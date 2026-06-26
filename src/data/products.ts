@@ -1,5 +1,4 @@
-
-interface productos {
+export interface Products {
     id: number;
     name: String,
     descrp: String,
@@ -10,15 +9,45 @@ interface productos {
     vendedor: string,
 };
 
-let producto: Array<any> =  [
-    {id: 1, name: "osito", precio:3000, img: "./img/Osito.jpg", descuento: false, cantDesc: 0}, 
-    {id: 2, name: "unicornio", precio:5000, img: "./img/Unicuernico.jpg", descuento: false, cantDesc: 0}, 
-    {id: 3, name: "gatito", precio:4500, img: "./img/Gatito.jpg", descuento: false, cantDesc: 0}, 
-    {id: 4, name: "perrito", precio:7000, img: "./img/Perrito.jpg", descuento: false, cantDesc: 0}, 
-    {id: 5, name: "foca", precio:8500, img: "./img/Foca.jpg", descuento: false, cantDesc: 0},
-    {id: 6, name: "pikachu", precio:9000, img: "./img/Pikachu.jpg", descuento: false, cantDesc: 0},
-    {id: 7, name: "chimuelo", precio:6000, img: "./img/Chimuelo.jpg", descuento: false, cantDesc: 0},
-    {id: 8, name: "stitch", precio:5500, img: "./img/Stitch.jpg", descuento: false, cantDesc: 0},
-    {id: 9, name: "pingüino", precio:10000, img: "./img/Pingüino.jpg", descuento: false, cantDesc: 0},
-    {id: 10, name: "totoro", precio:3000, img: "./img/Totoro.jpg", descuento: false, cantDesc: 0},
+export const productos : Products[] = [
+    {
+        id: 1,
+        name: "remera",
+        descrp: "remera negra manga corta semi nueva",
+        img: "",
+        stock: 1,
+        cat: [""],
+        precio: 3400,
+        vendedor: "Ivan Pascualich"
+    },
+    {
+        id: 2,
+        name: "pantalon",
+        descrp: "Pantalon corto marron usado",
+        img: "",
+        stock: 1,
+        cat: [""],
+        precio: 3400,
+        vendedor: "Ivan Pascualich"
+    },
+    {
+        id: 3,
+        name: "medias",
+        descrp: "medias largas con dibujo de pollo",
+        img: "",
+        stock: 5,
+        cat: [""],
+        precio: 3400,
+        vendedor: "Ivan Pascualich"
+    },
+    {
+        id: 4,
+        name: "gorra",
+        descrp: "gorra blanca plana marca GAP",
+        img: "",
+        stock: 3,
+        cat: [""],
+        precio: 3400,
+        vendedor: "Ivan Pascualich"
+    },
 ]
