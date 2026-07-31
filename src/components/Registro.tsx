@@ -14,15 +14,16 @@ const Registro = () => {
        console.log(usuario)
 
        formRef.current.reset()
+
     }
 
     return(
+        <>
         <div className='Registro-header'>
             <h1 className=''>Registro</h1>
         </div>
-    )
-}
-        <form ref = {FormRef} onSubmit={handleSubmit} className='registro-form'>
+
+        <form ref = {formRef} onSubmit={handleSubmit} className='registro-form'>
             <div>
                 <label htmlFor="name" className="form-label mt-4">Nombre</label>
                 <input type="text" className="form-control" id="name" placeholder="Tu Nombre" />
@@ -32,8 +33,8 @@ const Registro = () => {
                 <input type="text" className="form-control" id="lastName" placeholder="Tu Apellido" />
             </div>
             <div>
-                <label htmlFor="numberPhone" className="form-label mt-4">Número</label>
-                <input type="text" className="form-control" id="numberPhone" placeholder="Tu número" />
+                <label htmlFor="numberPhone" className="form-label mt-4">Teléfono</label>
+                <input type="text" className="form-control" id="numberPhone" placeholder="Tu teléfono" />
             </div>
             <div>
                 <label htmlFor="email" className="form-label mt-4">Email</label>
@@ -46,5 +47,9 @@ const Registro = () => {
             </div>
             <button type='submit'>Enviar</button>
         </form>
+        </>
+        
 
+)
+}
 export default Registro
