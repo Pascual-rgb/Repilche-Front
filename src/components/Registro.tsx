@@ -43,7 +43,7 @@ const Registro = () => {
             </div>
             <div>
                 <label htmlFor="password" className="form-label mt-4">Contraseña</label>
-                <input type="password" className="form-control" id="password" placeholder="password" autocomplete="off" />
+                <input type="password" className="form-control" id="password" placeholder="password" autoComplete="off" />
             </div>
             <button type='submit'>Enviar</button>
         </form>
