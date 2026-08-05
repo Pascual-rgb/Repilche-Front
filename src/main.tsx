@@ -3,11 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { CarritoProvider } from './context/CartContext.tsx'
+import { BrowserRouter } from "react-router-dom";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CarritoProvider>
+    <BrowserRouter>
+      <CarritoProvider>
         <App />
-    </CarritoProvider>
+      </CarritoProvider>
+    </BrowserRouter>
   </StrictMode>,
 )

@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import type { FormEvent } from 'react'
+import { Link } from 'react-router-dom';
 
 const Registro = () => {
     const formRef = useRef<HTMLFormElement>(null)
@@ -47,9 +48,11 @@ const Registro = () => {
             </div>
             <button type='submit'>Enviar</button>
         </form>
-        </>
         
-
+        <Link to="/login" className="registro-login-link">
+        Ya tengo una cuenta
+        </Link>
+        </>
 )
 }
 export default Registro
