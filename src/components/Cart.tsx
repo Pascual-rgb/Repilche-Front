@@ -67,3 +67,5 @@ export const CarritoProvider = ({ children }: { children: React.ReactNode }) => 
     <CarritoContext.Provider value={{ carrito, addToCart, removeItem, emptyCart, getItemQuantity, getTotalPrice }}>
       {children}
     </CarritoContext.Provider>
+  )
+}
