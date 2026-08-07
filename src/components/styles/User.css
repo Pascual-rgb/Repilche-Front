@@ -1,0 +1,149 @@
+.user-container {
+  position: relative;
+}
+
+.user-button {
+  width: 48px;
+  height: 48px;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 50%;
+
+  background: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  font-size: 30px;
+  color: #202020;
+
+  transition: .25s;
+
+  box-shadow: 0 3px 10px rgba(0,0,0,.08);
+}
+
+.user-button:hover {
+  transform: scale(1.08);
+}
+
+.user-menu {
+  position: absolute;
+
+  top: 60px;
+  right: 0;
+
+  width: 280px;
+
+  background: white;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  box-shadow: 0 15px 35px rgba(0,0,0,.15);
+
+  animation: aparecer .25s;
+
+  z-index: 9999;
+}
+
+.user-header {
+  padding: 25px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background: #f8f8f8;
+}
+
+.user-avatar {
+  font-size: 75px;
+  color: #888;
+}
+
+.user-info {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.user-info h3 {
+  font-size: 19px;
+}
+
+.user-info p {
+  color: #777;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.user-menu hr {
+  border: none;
+  border-top: 1px solid #ececec;
+}
+
+.user-menu button {
+  width: 100%;
+
+  padding: 15px 18px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  border: none;
+
+  background: white;
+
+  cursor: pointer;
+
+  font-size: 15px;
+
+  transition: .2s;
+}
+
+.user-menu button:hover {
+  background: #f6c915;
+}
+
+.user-menu button svg {
+  font-size: 18px;
+}
+
+.user-menu button span {
+  flex: 1;
+  text-align: left;
+}
+
+.logout {
+  color: #d32f2f;
+}
+
+.logout:hover {
+  background: #ffe7e7 !important;
+}
+
+@keyframes aparecer {
+
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+@media (max-width:768px) {
+
+  .user-menu {
+    width: 240px;
+  }
+
+}

@@ -1,15 +1,15 @@
-import { React } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Registro from './components/Registro';
-import Login from './components/Login';
+import Header from "./components/Header";
+import Home from "./components/Home";
+import Contact from "./components/Contact";
 
 function App() {
-    return (
-    <Routes>
-        <Route path="/registro" element={<Registro />} />
-        <Route path="/login" element={<Login />} />
-    </Routes>
-    );
+  return (
+    <>
+      <Header />
+      <Home />
+      <Contact />
+    </>
+  );
 }
 
 export default App;
