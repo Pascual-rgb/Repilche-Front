@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import type { FormEvent } from 'react'
 
-const Registro = () => {
+const SerVendedorForm = () => {
     const formRef = useRef<HTMLFormElement>(null)
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -46,4 +46,4 @@ const Registro = () => {
         </>
 )
 }
-export default Registro
+export default SerVendedorForm

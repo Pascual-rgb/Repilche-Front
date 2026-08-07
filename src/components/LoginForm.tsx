@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom';
 
-const Login = () => {
+const LoginForm = () => {
     const formRef = useRef<HTMLFormElement>(null)
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -42,4 +42,4 @@ const Login = () => {
         </>
 )
 }
-export default Login
+export default LoginForm
