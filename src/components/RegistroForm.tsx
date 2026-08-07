@@ -1,6 +1,5 @@
 import { useRef } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom';
 
 const Registro = () => {
     const formRef = useRef<HTMLFormElement>(null)
@@ -15,16 +14,15 @@ const Registro = () => {
        console.log(usuario)
 
        formRef.current.reset()
-
     }
 
     return(
-        <>
         <div className='Registro-header'>
             <h1 className=''>Registro</h1>
         </div>
-
-        <form ref = {formRef} onSubmit={handleSubmit} className='registro-form'>
+    )
+}
+        <form ref = {FormRef} onSubmit={handleSubmit} className='registro-form'>
             <div>
                 <label htmlFor="name" className="form-label mt-4">Nombre</label>
                 <input type="text" className="form-control" id="name" placeholder="Tu Nombre" />
@@ -34,8 +32,8 @@ const Registro = () => {
                 <input type="text" className="form-control" id="lastName" placeholder="Tu Apellido" />
             </div>
             <div>
-                <label htmlFor="numberPhone" className="form-label mt-4">Teléfono</label>
-                <input type="text" className="form-control" id="numberPhone" placeholder="Tu teléfono" />
+                <label htmlFor="numberPhone" className="form-label mt-4">Número</label>
+                <input type="text" className="form-control" id="numberPhone" placeholder="Tu número" />
             </div>
             <div>
                 <label htmlFor="email" className="form-label mt-4">Email</label>
@@ -44,15 +42,9 @@ const Registro = () => {
             </div>
             <div>
                 <label htmlFor="password" className="form-label mt-4">Contraseña</label>
-                <input type="password" className="form-control" id="password" placeholder="password" autoComplete="off" />
+                <input type="password" className="form-control" id="password" placeholder="password" autocomplete="off" />
             </div>
             <button type='submit'>Enviar</button>
         </form>
-        
-        <Link to="/login" className="registro-login-link">
-        Ya tengo una cuenta
-        </Link>
-        </>
-)
-}
+
 export default Registro
