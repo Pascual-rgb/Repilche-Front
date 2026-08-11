@@ -7,7 +7,7 @@ import {
   FaShoppingCart,
 } from "react-icons/fa";
 import User from "./User";
-import "./Header.css";
+import "./styles/Header.css";
 import logo from "../assets/PICHE.png";
 
 const Header = () => {
