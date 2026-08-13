@@ -25,20 +25,20 @@ const SerVendedorForm = () => {
 
         <form ref = {formRef} onSubmit={handleSubmit} className='serVendedor-form'>
             <div>
-                <label htmlFor="name" className="form-label mt-4">Localidad</label>
-                <input type="text" className="form-control" id="name" placeholder="Localidad" />
+                <label htmlFor="locality" className="form-label mt-4">Localidad</label>
+                <input type="text" className="form-control" id="locality" placeholder="Localidad" />
             </div>
             <div>
-                <label htmlFor="lastName" className="form-label mt-4">LlegoHasta</label>
-                <input type="text" className="form-control" id="lastName" placeholder="Llego hasta...(localidades)" />
+                <label htmlFor="name" className="form-label mt-4">LlegoHasta</label>
+                <input type="text" className="form-control" id="name" placeholder="Llego hasta...(localidades)" />
             </div>
             <div>
                 <label htmlFor="cvu" className="form-label mt-4">CVU</label>
                 <input type="text" className="form-control" id="cvu" placeholder="CVU(CBU)" />
             </div>
             <div>
-                <label htmlFor="exampleTextarea" className="form-label mt-4">Description</label>
-                <textarea className="form-control" id="exampleTextarea" rows={3} style={{ 'height': '37px' }} />
+                <label htmlFor="description" className="form-label mt-4">Description</label>
+                <textarea className="form-control" id="description" rows={3} style={{ 'height': '37px' }} />
             </div>
 
             <button type='submit'>Enviar</button>

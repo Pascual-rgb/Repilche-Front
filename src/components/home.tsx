@@ -1,75 +1,26 @@
-import "./Home.css";
+import React from 'react';
+import { ProductList } from './ProductList';
+import { ProductCard } from './ProductCard';
+import { productos } from '../data/products.ts';
+import './Home.css';
 
-const categorias = [
-  "Hombre",
-  "Mujer",
-  "Calzado",
-  "Accesorios",
-];
-
-const Home = () => {
+export const Home: React.FC = () => {
   return (
-    <main className="home">
-
-      <section className="hero">
-
-        <div className="hero-content">
-
-          <h1>La moda también puede tener una segunda oportunidad.</h1>
-
-          <p>
-            Comprá y vendé ropa usada de manera fácil, segura y sostenible.
-          </p>
-
-          <button>Explorar productos</button>
-
-        </div>
-
+    <div className="home-container">
+      {/* Sección Superior: Lista / Carrusel rotativo */}
+      <section className="home-section-top">
+        <ProductList products={productos} />
       </section>
 
-      <section className="categories">
-
-        <h2>Categorías</h2>
-
-        <div className="category-grid">
-
-          {categorias.map((categoria) => (
-            <div key={categoria} className="category-card">
-              {categoria}
-            </div>
+      {/* Sección Inferior: Filas de ProductCards (4 por fila) */}
+      <section className="home-section-grid">
+        <h2 className="section-title">Productos Destacados</h2>
+        <div className="product-grid">
+          {productos.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
-
         </div>
-
       </section>
-
-      <section className="about">
-
-        <h2>¿Por qué elegir Repilche?</h2>
-
-        <div className="about-grid">
-
-          <div className="about-card">
-            <h3>Moda sostenible</h3>
-            <p>Ayudás al planeta reutilizando prendas.</p>
-          </div>
-
-          <div className="about-card">
-            <h3>Ahorrá dinero</h3>
-            <p>Encontrá ropa en excelente estado a mejores precios.</p>
-          </div>
-
-          <div className="about-card">
-            <h3>Comunidad</h3>
-            <p>Comprá y vendé de forma simple entre personas.</p>
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
+    </div>
   );
 };
-
-export default Home;
