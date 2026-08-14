@@ -7,10 +7,10 @@ import ProductList from './components/ProductList';
 import Cart from './components/Cart';
 import CargaProduct from './components/CargaProduct';
 import Contact from './components/Contact';
-import Login from './components/Login';
+import Login from './components/LoginForm';
 import User from './components/User';
 import Notis from './components/Notis';
-import SerVendedor from './components/SerVendedor';
+import SerVendedor from './components/SerVendedorForm';
 
 function App() {
   return (

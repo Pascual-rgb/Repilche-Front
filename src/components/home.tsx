@@ -3,7 +3,7 @@ import { ProductList } from './ProductList';
 import { ProductCard } from './ProductCard';
 import { productos } from '../data/products'; 
 import { categorias } from '../data/categorias'; // Importación de categorías
-import './Home.css';
+import "./styles/Home.css";
 
 export const Home: React.FC = () => {
   return (

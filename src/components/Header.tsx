@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   FaSearch,
   FaBars,
@@ -7,7 +8,7 @@ import {
   FaShoppingCart,
 } from "react-icons/fa";
 import User from "./User";
-import "./Header.css";
+import "./styles/Header.css";
 import logo from "../assets/PICHE.png";
 
 const Header = () => {
@@ -15,17 +16,16 @@ const Header = () => {
 
   return (
     <header className="header">
-
       <div className="header-container">
 
-        <a href="#" className="header-logo">
+        <Link to="/" className="header-logo">
           <img src={logo} alt="Repilche" className="logo-image" />
 
           <div className="logo-text">
             <h1>REPILCHE</h1>
             <span>Moda Circular</span>
           </div>
-        </a>
+        </Link>
 
         <div className="search-container">
           <input
@@ -45,10 +45,14 @@ const Header = () => {
             <span className="badge">2</span>
           </button>
 
-          <button className="header-icon notification">
+          <Link
+            to="/notificaciones"
+            className="header-icon notification"
+            aria-label="Ir a notificaciones"
+          >
             <FaBell />
             <span className="badge">3</span>
-          </button>
+          </Link>
 
           <User />
 
@@ -64,14 +68,16 @@ const Header = () => {
       </div>
 
       <nav className={`navbar ${menuOpen ? "open" : ""}`}>
-        <a href="#">Inicio</a>
+        <Link to="/" onClick={() => setMenuOpen(false)}>
+          Inicio
+        </Link>
+
         <a href="#">Hombre</a>
         <a href="#">Mujer</a>
         <a href="#">Calzado</a>
         <a href="#">Accesorios</a>
         <a href="#">Vender</a>
       </nav>
-
     </header>
   );
 };
