@@ -1,0 +1,154 @@
+.notis-page {
+  min-height: 70vh;
+  padding: 60px 20px;
+  background: #f5f5f5;
+}
+
+.notis-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.notis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+
+  border-bottom: 2px solid #e5e5e5;
+}
+
+.notis-header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  color: #222;
+}
+
+.notis-header p {
+  margin: 0;
+  color: #777;
+}
+
+.notis-main-icon {
+  font-size: 42px;
+  color: #f6c915;
+}
+
+.notis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.notis-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  padding: 22px;
+
+  background: white;
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+
+  transition: 0.25s;
+}
+
+.notis-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
+}
+
+.notis-card.unread {
+  border-left: 5px solid #f6c915;
+}
+
+.notis-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  font-size: 20px;
+  color: white;
+}
+
+.product-icon {
+  background: #333;
+}
+
+.heart-icon {
+  background: #e85b5b;
+}
+
+.tag-icon {
+  background: #f6c915;
+  color: #222;
+}
+
+.notis-content {
+  flex: 1;
+}
+
+.notis-content h3 {
+  margin: 0 0 7px;
+  font-size: 17px;
+  color: #222;
+}
+
+.notis-content p {
+  margin: 0 0 8px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.notis-content span {
+  font-size: 13px;
+  color: #999;
+}
+
+.notis-dot {
+  width: 10px;
+  height: 10px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: #f6c915;
+}
+
+@media (max-width: 600px) {
+  .notis-page {
+    padding: 40px 15px;
+  }
+
+  .notis-header h1 {
+    font-size: 26px;
+  }
+
+  .notis-main-icon {
+    font-size: 32px;
+  }
+
+  .notis-card {
+    gap: 15px;
+    padding: 18px;
+  }
+
+  .notis-icon {
+    width: 45px;
+    height: 45px;
+  }
+}

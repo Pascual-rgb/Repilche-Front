@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Products } from '../data/products.ts';
-import './ProductList.css';
+import "./styles/ProductList.css";
 
 interface ProductListProps {
   products: Products[];
