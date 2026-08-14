@@ -43,8 +43,8 @@ const CargaProduct = () => {
                 </select>
             </div>
             <div>
-                <label htmlFor="exampleTextarea" className="form-label mt-4">Description</label>
-                <textarea className="form-control" id="exampleTextarea" rows={3} style={{ 'height': '37px' }} />
+                <label htmlFor="description" className="form-label mt-4">Description</label>
+                <textarea className="form-control" id="description" rows={3} style={{ 'height': '37px' }} />
             </div>
             <div>
                 <label htmlFor="formFile" className="form-label mt-4">Cargar fotos de la prenda</label>

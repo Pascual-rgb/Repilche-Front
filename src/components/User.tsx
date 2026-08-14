@@ -8,7 +8,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-import "./User.css";
+import "./styles/User.css";
 
 const User = () => {
   const [open, setOpen] = useState(false);

@@ -1,4 +1,4 @@
-import "./Contact.css";
+import "./styles/Contact.css";
 import logo from "../assets/PICHE.png";
 
 import {
@@ -11,15 +11,14 @@ import {
 const Contact = () => {
   return (
     <footer className="footer">
-
       <div className="footer-container">
 
-        {/* Marca */}
+        {/* LOGO + DESCRIPCIÓN */}
         <div className="footer-brand">
 
           <img
             src={logo}
-            alt="Logo Repilche"
+            alt="Repilche"
             className="footer-logo"
           />
 
@@ -30,48 +29,68 @@ const Contact = () => {
               Moda circular para todos.
               <br />
               Comprá y vendé ropa usada de forma simple,
+              <br />
               segura y sostenible.
             </p>
           </div>
 
         </div>
 
-        {/* Redes */}
+        {/* REDES SOCIALES */}
         <div className="footer-section">
 
           <h3>Redes Sociales</h3>
 
-          <a href="#">
+          <a
+            href="https://www.facebook.com/share/18FU1xW9a1/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaFacebookF />
-            <span>Facebook</span>
+            Facebook
           </a>
 
-          <a href="#">
+          <a
+            href="https://www.instagram.com/repilche.web?igsh=MXZ2MGNhOG5panVseQ=="
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaInstagram />
-            <span>Instagram</span>
+            Instagram
           </a>
 
-          <a href="#">
+          <a
+            href="https://www.tiktok.com/@repilche.app?_r=1&_t=ZS-98nnbpK9CIa"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaTiktok />
-            <span>TikTok</span>
+            TikTok
           </a>
 
-          <a href="mailto:contacto@repilche.com">
+          <a href="mailto:repilchecontact@gmail.com">
             <FaEnvelope />
-            <span>contacto@repilche.com</span>
+            repilchecontact@gmail.com
           </a>
 
         </div>
 
-        {/* Información */}
+        {/* INFORMACIÓN */}
         <div className="footer-section">
 
           <h3>Información</h3>
 
-          <a href="#">Ayuda</a>
-          <a href="#">Políticas</a>
-          <a href="#">Términos y condiciones</a>
-          <a href="#">Contacto</a>
+          <a href="/ayuda">Ayuda</a>
+
+          <a href="/politicas">Políticas</a>
+
+          <a href="/terminos">
+            Términos y condiciones
+          </a>
+
+          <a href="mailto:repilchecontact@gmail.com">
+            Contacto
+          </a>
 
         </div>
 
