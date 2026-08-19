@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 import Header from "./components/Header";
 import { Home } from "./components/home";
@@ -10,7 +10,8 @@ import CargaProduct from "./components/CargaProduct";
 
 function App() {
   return (
-    <>
+    
+      <BrowserRouter>
       <Header />
 
       <Routes>
@@ -22,7 +23,8 @@ function App() {
       </Routes>
 
       <Contact />
-    </>
+      </BrowserRouter>
+    
   );
 }
 

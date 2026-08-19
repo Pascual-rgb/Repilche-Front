@@ -19,10 +19,7 @@ const RegistroForm = () => {
     return(
         <div className='Registro-header'>
             <h1 className=''>Registro</h1>
-        </div>
-    )
-}
-        <form ref = {FormRef} onSubmit={handleSubmit} className='registro-form'>
+             <form ref = {formRef} onSubmit={handleSubmit} className='registro-form'>
             <div>
                 <label htmlFor="name" className="form-label mt-4">Nombre</label>
                 <input type="text" className="form-control" id="name" placeholder="Tu Nombre" />
@@ -46,5 +43,9 @@ const RegistroForm = () => {
             </div>
             <button type='submit'>Enviar</button>
         </form>
+        </div>
+    )
+}
+       
 
 export default RegistroForm

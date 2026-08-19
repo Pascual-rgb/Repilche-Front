@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Products } from '../data/products.ts';
-import './ProductCard.css';
+import "./styles/ProductCard.css";
 
 interface ProductCardProps {
   product: Products;
