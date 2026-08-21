@@ -44,7 +44,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products }) => {
           <img src={currentProduct.img as string} alt={currentProduct.name as string} />
         </div>
         <div className="product-list-details">
-          <h2 className="product-list-title"><u>{currentProduct.name}</u></h2>
+          <h2 className="product-list-title">{currentProduct.name}</h2>
           <p className="product-list-desc"><strong>Descripción:</strong> {currentProduct.descrp}</p>
           <p className="product-list-seller"><strong>Vendedor:</strong> {currentProduct.vendedor}</p>
           <div className="product-list-price">${currentProduct.precio}</div>

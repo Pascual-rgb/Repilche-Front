@@ -1,7 +1,7 @@
 .product-card {
-  background-color: #f3efff;
+  background-color: #ece5f7;
   border-radius: 16px;
-  padding: 12px;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -17,21 +17,21 @@
 
 .product-card-header {
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .product-card-name {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  text-decoration: underline;
   color: #000;
   margin: 0;
+  font-family: 'Radio Canada Big', sans-serif;
 }
 
 .product-card-img-container {
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 10px;
+  background-color: #f7f5f5;
+  padding: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,9 +46,10 @@
 
 .product-card-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: flex-end;
   margin-top: 10px;
+  margin-bottom: 15px;
 }
 
 .product-card-info {
@@ -56,12 +57,14 @@
   flex-direction: column;
   font-size: 0.85rem;
   color: #333;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
 
 .product-card-price {
   font-size: 1.2rem;
   font-weight: bold;
   color: #000;
+  font-family: 'Radio Canada Big', sans-serif;
 }
 
 .product-card-link {
