@@ -12,42 +12,42 @@ export interface Products {
 export const productos : Products[] = [
     {
         id: 1,
-        name: "remera",
-        descrp: "remera negra manga corta semi nueva",
+        name: "Remera",
+        descrp: "Remera negra manga corta semi nueva",
         img: "/src/data/img/remera-negra-manga-corta.png",
         stock: 1,
-        cat: ["remera manga corta"],
-        precio: 3400,
+        cat: ["Remera"],
+        precio: 5000,
         vendedor: "Ivan Pascualich"
     },
     {
         id: 2,
-        name: "pantalon",
-        descrp: "Pantalon corto marron usado",
+        name: "Pantalón",
+        descrp: "Pantalón corto marrón usado",
         img: "/src/data/img/pantalon-corto-marron.png",
         stock: 1,
-        cat: ["pantalon largo"],
-        precio: 3400,
+        cat: ["Pantalón"],
+        precio: 8500,
         vendedor: "Ivan Pascualich"
     },
     {
         id: 3,
-        name: "medias",
-        descrp: "medias largas con dibujo de pollo",
+        name: "Medias",
+        descrp: "Medias largas con dibujo de pollo",
         img: "/src/data/img/medias-pollo.png",
         stock: 5,
-        cat: ["soquete"],
+        cat: ["Medias"],
         precio: 3400,
         vendedor: "Ivan Pascualich"
     },
     {
         id: 4,
-        name: "gorra",
-        descrp: "gorra blanca plana marca GAP",
+        name: "Gorra",
+        descrp: "Gorra blanca plana marca GAP",
         img: "/src/data/img/gorra-blanca.png",
         stock: 3,
-        cat: ["gorra plana"],
-        precio: 3400,
+        cat: ["Gorra"],
+        precio: 1300,
         vendedor: "Ivan Pascualich"
     },
 ]
