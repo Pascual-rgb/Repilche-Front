@@ -1,12 +1,12 @@
 import "./styles/Contact.css";
 import logo from "../assets/PICHE.png";
 
-import {
+/*import {
   FaFacebookF,
   FaInstagram,
   FaTiktok,
   FaEnvelope,
-} from "react-icons/fa";
+} from "react-icons/fa";*/
 
 const Contact = () => {
   return (
