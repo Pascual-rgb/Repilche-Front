@@ -3,21 +3,12 @@ import { ProductList } from './ProductList';
 import { ProductCard } from './ProductCard';
 import { productos } from '../data/products.ts';
 import './styles/Home.css';
-import { categorias } from '../data/categorias';
 
 export const Home: React.FC = () => {
   return (
     <div className="home-container">
       {/* Nuevo Header de Categorías */}
-      <nav className="categories-header">
-        <ul className="categories-list">
-          {categorias.map((categoria, index) => (
-            <li key={index} className="category-item">
-              {categoria}
-            </li>
-          ))}
-        </ul>
-      </nav>
+     
 
       <section className="home-section-top">
         <h2 className="section-title">Productos Destacados</h2>

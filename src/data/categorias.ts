@@ -1,1 +1,0 @@
-export const categorias: string[] = ['remera', 'pantalon', 'buzos', ''];
