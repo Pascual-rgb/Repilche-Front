@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Header from "./components/Header";
 import { Home } from "./components/home";
@@ -13,9 +13,16 @@ import ProductoDetail from "./components/ProductoDetail";
 import { productos } from "./data/products";
 
 function App() {
+  const location = useLocation();
+
+  // Lista de rutas donde NO quieres que aparezca el Header
+  const hideHeaderPaths = ["/login", "/ser-vendedor", "/serVendedor"];
+  const shouldHideHeader = hideHeaderPaths.includes(location.pathname);
+
   return (
     <>
-      <Header />
+      {/* El Header solo se muestra si NO estamos en una ruta de formulario */}
+      {!shouldHideHeader && <Header />}
 
       <main style={{ padding: "20px" }}>
         <Routes>
