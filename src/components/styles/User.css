@@ -5,24 +5,17 @@
 .user-button {
   width: 48px;
   height: 48px;
-
   border: 1px solid #e5e5e5;
   border-radius: 50%;
-
   background: white;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   cursor: pointer;
-
   font-size: 30px;
   color: #202020;
-
-  transition: .25s;
-
-  box-shadow: 0 3px 10px rgba(0,0,0,.08);
+  transition: 0.25s;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 .user-button:hover {
@@ -31,32 +24,22 @@
 
 .user-menu {
   position: absolute;
-
   top: 60px;
   right: 0;
-
   width: 280px;
-
   background: white;
-
   border-radius: 18px;
-
   overflow: hidden;
-
-  box-shadow: 0 15px 35px rgba(0,0,0,.15);
-
-  animation: aparecer .25s;
-
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  animation: aparecer 0.25s;
   z-index: 9999;
 }
 
 .user-header {
   padding: 25px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   background: #f8f8f8;
 }
 
@@ -85,49 +68,54 @@
   border-top: 1px solid #ececec;
 }
 
-.user-menu button {
+/* BOTONES Y LINKS DEL MENÚ */
+
+.user-menu button,
+.user-menu-link {
   width: 100%;
-
   padding: 15px 18px;
-
   display: flex;
   align-items: center;
   gap: 14px;
-
   border: none;
-
   background: white;
-
   cursor: pointer;
-
   font-size: 15px;
-
-  transition: .2s;
+  transition: 0.2s;
+  color: #202020;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.user-menu button:hover {
+.user-menu button:hover,
+.user-menu-link:hover {
   background: #f6c915;
 }
 
-.user-menu button svg {
+.user-menu button svg,
+.user-menu-link svg {
   font-size: 18px;
 }
 
-.user-menu button span {
+.user-menu button span,
+.user-menu-link span {
   flex: 1;
   text-align: left;
 }
 
+/* CERRAR SESIÓN */
+
 .logout {
-  color: #d32f2f;
+  color: #d32f2f !important;
 }
 
 .logout:hover {
   background: #ffe7e7 !important;
 }
 
-@keyframes aparecer {
+/* ANIMACIÓN */
 
+@keyframes aparecer {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -137,13 +125,12 @@
     opacity: 1;
     transform: translateY(0);
   }
-
 }
 
-@media (max-width:768px) {
+/* RESPONSIVE */
 
+@media (max-width: 768px) {
   .user-menu {
     width: 240px;
   }
-
 }

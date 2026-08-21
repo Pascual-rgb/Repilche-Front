@@ -1,0 +1,157 @@
+.editar-perfil-page {
+  min-height: 75vh;
+  padding: 50px 20px 70px;
+  background: #f5f5f5;
+}
+
+.editar-perfil-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.editar-perfil-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  padding: 10px 16px;
+  background: white;
+  color: #222;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: 0.25s;
+}
+
+.editar-perfil-volver:hover {
+  background: #f6c915;
+}
+
+.editar-perfil-card {
+  background: white;
+  padding: 40px;
+  border-radius: 18px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.editar-perfil-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 35px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #eee;
+}
+
+.editar-perfil-avatar {
+  font-size: 75px;
+  color: #888;
+}
+
+.editar-perfil-header h1 {
+  margin: 0 0 8px;
+  color: #222;
+  font-size: 32px;
+}
+
+.editar-perfil-header p {
+  margin: 0;
+  color: #777;
+}
+
+.editar-perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.editar-perfil-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editar-perfil-field label {
+  font-weight: 600;
+  color: #333;
+}
+
+.editar-perfil-field input {
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  font-size: 15px;
+  transition: 0.25s;
+}
+
+.editar-perfil-field input:focus {
+  border-color: #f6c915;
+  box-shadow: 0 0 0 3px rgba(246, 201, 21, 0.15);
+}
+
+.editar-perfil-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.editar-perfil-cancelar,
+.editar-perfil-guardar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.25s;
+}
+
+.editar-perfil-cancelar {
+  background: #eee;
+  color: #333;
+}
+
+.editar-perfil-cancelar:hover {
+  background: #ddd;
+}
+
+.editar-perfil-guardar {
+  border: none;
+  background: #f6c915;
+  color: #222;
+}
+
+.editar-perfil-guardar:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.95);
+}
+
+@media (max-width: 600px) {
+  .editar-perfil-page {
+    padding: 30px 15px 50px;
+  }
+
+  .editar-perfil-card {
+    padding: 25px 20px;
+  }
+
+  .editar-perfil-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .editar-perfil-actions {
+    flex-direction: column;
+  }
+
+  .editar-perfil-cancelar,
+  .editar-perfil-guardar {
+    width: 100%;
+  }
+}

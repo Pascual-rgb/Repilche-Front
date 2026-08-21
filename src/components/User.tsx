@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import {
   FaUserCircle,
   FaUserEdit,
@@ -6,6 +7,7 @@ import {
   FaClipboardList,
   FaCog,
   FaSignOutAlt,
+  FaStore,
 } from "react-icons/fa";
 
 import "./styles/User.css";
@@ -56,15 +58,28 @@ const User = () => {
 
           <hr />
 
-          <button type="button">
-            <FaUserEdit />
-            <span>Editar perfil</span>
-          </button>
+          <Link to="/editar-perfil" className="user-menu-link" onClick={() => setOpen(false)}>
+          <FaUserEdit />
+          <span>Editar perfil</span>
+          </Link>
 
-          <button type="button">
+          <Link
+            to="/cargar-producto"
+            className="user-menu-link"
+            onClick={() => setOpen(false)}
+          >
             <FaBoxOpen />
             <span>Cargar producto</span>
-          </button>
+          </Link>
+
+          <Link
+            to="/ser-vendedor"
+            className="user-menu-link"
+            onClick={() => setOpen(false)}
+          >
+            <FaStore />
+            <span>Ser vendedor</span>
+          </Link>
 
           <button type="button">
             <FaClipboardList />

@@ -11,6 +11,7 @@ import Notis from "./components/Notis";
 import SerVendedor from "./components/SerVendedorForm";
 import ProductoDetail from "./components/ProductoDetail";
 import { productos } from "./data/products";
+import EditarPerfil from "./components/EditarPerfil";
 
 function App() {
   return (
@@ -62,6 +63,8 @@ function App() {
 
           {/* Página por defecto */}
           <Route path="*" element={<Home />} />
+
+          <Route path="/editar-perfil" element={<EditarPerfil />}/>
         </Routes>
       </main>
 
