@@ -19,7 +19,7 @@ ReactDOM.createRoot(rootElement).render(
     <CarritoProvider>
       <NotificationProvider>
         <App />
-      </NotificationProvider>
-    </CarritoProvider>
-  </React.StrictMode>
-);
+      </CarritoProvider>
+    </BrowserRouter>
+  </StrictMode>
+)

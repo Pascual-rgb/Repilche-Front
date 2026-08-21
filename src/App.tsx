@@ -9,8 +9,8 @@ import Login from "./components/LoginForm";
 import User from "./components/User";
 import Notis from "./components/Notis";
 import SerVendedor from "./components/SerVendedorForm";
-import { productos } from "./data/products";
 import ProductoDetail from "./components/ProductoDetail";
+import { productos } from "./data/products";
 
 function App() {
   return (
