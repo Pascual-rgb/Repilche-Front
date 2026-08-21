@@ -12,17 +12,18 @@ interface CarritoContextType {
   emptyCart: () => void;
   getItemQuantity: () => number;
   getTotalPrice: () => number;
+  isCartOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
 }
 
 const CarritoContext = createContext<CarritoContextType | undefined>(undefined);
 
 export const useCarritoContext = () => {
   const context = useContext(CarritoContext);
-
   if (!context) {
     throw new Error("useCarritoContext debe usarse dentro de CarritoProvider");
   }
-
   return context;
 };
 
@@ -32,44 +33,39 @@ export const CarritoProvider = ({
   children: React.ReactNode;
 }) => {
   const [carrito, setCarrito] = useState<CarritoItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const addToCart = (product: Products, quantity: number) => {
-    const existente = carrito.find((item) => item.id === product.id);
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
 
-    if (existente) {
-      setCarrito(
-        carrito.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + quantity,
-              }
-            : item
-        )
-      );
+  const isInCart = (id: number): boolean => carrito.some(p => p.id === id);
+
+  const addToCart = (product: Products, quantity: number): void => {
+    const itemExistente = carrito.find(p => p.id === product.id);
+    const cantidadTotal = itemExistente ? itemExistente.quantity + quantity : quantity;
+
+    if (cantidadTotal > product.stock) {
+      return console.warn('No hay stock suficiente. Máximo disponible: ' + product.stock);
+    }
+
+    if (isInCart(product.id)) {
+      setCarrito(carrito.map(p => 
+        p.id === product.id 
+          ? { ...p, quantity: p.quantity + quantity } 
+          : p
+      ));
     } else {
-      setCarrito([...carrito, { ...product, quantity }]);
+      setCarrito(aux => [...aux, { ...product, quantity }]);
     }
   };
 
-  const removeItem = (id: number) => {
-    setCarrito(carrito.filter((item) => item.id !== id));
-  };
+  const removeItem = (id: number): void => setCarrito(aux => aux.filter(p => p.id !== id));
 
-  const emptyCart = () => {
-    setCarrito([]);
-  };
+  const emptyCart = (): void => setCarrito([]);
 
-  const getItemQuantity = () => {
-    return carrito.reduce((acc, item) => acc + item.quantity, 0);
-  };
+  const getItemQuantity = (): number => carrito.reduce((acum, p) => acum + p.quantity, 0);
 
-  const getTotalPrice = () => {
-    return carrito.reduce(
-      (acc, item) => acc + item.precio * item.quantity,
-      0
-    );
-  };
+  const getTotalPrice = (): number => carrito.reduce((acum, p) => acum + p.precio * p.quantity, 0);
 
   return (
     <CarritoContext.Provider
@@ -80,6 +76,9 @@ export const CarritoProvider = ({
         emptyCart,
         getItemQuantity,
         getTotalPrice,
+        isCartOpen,
+        openCart,
+        closeCart,
       }}
     >
       {children}

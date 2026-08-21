@@ -1,10 +1,10 @@
 export interface Products {
     id: number;
-    name: String,
-    descrp: String,
-    img: String,
+    name: string,
+    descrp: string,
+    img: string,
     stock: number,
-    cat: String[],
+    cat: string[],
     precio: number,
     vendedor: string,
 };

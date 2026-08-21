@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Importamos Link
 import type { Products } from '../data/products.ts';
 import "./styles/Home.css";
 
@@ -19,7 +20,8 @@ export const ProductList: React.FC<ProductListProps> = ({ products }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  const handlePrev = () => {
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault(); // Evita que el botón dispare la navegación del Link
     setCurrentIndex((prevIndex) => 
       prevIndex === 0 ? sliderProducts.length - 1 : prevIndex - 1
     );
@@ -31,6 +33,11 @@ export const ProductList: React.FC<ProductListProps> = ({ products }) => {
     );
   };
 
+  const handleNextBtn = (e: React.MouseEvent) => {
+    e.preventDefault(); // Evita que el botón dispare la navegación del Link
+    handleNext();
+  };
+
   if (sliderProducts.length === 0) return null;
 
   const currentProduct = sliderProducts[currentIndex];
@@ -39,7 +46,8 @@ export const ProductList: React.FC<ProductListProps> = ({ products }) => {
     <div className="product-list-container">
       <button className="slider-btn prev-btn" onClick={handlePrev}>&lt;</button>
       
-      <div className="product-list-card">
+      {/* Envolvemos toda la tarjeta en un Link hacia la vista de detalle */}
+      <Link to={`/product/${currentProduct.id}`} className="product-list-card" style={{ textDecoration: 'none', color: 'inherit' }}>
         <div className="product-list-img-box">
           <img src={currentProduct.img as string} alt={currentProduct.name as string} />
         </div>
@@ -49,9 +57,9 @@ export const ProductList: React.FC<ProductListProps> = ({ products }) => {
           <p className="product-list-seller"><strong>Vendedor:</strong> {currentProduct.vendedor}</p>
           <div className="product-list-price">${currentProduct.precio}</div>
         </div>
-      </div>
+      </Link>
 
-      <button className="slider-btn next-btn" onClick={handleNext}>&gt;</button>
+      <button className="slider-btn next-btn" onClick={handleNextBtn}>&gt;</button>
     </div>
   );
 };

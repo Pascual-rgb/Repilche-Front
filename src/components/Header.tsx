@@ -19,18 +19,15 @@ const Header = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const { unreadCount } = useNotificationContext();
-  const { getItemQuantity } = useCarritoContext();
+  const { getItemQuantity, openCart } = useCarritoContext();
 
-  // Controlar el scroll hacia arriba y hacia abajo
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        // Si bajamos y ya pasamos los 80px, ocultamos el header
         setShowHeader(false);
       } else {
-        // Si subimos, mostramos el header
         setShowHeader(true);
       }
 

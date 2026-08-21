@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Header from "./components/Header";
+import Cart from "./components/Cart"; // Importa el panel del carrito
 import { Home } from "./components/home";
 import { ProductList } from "./components/ProductList";
 import CargaProduct from "./components/CargaProduct";
@@ -16,18 +17,18 @@ import EditarPerfil from "./components/EditarPerfil";
 function App() {
   const location = useLocation();
 
-  // Lista de rutas donde NO quieres que aparezca el Header
   const hideHeaderPaths = ["/login", "/ser-vendedor", "/serVendedor"];
   const shouldHideHeader = hideHeaderPaths.includes(location.pathname);
 
   return (
     <>
-      {/* El Header solo se muestra si NO estamos en una ruta de formulario */}
       {!shouldHideHeader && <Header />}
+      
+      {/* Panel superpuesto del carrito disponible en toda la app */}
+      <Cart />
 
       <main style={{ padding: "20px" }}>
         <Routes>
-          {/* Página principal */}
           <Route path="/" element={<Home />} />
 
           {/* Catálogo de productos */}
@@ -44,38 +45,20 @@ function App() {
 
           {/* Contacto */}
           <Route path="/contact" element={<Contact />} />
-
-          {/* Login */}
           <Route path="/login" element={<Login />} />
-
-          {/* Usuario */}
           <Route path="/user" element={<User />} />
-
-          {/* Notificaciones */}
           <Route path="/notifications" element={<Notis />} />
           <Route path="/notis" element={<Notis />} />
-
-          {/* Ser vendedor */}
           <Route path="/ser-vendedor" element={<SerVendedor />} />
           <Route path="/serVendedor" element={<SerVendedor />} />
-
-          {/* Cargar producto - ruta alternativa */}
           <Route path="/cargaProduct" element={<CargaProduct />} />
-
-          {/* Página de producto */}
-          <Route
-            path="/producto/:id"
-            element={<ProductoDetail />}
-          />
-
-          {/* Página por defecto */}
+          <Route path="/producto/:id" element={<ProductoDetail />} />
           <Route path="*" element={<Home />} />
 
           <Route path="/editar-perfil" element={<EditarPerfil />}/>
         </Routes>
       </main>
 
-      {/* Footer */}
       <Contact />
     </>
   );
