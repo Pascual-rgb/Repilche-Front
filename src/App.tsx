@@ -19,49 +19,39 @@ function App() {
 
       <main style={{ padding: "20px" }}>
         <Routes>
-          {/* Página principal */}
           <Route path="/" element={<Home />} />
 
-          {/* Catálogo de productos */}
           <Route
             path="/products"
             element={<ProductList products={productos} />}
           />
 
-          {/* Cargar producto */}
           <Route
             path="/cargar-producto"
             element={<CargaProduct />}
           />
 
-          {/* Contacto */}
-          <Route path="/contact" element={<Contact />} />
-
-          {/* Login */}
           <Route path="/login" element={<Login />} />
 
-          {/* Usuario */}
           <Route path="/user" element={<User />} />
 
-          {/* Notificaciones */}
           <Route path="/notifications" element={<Notis />} />
 
-          {/* Ser vendedor */}
           <Route
             path="/ser-vendedor"
             element={<SerVendedor />}
           />
 
-          {/* Página de producto */}
           <Route
             path="/producto/:id"
             element={<ProductoDetail />}
           />
 
-          {/* Página por defecto */}
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
+
+      <Contact />
     </>
   );
 }
