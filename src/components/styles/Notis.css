@@ -1,0 +1,265 @@
+.notis-page {
+  min-height: 70vh;
+  padding: 60px 20px;
+  background: #f5f5f5;
+}
+
+.notis-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.notis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+
+  border-bottom: 2px solid #e5e5e5;
+}
+
+.notis-header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  color: #222;
+}
+
+.notis-header p {
+  margin: 0;
+  color: #777;
+}
+
+.notis-main-icon {
+  font-size: 42px;
+  color: #f6c915;
+}
+
+.notis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.notis-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  padding: 22px;
+
+  background: white;
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+
+  transition: 0.25s;
+}
+
+.notis-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
+}
+
+.notis-card.unread {
+  border-left: 5px solid #f6c915;
+}
+
+.notis-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  font-size: 20px;
+  color: white;
+}
+
+.product-icon {
+  background: #333;
+}
+
+.heart-icon {
+  background: #e85b5b;
+}
+
+.tag-icon {
+  background: #f6c915;
+  color: #222;
+}
+
+.notis-content {
+  flex: 1;
+}
+
+.notis-content h3 {
+  margin: 0 0 7px;
+  font-size: 17px;
+  color: #222;
+}
+
+.notis-content p {
+  margin: 0 0 8px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.notis-content span {
+  font-size: 13px;
+  color: #999;
+}
+
+.notis-dot {
+  width: 10px;
+  height: 10px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: #f6c915;
+}
+
+@media (max-width: 600px) {
+  .notis-page {
+    padding: 40px 15px;
+  }
+
+  .notis-header h1 {
+    font-size: 26px;
+  }
+
+  .notis-main-icon {
+    font-size: 32px;
+  }
+
+  .notis-card {
+    gap: 15px;
+    padding: 18px;
+  }
+
+  .notis-icon {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+.notis-count {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #f6c915;
+}
+
+.mark-all-button {
+  display: block;
+  margin: 0 0 20px auto;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #222;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.mark-all-button:hover {
+  background: #444;
+  transform: translateY(-2px);
+}
+
+.notis-card {
+  cursor: pointer;
+}
+
+.notis-card:not(.unread) {
+  opacity: 0.75;
+}
+
+.notis-card:not(.unread):hover {
+  opacity: 1;
+}
+
+.notis-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  color: #777;
+  font-size: 14px;
+}
+
+.notis-read-all {
+  border: none;
+  background: #f6c915;
+  color: #222;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.notis-read-all:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.notis-card {
+  cursor: pointer;
+}
+
+.notis-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.notis-actions span {
+  color: #666;
+  font-size: 14px;
+}
+
+.notis-actions button {
+  border: none;
+  background: #202020;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.notis-actions button:hover {
+  background: #f6c915;
+  color: #202020;
+}
+
+.notis-card {
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .notis-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .notis-actions button {
+    width: 100%;
+  }
+}
