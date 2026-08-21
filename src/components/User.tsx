@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   FaUserCircle,
   FaUserEdit,
@@ -13,11 +13,31 @@ import "./styles/User.css";
 const User = () => {
   const [open, setOpen] = useState(false);
 
+  const userContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userContainerRef.current &&
+        !userContainerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="user-container">
+    <div className="user-container" ref={userContainerRef}>
       <button
         className="user-button"
         onClick={() => setOpen(!open)}
+        aria-label="Abrir menú de usuario"
       >
         <FaUserCircle />
       </button>
