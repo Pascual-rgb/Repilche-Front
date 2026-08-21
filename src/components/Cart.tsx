@@ -1,71 +1,52 @@
-import { useState, createContext, useContext } from 'react'
-// Importamos la interfaz correcta desde tu archivo de productos
-import type { Products } from '../data/products.ts'
+import { useCarritoContext } from "../context/CartContext";
+import { FaTimes, FaTrash } from "react-icons/fa";
+import "./styles/Cart.css";
 
-// 1. Tipamos el item del carrito extendiendo de tu interfaz Products
-interface CarritoItem extends Products {
-  quantity: number
-}
+// Asegúrate de usar 'export default' directamente en la función principal
+export default function Cart() {
+  const { carrito, removeItem, getTotalPrice, isCartOpen, closeCart } = useCarritoContext();
 
-interface CarritoContextType {
-  carrito: CarritoItem[]
-  addToCart: (product: Products, quantity: number) => void
-  removeItem: (id: number) => void
-  emptyCart: () => void
-  getItemQuantity: () => number
-  getTotalPrice: () => number
-}
-
-const CarritoContext = createContext<CarritoContextType | undefined>(undefined)
-
-export const useCarritoContext = (): CarritoContextType => {
-  const context = useContext(CarritoContext)
-  if (!context) throw new Error('useCarritoContext debe usarse dentro de CarritoProvider')
-  return context
-}
-
-export const CarritoProvider = ({ children }: { children: React.ReactNode }) => {
-  const [carrito, setCarrito] = useState<CarritoItem[]>([])
-
-  const isInCart = (id: number): boolean => carrito.some(p => p.id === id)
-
-  const addToCart = (product: Products, quantity: number): void => {
-    // Buscamos si el producto ya existe en el carrito
-    const itemExistente = carrito.find(p => p.id === product.id)
-    
-    // Calculamos cuánto habría en total si sumamos lo nuevo
-    const cantidadTotal = itemExistente ? itemExistente.quantity + quantity : quantity
-
-    // Validación de stock real
-    if (cantidadTotal > product.stock) {
-      return console.warn('No hay stock suficiente. Máximo disponible: ' + product.stock)
-    }
-
-    if (isInCart(product.id)) {
-      // ¿Por qué .map()? Recorre el carrito y devuelve un nuevo array. 
-      // Si encuentra el ID, crea un nuevo objeto sumando la cantidad sin mutar el estado original.
-      setCarrito(carrito.map(p => 
-        p.id === product.id 
-          ? { ...p, quantity: p.quantity + quantity } 
-          : p
-      ))
-    } else {
-      // Si no existe, lo agregamos al array
-      setCarrito(aux => [...aux, { ...product, quantity }])
-    }
-  }
-
-  const removeItem = (id: number): void => setCarrito(aux => aux.filter(p => p.id !== id))
-
-  const emptyCart = (): void => setCarrito([])
-
-  const getItemQuantity = (): number => carrito.reduce((acum, p) => acum + p.quantity, 0)
-
-  const getTotalPrice = (): number => carrito.reduce((acum, p) => acum + p.precio * p.quantity, 0)
+  if (!isCartOpen) return null;
 
   return (
-    <CarritoContext.Provider value={{ carrito, addToCart, removeItem, emptyCart, getItemQuantity, getTotalPrice }}>
-      {children}
-    </CarritoContext.Provider>
-  )
+    <div className="cart-overlay" onClick={closeCart}>
+      <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
+        <div className="cart-header">
+          <h2>Tu Carrito</h2>
+          <button className="close-btn" onClick={closeCart}>
+            <FaTimes />
+          </button>
+        </div>
+
+        <div className="cart-items">
+          {carrito.length === 0 ? (
+            <p className="empty-cart">Tu carrito está vacío</p>
+          ) : (
+            carrito.map((item) => (
+              <div key={item.id} className="cart-item">
+                <img src={item.img as string} alt={item.name as string} />
+                <div className="cart-item-details">
+                  <h4>{item.name}</h4>
+                  <p>${item.precio} x {item.quantity}</p>
+                </div>
+                <button onClick={() => removeItem(item.id)} className="delete-btn">
+                  <FaTrash />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="cart-footer">
+          <div className="cart-total">
+            <span>Total:</span>
+            <strong>${getTotalPrice()}</strong>
+          </div>
+          <button className="checkout-btn" onClick={() => alert("Proceder al pago")}>
+            Finalizar Compra
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
