@@ -1,0 +1,137 @@
+.serVendedor-page {
+  min-height: 85vh;
+  background: #f2f2f2;
+  padding: 40px 20px 70px;
+}
+
+.volver-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin: 0px auto 24px 270px;
+  padding: 12px 20px;
+  background: #F4EEFF;
+  border-radius: 10px;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.volver-btn:hover {
+  background: #e8dcff;
+}
+
+.serVendedor-card {
+  width: 900px;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  margin: 0 auto;
+}
+
+.serVendedor-card-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.serVendedor-card-header h1 {
+  font-size: 28px;
+  color: #1a1a1a;
+  margin: 0 0 4px;
+  font-family: 'Viga', sans-serif;
+}
+
+.serVendedor-card-header p {
+  color: #888;
+  font-size: 15px;
+  margin: 0;
+}
+
+.serVendedor-divider {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 24px 0;
+}
+
+.serVendedor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.serVendedor-form .form-label {
+  display: block;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.serVendedor-form .form-control {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #333;
+  background: #fff;
+  box-sizing: border-box;
+  font-family: 'Radio Canada Big', sans-serif;
+}
+
+.serVendedor-form .form-control::placeholder {
+  color: #a0a0a0;
+}
+
+.serVendedor-form .form-control:focus {
+  outline: none;
+  border-color: #F6C417;
+}
+
+.serVendedor-form textarea.form-control {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.serVendedor-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-cancel,
+.btn-save {
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+  font-family: 'Radio Canada Big', sans-serif;
+}
+
+.btn-cancel {
+  background: #eee;
+  color: #1a1a1a;
+}
+
+.btn-cancel:hover {
+  background: #e0e0e0;
+}
+
+.btn-save {
+  background: #F6C417;
+  color: #1a1a1a;
+}
+
+.btn-save:hover {
+  background: #f6ca17;
+}

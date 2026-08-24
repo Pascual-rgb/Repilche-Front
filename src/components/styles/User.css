@@ -40,7 +40,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #f8f8f8;
+  background: #f2f2f2;
 }
 
 .user-avatar {
@@ -55,20 +55,20 @@
 
 .user-info h3 {
   font-size: 19px;
+  font-family: 'Radio Canada Big', sans-serif;
 }
 
 .user-info p {
   color: #777;
   font-size: 14px;
   margin-top: 4px;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
 
 .user-menu hr {
   border: none;
   border-top: 1px solid #ececec;
 }
-
-/* BOTONES Y LINKS DEL MENÚ */
 
 .user-menu button,
 .user-menu-link {
@@ -89,7 +89,7 @@
 
 .user-menu button:hover,
 .user-menu-link:hover {
-  background: #f6c915;
+  background: #f6ca17;
 }
 
 .user-menu button svg,
@@ -101,19 +101,16 @@
 .user-menu-link span {
   flex: 1;
   text-align: left;
+  font-family: 'Radio Canada Big', sans-serif;
 }
 
-/* CERRAR SESIÓN */
-
 .logout {
-  color: #d32f2f !important;
+  color: #b6263b !important;
 }
 
 .logout:hover {
   background: #ffe7e7 !important;
 }
-
-/* ANIMACIÓN */
 
 @keyframes aparecer {
   from {
@@ -126,8 +123,6 @@
     transform: translateY(0);
   }
 }
-
-/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .user-menu {

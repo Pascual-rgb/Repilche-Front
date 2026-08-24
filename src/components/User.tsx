@@ -51,8 +51,8 @@ const User = () => {
             <FaUserCircle className="user-avatar" />
 
             <div className="user-info">
-              <h3>David</h3>
-              <p>david@repilche.com</p>
+              <h3>Usuario</h3>
+              <p>usuario@repilche.com</p>
             </div>
           </div>
 

@@ -1,7 +1,6 @@
 .producto-detail-page {
   min-height: 75vh;
   padding: 50px 20px 70px;
-  background: #f5f5f5;
 }
 
 .producto-detail-container {
@@ -10,73 +9,56 @@
   margin: 0 auto;
 }
 
-/* BOTÓN VOLVER */
-
 .volver-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 30px;
   padding: 10px 16px;
-
   color: #222;
   text-decoration: none;
-
-  background: white;
+  background: #f7f5f5;
   border-radius: 8px;
-
   transition: 0.25s;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Wix Madefor Display', sans-serif;
 }
 
 .volver-btn:hover {
-  background: #f6c915;
+  background: #F5CA17;
   transform: translateX(-3px);
 }
-
-/* CONTENEDOR DEL PRODUCTO */
 
 .producto-detail {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 50px;
-
   padding: 40px;
-
-  background: white;
-  border-radius: 16px;
-
+  background: #f7f5f5;
+  border-radius: 20px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
-
-/* IMAGEN */
 
 .producto-detail-image {
   display: flex;
   align-items: center;
   justify-content: center;
-
   min-height: 450px;
-
-  background: #f3f3f3;
-  border-radius: 12px;
-
+  background: #ece5f5;
+  border-radius: 16px;
   overflow: hidden;
 }
 
 .producto-detail-image img {
   width: 100%;
   height: 450px;
-
   object-fit: contain;
-
   transition: 0.3s;
 }
 
 .producto-detail-image:hover img {
   transform: scale(1.04);
 }
-
-/* INFORMACIÓN */
 
 .producto-detail-info {
   display: flex;
@@ -86,80 +68,70 @@
 
 .producto-detail-category {
   padding: 7px 14px;
-
-  background: #f6c915;
+  background: #f6ca17;
   color: #222;
-
   border-radius: 20px;
-
-  font-size: 14px;
+  font-size: 16px;
   text-transform: capitalize;
+  font-family: 'Radio Canada Big', sans-serif;
+  font-weight: bold;
 }
 
 .producto-detail-info h1 {
   margin: 18px 0 15px;
-
   color: #222;
-
   font-size: 38px;
   line-height: 1.15;
-
   text-transform: capitalize;
+  font-family: 'viga', sans-serif;
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 .producto-detail-description {
   margin: 0;
-
   color: #666;
-
   font-size: 17px;
   line-height: 1.6;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
-
-/* PRECIO */
 
 .producto-detail-price {
-  margin: 25px 0 15px;
-
+  margin: 20px 0 15px;
   color: #222;
-
   font-size: 32px;
   font-weight: bold;
+  font-family: 'Radio Canada Big', sans-serif;
 }
-
-/* STOCK */
 
 .producto-detail-stock {
   margin-bottom: 25px;
-
   color: #555;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
 
 .producto-detail-stock strong {
   color: #222;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
-
-/* VENDEDOR */
 
 .producto-detail-seller {
   width: 100%;
-
   display: flex;
   align-items: center;
   gap: 15px;
-
   margin-bottom: 25px;
   padding: 18px;
-
-  background: #f5f5f5;
+  background: #ece5f5;
   border-radius: 10px;
-
   box-sizing: border-box;
+  border-color: #555;
+  border-style: solid;
 }
 
 .producto-detail-seller svg {
   font-size: 28px;
-  color: #f6c915;
+  color: #f6ca17;
 }
 
 .producto-detail-seller div {
@@ -171,36 +143,30 @@
 .producto-detail-seller span {
   font-size: 13px;
   color: #777;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
 
 .producto-detail-seller strong {
   color: #222;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
-
-/* BOTÓN CARRITO */
 
 .producto-detail-cart {
   width: 100%;
-
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
-
   padding: 16px;
-
   border: none;
   border-radius: 10px;
-
-  background: #f6c915;
+  background: #f6ca17;
   color: #222;
-
   font-size: 17px;
   font-weight: bold;
-
   cursor: pointer;
-
   transition: 0.25s;
+  font-family: 'Radio Canada Big';
 }
 
 .producto-detail-cart:hover {
@@ -212,37 +178,30 @@
   transform: translateY(0);
 }
 
-/* PRODUCTO NO ENCONTRADO */
-
 .producto-no-encontrado {
   max-width: 600px;
-
   margin: 80px auto;
   padding: 40px;
-
   text-align: center;
-
-  background: white;
+  background: #f7f5f5;
   border-radius: 15px;
-
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
 .producto-no-encontrado h1 {
   color: #222;
+  font-family: 'Viga', sans-serif;
 }
 
 .producto-no-encontrado p {
   margin-bottom: 25px;
   color: #666;
+  font-family: 'Radio Canada Big', sans-serif;
 }
-
-/* TABLET */
 
 @media (max-width: 800px) {
   .producto-detail {
     grid-template-columns: 1fr;
-
     gap: 30px;
     padding: 25px;
   }
@@ -259,8 +218,6 @@
     font-size: 34px;
   }
 }
-
-/* CELULAR */
 
 @media (max-width: 500px) {
   .producto-detail-page {

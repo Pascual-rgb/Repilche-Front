@@ -50,4 +50,84 @@ export const productos : Products[] = [
         precio: 1300,
         vendedor: "Ivan Pascualich"
     },
+    {
+    id: 5,
+    name: "Campera",
+    descrp: "Campera de jean azul con forro interior, buen estado",
+    img: "/src/data/img/campera-jean.png",
+    stock: 1,
+    cat: ["Campera"],
+    precio: 15000,
+    vendedor: "Martina Saavedra"
+    },
+    {
+    id: 6,
+    name: "Zapatillas",
+    descrp: "Zapatillas blancas deportivas, ligeras y cómodas",
+    img: "/src/data/img/zapatillas-blancas.png",
+    stock: 1,
+    cat: ["Zapatillas"],
+    precio: 22000,
+    vendedor: "Martina Saavedra"
+    },
+    {
+    id: 7,
+    name: "Buzo",
+    descrp: "Buzo oversize gris con capucha, tela polar",
+    img: "/src/data/img/buzo-gris.png",
+    stock: 2,
+    cat: ["Buzo"],
+    precio: 12000,
+    vendedor: "Martina Saavedra"
+    },
+    {
+    id: 8,
+    name: "Vestido",
+    descrp: "Vestido estampado floral, talle único, verano",
+    img: "/src/data/img/vestido-floral.png",
+    stock: 1,
+    cat: ["Vestido"],
+    precio: 9500,
+    vendedor: "Martina Saavedra"
+    },
+    {
+    id: 9,
+    name: "Camisa",
+    descrp: "Camisa blanca de lino, fresca y elegante",
+    img: "/src/data/img/camisa-blanca.png",
+    stock: 1,
+    cat: ["Camisa"],
+    precio: 11000,
+    vendedor: "David Pereyra"
+    },
+    {
+    id: 10,
+    name: "Short",
+    descrp: "Short de jean azul desgastado, tiro alto",
+    img: "/src/data/img/short-jean.png",
+    stock: 1,
+    cat: ["Short"],
+    precio: 7000,
+    vendedor: "David Pereyra"
+    },
+    {
+    id: 11,
+    name: "Chaqueta",
+    descrp: "Chaqueta de cuero sintético negra, clásica",
+    img: "...",
+    stock: 1,
+    cat: ["Chaqueta"],
+    precio: 25000,
+    vendedor: "David Pereyra"
+    },
+    {
+    id: 12,
+    name: "Pantalón",
+    descrp: "Pantalón de vestir beige, tiro recto, impecable",
+    img: "...",
+    stock: 1,
+    cat: ["Pantalón"],
+    precio: 13000,
+    vendedor: "David Pereyra"
+    },
 ]

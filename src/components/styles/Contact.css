@@ -1,22 +1,23 @@
 .footer {
-  background: #666666;
+  background: #d0d0d0;
   color: white;
   margin-top: 80px;
 }
 
 .footer-container {                                                                                                                                                                                                                                                                                                                                                    
-  max-width: 1300px;
+  max-width: 1100px;
   margin: auto;
-  padding: 60px 40px;
-
+  padding: 40px 40px;
   display: grid;
+  margin-bottom: -5%;
   grid-template-columns: 2fr 1fr 1fr;
-  gap: 60px;
+  gap: 80px;
 }
 
 .footer-brand {
-  display: flex;
+  display: grid;
   align-items: center;
+  grid-template-columns: 200px 1fr;
   gap: 25px;
 }
 
@@ -24,25 +25,30 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-top: -50%;
 }
 
 .footer-logo {
-  width: 140px;
-  height: 140px;
+  width: 300px;
+  height: 300px;
+  margin-left: -80%;
   object-fit: contain;
   flex-shrink: 0;
+  align-items: center;
 }
 
 .footer-brand h2 {
   font-size: 34px;
-  color: #F6C915;
+  color: #202020;
   margin-bottom: 12px;
+  font-family: 'Viga', sans-serif;
 }
 
 .footer-brand p {
-  color: #d4d4d4;
+  color: #202020;
   line-height: 1.7;
   max-width: 340px;
+  font-family: 'Radio Canada Big', sans-serif;
 }
 
 .footer-section {
@@ -52,23 +58,23 @@
 }
 
 .footer-section h3 {
-  color: #F6C915;
+  color: #202020;
   margin-bottom: 10px;
+  font-family: 'Viga', sans-serif;
 }
 
 .footer-section a {
   display: flex;
   align-items: center;
   gap: 10px;
-
-  color: white;
+  color: #202020;
+  font-family: 'Radio Canada Big', sans-serif;
   text-decoration: none;
-
   transition: .25s;
 }
 
 .footer-section a:hover {
-  color: #F6C915;
+  color: #b6263b;
   transform: translateX(6px);
 }
 
@@ -76,7 +82,7 @@
   border-top: 1px solid #444;
   text-align: center;
   padding: 20px;
-  color: #bdbdbd;
+  color: #f4eeff;
 }
 
 @media (max-width: 900px) {

@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import type { FormEvent } from 'react'
+import './styles/CargaProduct.css';
 
 const CargaProduct = () => {
     const formRef = useRef<HTMLFormElement>(null)
@@ -19,6 +20,8 @@ const CargaProduct = () => {
 
     return(
         <>
+    <div className="cargaProduct-page">
+        <div className="cargaProduct-wrapper">
         <div className='CargaProduct-header'>
             <h1 className=''>Carga de Producto</h1>
         </div>
@@ -51,11 +54,14 @@ const CargaProduct = () => {
                 <input className="form-control" type="file" id="formFile" />
             </div>
         
-            <button type='submit'>Guardar y agregar otro</button>
-            <button type='submit'>Guardar y seguir editando</button>
-            <button type='submit'>Guardar</button>
+            <div className="cargaProduct-buttons">
+            <button type='submit' className="btn-secondary">Guardar y agregar otro</button>
+            <button type='submit' className="btn-secondary">Guardar y seguir editando</button>
+            <button type='submit' className="btn-primary">Guardar</button>
+            </div>
         </form>
-        
+        </div> 
+    </div>   
         </>
 )
 }

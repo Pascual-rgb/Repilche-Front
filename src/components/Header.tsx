@@ -44,10 +44,6 @@ const Header = () => {
         {/* LOGO */}
         <Link to="/" className="header-logo">
           <img src={logo} alt="Repilche" className="logo-image" />
-          <div className="logo-text">
-            <h1>REPILCHE</h1>
-            <span>Moda Circular</span>
-          </div>
         </Link>
 
         {/* BUSCADOR */}
@@ -60,10 +56,10 @@ const Header = () => {
 
         {/* ICONOS */}
         <div className="desktop-icons">
-          <Link to="/cart" className="header-icon cart" aria-label="Ir al carrito">
+          <button className="header-icon cart" aria-label="Ir al carrito" onClick={openCart}>
             <FaShoppingCart />
             {getItemQuantity() > 0 && <span className="badge">{getItemQuantity()}</span>}
-          </Link>
+          </button>
 
           <Link to="/notifications" className="header-icon notification" aria-label="Ir a notificaciones">
             <FaBell />

@@ -4,10 +4,10 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+    font-family:'Radio Canada Big',sans-serif;
 }
 
-body{
-    background:#F7F7F5;
-    color:#1E1E1E;
+body {
+  margin: 0;
+  background-color: #f2f2f2; 
 }

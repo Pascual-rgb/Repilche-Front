@@ -15,7 +15,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       handleNext();
-    }, 15000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [currentIndex]);
