@@ -19,8 +19,9 @@ const SerVendedorForm = () => {
 
     }
 
-    return(
-      <div className="serVendedor-page">
+  return(
+    <div className="serVendedor-page">
+      <div className="serVendedor-container">
         <Link to="/" className="volver-btn">
           <span>&#8592;</span> Volver al inicio
         </Link>
@@ -60,6 +61,7 @@ const SerVendedorForm = () => {
           </form>
         </div>
       </div>
-    )
+    </div>
+  )
 }
 export default SerVendedorForm

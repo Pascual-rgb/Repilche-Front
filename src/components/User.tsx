@@ -1,19 +1,25 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
+import { useCarritoContext } from "../context/CartContext";
 import {
   FaUserCircle,
   FaUserEdit,
   FaBoxOpen,
   FaClipboardList,
-  FaCog,
   FaSignOutAlt,
   FaStore,
+  FaShoppingBag,
+  FaMoneyBillWave,
 } from "react-icons/fa";
 
 import "./styles/User.css";
 
 const User = () => {
   const [open, setOpen] = useState(false);
+  const { logout } = useAuthContext();
+  const navigate = useNavigate();
+  const { emptyCart } = useCarritoContext();
 
   const userContainerRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +39,13 @@ const User = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+    const handleLogout = async () => {
+      await logout();
+      emptyCart();
+      setOpen(false);
+      navigate("/login");
+    }
 
   return (
     <div className="user-container" ref={userContainerRef}>
@@ -81,17 +94,22 @@ const User = () => {
             <span>Ser vendedor</span>
           </Link>
 
-          <button type="button">
+          <Link to="/mis-productos" className="user-menu-link" onClick={() => setOpen(false)}>
             <FaClipboardList />
             <span>Mis productos</span>
-          </button>
+          </Link>
 
-          <button type="button">
-            <FaCog />
-            <span>Configuración</span>
-          </button>
+          <Link to="/mis-compras" className="user-menu-link" onClick={() => setOpen(false)}>
+            <FaShoppingBag />
+            <span>Mis compras</span>
+          </Link>
 
-          <button type="button" className="logout">
+          <Link to="/mis-ventas" className="user-menu-link" onClick={() => setOpen(false)}>
+            <FaMoneyBillWave />
+            <span>Mis ventas</span>
+          </Link>
+
+          <button type="button" className="logout" onClick={handleLogout}>
             <FaSignOutAlt />
             <span>Cerrar sesión</span>
           </button>

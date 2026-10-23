@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Importamos Link
+import { Link } from 'react-router-dom';
 import type { Products } from '../data/products.ts';
 import "./styles/Home.css";
 
@@ -46,8 +46,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products }) => {
     <div className="product-list-container">
       <button className="slider-btn prev-btn" onClick={handlePrev}>&lt;</button>
       
-      {/* Envolvemos toda la tarjeta en un Link hacia la vista de detalle */}
-      <Link to={`/product/${currentProduct.id}`} className="product-list-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <Link to={`/producto/${currentProduct.id}`} className="product-list-card" style={{ textDecoration: 'none', color: 'inherit' }}>
         <div className="product-list-img-box">
           <img src={currentProduct.img as string} alt={currentProduct.name as string} />
         </div>

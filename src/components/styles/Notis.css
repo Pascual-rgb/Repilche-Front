@@ -120,30 +120,6 @@
   background: #f6ca17;
 }
 
-@media (max-width: 600px) {
-  .notis-page {
-    padding: 40px 15px;
-  }
-
-  .notis-header h1 {
-    font-size: 26px;
-  }
-
-  .notis-main-icon {
-    font-size: 32px;
-  }
-
-  .notis-card {
-    gap: 15px;
-    padding: 18px;
-  }
-
-  .notis-icon {
-    width: 45px;
-    height: 45px;
-  }
-}
-
 .notis-count {
   display: block;
   margin-top: 10px;
@@ -247,12 +223,110 @@
 }
 
 @media (max-width: 600px) {
+  .notis-page {
+    padding: 40px 15px;
+  }
+
+  .notis-header h1 {
+    font-size: 24px;
+  }
+
+  .notis-main-icon {
+    font-size: 32px;
+  }
+
+  .notis-card {
+    gap: 15px;
+    padding: 18px;
+  }
+
+  .notis-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+
   .notis-actions {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
   }
 
   .notis-actions button {
     width: 100%;
+    padding: 12px 16px;
+  }
+
+  .notis-header {
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+  }
+
+  .notis-header p {
+    font-size: 14px;
+  }
+
+    .notis-content h3 {
+    font-size: 16px;
+  }
+
+  .notis-content p {
+    font-size: 14px;
+  }
+}
+
+.notis-header > div {
+  min-width: 0;
+}
+
+.notis-content {
+  min-width: 0;
+}
+
+.notis-content h3,
+.notis-content p {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .notis-page {
+    padding: 44px 16px;
+  }
+
+  .notis-header h1 {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 380px) {
+  .notis-page {
+    padding: 30px 10px;
+  }
+
+  .notis-card {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .notis-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .notis-main-icon {
+    font-size: 28px;
+  }
+}
+
+@media (hover: none) {
+  .notis-card:hover {
+    transform: none;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .notis-actions button:hover {
+    background: #202020;
+    color: white;
   }
 }

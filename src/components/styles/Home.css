@@ -29,18 +29,6 @@
   gap: 20px;
 }
 
-@media (max-width: 900px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 500px) {
-  .product-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .product-list-container {
   display: flex;
   align-items: center;
@@ -56,7 +44,13 @@
   align-items: center;
   gap: 20px;
   flex: 1;
+  min-width: 0;
   max-width: 1200px;
+}
+
+a.product-list-card {
+  color: inherit;
+  text-decoration: none;
 }
 
 .product-list-img-box {
@@ -81,6 +75,7 @@
 
 .product-list-details {
   flex: 1;
+  min-width: 0;
 }
 
 .product-list-title {
@@ -125,4 +120,107 @@
 
 .slider-btn:hover {
   background-color: #f0d4d4;
+}
+
+@media (max-width: 1100px) {
+  .product-list-card {
+    padding: 40px 48px;
+  }
+
+  .product-list-img-box {
+    width: 340px;
+    height: 240px;
+    margin: -5% 0 -5% -8%;
+  }
+
+  .product-list-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .product-list-card {
+    padding: 28px 24px;
+    gap: 24px;
+  }
+
+  .product-list-img-box {
+    width: 260px;
+    height: 200px;
+    margin: 0;
+  }
+
+  .product-list-title {
+    font-size: 1.6rem;
+    margin-top: 0;
+  }
+
+  .product-list-desc,
+  .product-list-seller {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-container {
+    padding: 16px 10px;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+    margin-top: 10px;
+    margin-bottom: 18px;
+  }
+
+  .home-section-top {
+    margin-bottom: 24px;
+  }
+
+  .product-list-container {
+    gap: 6px;
+  }
+
+  .product-list-card {
+    flex-direction: column;
+    padding: 16px;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .product-list-img-box {
+    width: 100%;
+    height: 200px;
+    margin: 0;
+  }
+
+  .product-list-title {
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  .product-list-price {
+    font-size: 1.5rem;
+    margin-top: 8px;
+  }
+
+  .slider-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+  }
+
+  .product-grid {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 500px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
 }

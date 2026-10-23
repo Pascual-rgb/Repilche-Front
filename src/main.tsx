@@ -6,6 +6,7 @@ import './index.css';
 import './components/styles/fonts.css';
 import { CarritoProvider } from './context/CartContext.tsx';
 import { NotificationProvider } from './context/NotificationContext.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
 
 const rootElement = document.getElementById('root');
 
@@ -15,12 +16,14 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <BrowserRouter> {/* 2. Envuélvelo aquí para que las rutas funcionen */}
-      <CarritoProvider>
-        <NotificationProvider>
-          <App />
-        </NotificationProvider>
-      </CarritoProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <CarritoProvider>
+          <NotificationProvider>
+            <App />
+          </NotificationProvider>
+        </CarritoProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

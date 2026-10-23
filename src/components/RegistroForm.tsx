@@ -1,10 +1,15 @@
 import { useRef } from "react";
 import type { FormEvent } from "react";
+import './styles/RegistroForm.css'
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 
 const RegistroForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
+  const { login } = useAuthContext();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formRef.current) return;
@@ -14,7 +19,10 @@ const RegistroForm = () => {
 
     console.log(usuario);
 
-    formRef.current.reset();
+    await login(usuario);
+    navigate("/");
+
+    formRef.current?.reset();
   };
 
   return (
@@ -50,14 +58,14 @@ const RegistroForm = () => {
 
         <div>
           <label htmlFor="numberPhone" className="form-label mt-4">
-            Número
+            Número Telefónico
           </label>
           <input
             type="text"
             className="form-control"
             id="numberPhone"
             name="numberPhone"
-            placeholder="Tu número"
+            placeholder="Tu número telefónico"
           />
         </div>
 
@@ -93,6 +101,9 @@ const RegistroForm = () => {
         </div>
 
         <button type="submit">Enviar</button>
+        <Link to="/login" className="registro-link">
+          Ya tengo una cuenta
+        </Link>
       </form>
     </div>
   );

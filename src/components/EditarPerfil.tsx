@@ -61,6 +61,19 @@ const EditarPerfil = () => {
             </div>
 
             <div className="editar-perfil-field">
+              <label htmlFor="usuario">
+                Nombre de usuario
+              </label>
+
+              <input
+                type="text"
+                id="usuario"
+                defaultValue=""
+                placeholder="Nombre de usuario"
+              />
+            </div>
+
+            <div className="editar-perfil-field">
               <label htmlFor="email">
                 Correo electrónico
               </label>
@@ -75,15 +88,15 @@ const EditarPerfil = () => {
             </div>
 
             <div className="editar-perfil-field">
-              <label htmlFor="usuario">
-                Nombre de usuario
+              <label htmlFor="numberPhone">
+                Número Telefónico
               </label>
-
               <input
                 type="text"
-                id="usuario"
-                defaultValue=""
-                placeholder="Nombre de usuario"
+                className="form-control"
+                id="numberPhone"
+                name="numberPhone"
+                placeholder="Tu número telefónico"
               />
             </div>
 

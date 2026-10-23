@@ -1,0 +1,232 @@
+.lista-page {
+  min-height: 75vh;
+  padding: 40px 20px 70px;
+  background: #f2f2f2;
+  border-radius: 2%;
+}
+
+.lista-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.lista-title {
+  font-size: 34px;
+  color: #1a1a1a;
+  font-family: 'Viga', sans-serif;
+  margin: 0 0 6px;
+}
+
+.lista-subtitle {
+  color: #777;
+  margin: 0 0 28px;
+  font-family: 'Wix Madefor Display', sans-serif;
+}
+
+.lista-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lista-card {
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.lista-img {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ece5f7;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.lista-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lista-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lista-info h2 {
+  margin: 0;
+  font-size: 22px;
+  text-transform: capitalize;
+  font-family: 'Viga', sans-serif;
+  color: #1a1a1a;
+}
+
+.lista-desc {
+  margin: 0;
+  color: #666;
+  font-family: 'Wix Madefor Display', sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.lista-datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 20px;
+  margin: 0;
+}
+
+.lista-datos dt {
+  font-size: 12px;
+  color: #888;
+  font-family: 'Wix Madefor Display', sans-serif;
+}
+
+.lista-datos dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 20px;
+  overflow-wrap: anywhere;
+  font-family: 'Radio Canada Big', sans-serif;
+}
+
+.lista-btn {
+  align-self: flex-start;
+  display: inline-block;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #f6ca17;
+  color: #1a1a1a;
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: 'Radio Canada Big', sans-serif;
+}
+
+.lista-btn:hover { background: #e0b013; }
+
+.lista-btn:disabled {
+  background: #e5e5e5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.codigo-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px;
+  background: #f4eeff;
+  border: 2px dashed #f6ca17;
+  border-radius: 14px;
+}
+
+.codigo-box span {
+  font-size: 13px;
+  color: #666;
+}
+
+.codigo-box strong {
+  font-size: 34px;
+  letter-spacing: 8px;
+  color: #1a1a1a;
+  font-family: 'Viga', sans-serif;
+}
+
+.validar-box label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.validar-fila {
+  display: flex;
+  gap: 10px;
+}
+
+.validar-fila input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 20px;
+  letter-spacing: 6px;
+  text-align: center;
+  font-family: 'Viga', sans-serif;
+}
+
+.validar-fila input:focus {
+  outline: none;
+  border-color: #f6ca17;
+}
+
+.validar-error {
+  margin: 8px 0 0;
+  color: #b6263b;
+  font-size: 14px;
+}
+
+.estado-entregado {
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  color: #3c5324;
+  background: #e8f1dc;
+  border-radius: 10px;
+}
+
+.lista-vacia {
+  padding: 40px 20px;
+  text-align: center;
+  background: #fff;
+  border-radius: 20px;
+  color: #666;
+}
+
+.lista-vacia .lista-btn { margin-top: 12px; }
+
+@media (max-width: 700px) {
+  .lista-page { padding: 28px 14px 50px; }
+  .lista-title { font-size: 26px; }
+
+  .lista-card {
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .lista-img {
+    width: 100%;
+    height: 220px;
+  }
+
+  .lista-datos { grid-template-columns: 1fr; }
+
+  .codigo-box strong {
+    font-size: 28px;
+    letter-spacing: 6px;
+  }
+
+  .validar-fila { flex-direction: column; }
+  .validar-fila .lista-btn { align-self: stretch; text-align: center; }
+  .lista-btn { align-self: stretch; text-align: center; }
+}

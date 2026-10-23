@@ -6,6 +6,7 @@ import {
   FaInstagram,
   FaTiktok,
   FaEnvelope,
+  FaWhatsapp,
 } from "react-icons/fa";
 
 const Contact = () => {
@@ -73,6 +74,11 @@ const Contact = () => {
           <a href="mailto:repilchecontact@gmail.com">
             <FaEnvelope />
             repilchecontact@gmail.com
+          </a>
+
+          <a href="https://wa.me/5492804689682">
+            <FaWhatsapp />
+            WhatsApp
           </a>
 
         </div>

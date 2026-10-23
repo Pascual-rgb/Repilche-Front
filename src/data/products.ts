@@ -36,7 +36,7 @@ export const productos : Products[] = [
         descrp: "Medias largas con dibujo de pollo",
         img: "/src/data/img/medias-pollo.png",
         stock: 5,
-        cat: ["Medias"],
+        cat: ["Accesorio"],
         precio: 3400,
         vendedor: "Ivan Pascualich"
     },
@@ -46,7 +46,7 @@ export const productos : Products[] = [
         descrp: "Gorra blanca plana marca GAP",
         img: "/src/data/img/gorra-blanca.png",
         stock: 3,
-        cat: ["Gorra"],
+        cat: ["Accesorio"],
         precio: 1300,
         vendedor: "Ivan Pascualich"
     },
@@ -56,7 +56,7 @@ export const productos : Products[] = [
     descrp: "Campera de jean azul con forro interior, buen estado",
     img: "/src/data/img/campera-jean.png",
     stock: 1,
-    cat: ["Campera"],
+    cat: ["Abrigo"],
     precio: 15000,
     vendedor: "Martina Saavedra"
     },
@@ -66,7 +66,7 @@ export const productos : Products[] = [
     descrp: "Zapatillas blancas deportivas, ligeras y cómodas",
     img: "/src/data/img/zapatillas-blancas.png",
     stock: 1,
-    cat: ["Zapatillas"],
+    cat: ["Calzado"],
     precio: 22000,
     vendedor: "Martina Saavedra"
     },
@@ -76,7 +76,7 @@ export const productos : Products[] = [
     descrp: "Buzo oversize gris con capucha, tela polar",
     img: "/src/data/img/buzo-gris.png",
     stock: 2,
-    cat: ["Buzo"],
+    cat: ["Abrigo"],
     precio: 12000,
     vendedor: "Martina Saavedra"
     },
@@ -116,7 +116,7 @@ export const productos : Products[] = [
     descrp: "Chaqueta de cuero sintético negra, clásica",
     img: "/src/data/img/campera-cuero.png",
     stock: 1,
-    cat: ["Chaqueta"],
+    cat: ["Abrigo"],
     precio: 25000,
     vendedor: "David Pereyra"
     },

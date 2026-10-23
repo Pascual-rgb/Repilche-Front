@@ -135,7 +135,35 @@
   filter: brightness(0.95);
 }
 
+.editar-perfil-field input {
+  width: 100%;
+  min-width: 0;
+}
+
+.editar-perfil-header > div {
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .editar-perfil-page {
+    padding: 36px 16px 50px;
+  }
+
+  .editar-perfil-card {
+    padding: 32px 28px;
+  }
+
+  .editar-perfil-header h1 {
+    font-size: 28px;
+  }
+
+  .editar-perfil-avatar {
+    font-size: 64px;
+  }
+}
+
 @media (max-width: 600px) {
+
   .editar-perfil-page {
     padding: 30px 15px 50px;
   }
@@ -147,14 +175,51 @@
   .editar-perfil-header {
     flex-direction: column;
     text-align: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
   }
 
   .editar-perfil-actions {
     flex-direction: column;
+    gap: 10px;
   }
 
   .editar-perfil-cancelar,
   .editar-perfil-guardar {
     width: 100%;
+    padding: 14px 20px;
+  }
+
+  .editar-perfil-header h1 {
+    font-size: 24px;
+  }
+
+  .editar-perfil-avatar {
+    font-size: 56px;
+  }
+
+  .editar-perfil-field input {
+    font-size: 16px;
+  }
+
+  .editar-perfil-volver {
+    padding: 12px 16px;
+    margin-bottom: 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .editar-perfil-page {
+    padding: 24px 10px 40px;
+  }
+
+  .editar-perfil-card {
+    padding: 20px 14px;
+    border-radius: 14px;
+  }
+
+  .editar-perfil-form {
+    gap: 18px;
   }
 }

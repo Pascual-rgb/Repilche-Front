@@ -1,11 +1,15 @@
 import { useRef } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+import './styles/LoginForm.css'
 
 const LoginForm = () => {
     const formRef = useRef<HTMLFormElement>(null)
+    const { login } = useAuthContext();
+    const navigate = useNavigate();
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
        e.preventDefault()
        
         if (!formRef.current) return
@@ -14,7 +18,10 @@ const LoginForm = () => {
        const usuario = Object.fromEntries(data)
        console.log(usuario)
 
-       formRef.current.reset()
+       await login(usuario);
+       navigate("/");
+
+       formRef.current?.reset()
 
     }
 
@@ -34,11 +41,10 @@ const LoginForm = () => {
                 <input type="password" className="form-control" id="password" placeholder="password" autoComplete="off" />
             </div>
             <button type='submit'>Enviar</button>
+            <Link to="/registro" className="login-link">
+                No tengo cuenta
+            </Link>
         </form>
-        
-        <Link to="/registro" className="login-link">
-        No tengo cuenta
-        </Link>
         </>
 )
 }

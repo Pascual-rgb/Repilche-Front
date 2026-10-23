@@ -1,10 +1,12 @@
 import { Link, useParams } from "react-router-dom";
 import { FaArrowLeft, FaShoppingCart, FaUser } from "react-icons/fa";
 import { productos } from "../data/products";
+import { useCarritoContext } from "../context/CartContext";
 import "./styles/ProductoDetail.css";
 
 const ProductoDetail = () => {
   const { id } = useParams();
+  const { addToCart, openCart } = useCarritoContext();
 
   const producto = productos.find(
     (producto) => producto.id === Number(id)
@@ -72,10 +74,13 @@ const ProductoDetail = () => {
               </div>
             </div>
 
-            <button className="producto-detail-cart">
-              <FaShoppingCart />
-              Agregar al carrito
-            </button>
+            <button className="producto-detail-cart"
+              onClick={() => {
+                addToCart(producto, 1);
+                openCart();
+              }}
+            >
+              <FaShoppingCart />Agregar al carrito</button>
 
           </div>
 

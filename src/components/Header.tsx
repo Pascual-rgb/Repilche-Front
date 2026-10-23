@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 import {
   FaSearch,
   FaBars,
@@ -17,9 +18,10 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
+  const [searchOpen, setSearchOpen] = useState(false);
   const { unreadCount } = useNotificationContext();
   const { getItemQuantity, openCart } = useCarritoContext();
+  const { isLoggedIn } = useAuthContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,47 +49,65 @@ const Header = () => {
         </Link>
 
         {/* BUSCADOR */}
-        <div className="search-container">
-          <input type="text" placeholder="¿Qué prenda estás buscando?" />
-          <button>
-            <FaSearch />
-          </button>
-        </div>
+          <div className={`search-container ${searchOpen ? "search-open" : ""}`}>
+            <input type="text" placeholder="¿Qué prenda estás buscando?" />
+            <button>
+              <FaSearch />
+            </button>
+          </div>
 
         {/* ICONOS */}
         <div className="desktop-icons">
-          <button className="header-icon cart" aria-label="Ir al carrito" onClick={openCart}>
-            <FaShoppingCart />
-            {getItemQuantity() > 0 && <span className="badge">{getItemQuantity()}</span>}
-          </button>
+          
+              <button className="header-icon search-toggle" aria-label="Buscar" onClick={() => setSearchOpen(!searchOpen)}>
+                {searchOpen ? <FaTimes /> : <FaSearch />}
+              </button>
 
-          <Link to="/notifications" className="header-icon notification" aria-label="Ir a notificaciones">
-            <FaBell />
-            {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
-          </Link>
+            {isLoggedIn ? (
+            <>
+              <button className="header-icon cart" aria-label="Ir al carrito" onClick={openCart}>
+                <FaShoppingCart />
+                {getItemQuantity() > 0 && <span className="badge">{getItemQuantity()}</span>}
+              </button>
 
-          <User />
+              <Link to="/notifications" className="header-icon notification" aria-label="Ir a notificaciones">
+                <FaBell />
+                {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
+              </Link>
+
+              <User />
+            </>
+          ) : (
+            <div className="auth-buttons">
+              <Link to="/login" className="auth-btn auth-btn-login">Iniciar sesión</Link>
+              <Link to="/registro" className="auth-btn auth-btn-register">Registrarme</Link>
+            </div>
+          )}
         </div>
 
         {/* MENÚ MÓVIL */}
-        <button
-          className="mobile-menu"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Abrir menú"
-        >
-          {menuOpen ? <FaTimes /> : <FaBars />}
-        </button>
+        {isLoggedIn && (
+          <button
+            className="mobile-menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Abrir menú"
+          >
+            {menuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        )}
       </div>
 
       {/* NAVBAR */}
-      <nav className={`navbar ${menuOpen ? "open" : ""}`}>
-        <Link to="/" onClick={() => setMenuOpen(false)}>Inicio</Link>
-        <Link to="/products?gender=hombre" onClick={() => setMenuOpen(false)}>Hombre</Link>
-        <Link to="/products?gender=mujer" onClick={() => setMenuOpen(false)}>Mujer</Link>
-        <Link to="/products?category=calzado" onClick={() => setMenuOpen(false)}>Calzado</Link>
-        <Link to="/products?category=accesorios" onClick={() => setMenuOpen(false)}>Accesorios</Link>
-        <Link to="/ser-vendedor" onClick={() => setMenuOpen(false)}>Vender</Link>
-      </nav>
+      {isLoggedIn && (
+        <nav className={`navbar ${menuOpen ? "open" : ""}`}>
+          <Link to="/" onClick={() => setMenuOpen(false)}>Inicio</Link>
+          <Link to="/products?category=remera" onClick={() => setMenuOpen(false)}>Remeras</Link>
+          <Link to="/products?category=pantalón" onClick={() => setMenuOpen(false)}>Pantalones</Link>
+          <Link to="/products?category=calzado" onClick={() => setMenuOpen(false)}>Calzado</Link>
+          <Link to="/products?category=accesorio" onClick={() => setMenuOpen(false)}>Accesorios</Link>
+          <Link to="/ser-vendedor" onClick={() => setMenuOpen(false)}>Vender</Link>
+        </nav>
+      )}
     </header>
   );
 };

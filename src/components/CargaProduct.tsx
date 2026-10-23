@@ -28,7 +28,7 @@ const CargaProduct = () => {
 
         <form ref = {formRef} onSubmit={handleSubmit} className='cargaProduct-form'>
             <div>
-                <label htmlFor="name" className="form-label mt-4">NombrePrenda</label>
+                <label htmlFor="name" className="form-label mt-4">Nombre de la prenda</label>
                 <input type="text" className="form-control" id="name" placeholder="Nombre de la prenda..." />
             </div>
             <div>
