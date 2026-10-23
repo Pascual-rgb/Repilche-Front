@@ -17,9 +17,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MisProductos from "./components/MisProductos";
 import MisCompras from "./components/MisCompras";
 import MisVentas from "./components/MisVentas";
+import { useAuthContext } from "./context/AuthContext";
 
 function App() {
   const location = useLocation();
+  const { isLoggedIn } = useAuthContext();
 
   const hideHeaderPaths: string[] = [];
   const shouldHideHeader = hideHeaderPaths.includes(location.pathname);
@@ -56,6 +58,8 @@ function App() {
           <Route path="*" element={<Login />} />
         </Routes>
       </main>
+
+      {isLoggedIn && location.pathname !== "/contact" && <Contact />}
     </>
   );
 }
