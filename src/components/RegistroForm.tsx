@@ -6,7 +6,7 @@ import { useAuthContext } from "../context/AuthContext";
 
 const RegistroForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
-  const { login } = useAuthContext();
+  const { register } = useAuthContext(); // <--- Usamos register en lugar de login
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -17,12 +17,20 @@ const RegistroForm = () => {
     const data = new FormData(formRef.current);
     const usuario = Object.fromEntries(data);
 
-    console.log(usuario);
+    console.log("Datos de registro:", usuario);
 
-    await login(usuario);
-    navigate("/");
-
-    formRef.current?.reset();
+    try {
+      // Llamamos a la función de registro del contexto
+      await register(usuario);
+      
+      alert("¡Registro exitoso! Por favor, inicia sesión con tus nuevas credenciales.");
+      navigate("/login"); // Redirigimos al login tras registrarse con éxito
+      
+      formRef.current?.reset();
+    } catch (error: any) {
+      console.error("Error al registrarse:", error);
+      alert(error.message || "Hubo un error al procesar el registro.");
+    }
   };
 
   return (
@@ -40,6 +48,7 @@ const RegistroForm = () => {
             id="name"
             name="name"
             placeholder="Tu Nombre"
+            required
           />
         </div>
 
@@ -53,6 +62,7 @@ const RegistroForm = () => {
             id="lastName"
             name="lastName"
             placeholder="Tu Apellido"
+            required
           />
         </div>
 
@@ -80,6 +90,7 @@ const RegistroForm = () => {
             name="email"
             aria-describedby="emailHelp"
             placeholder="tu@email.com"
+            required
           />
           <small id="emailHelp" className="form-text text-muted">
             Tu email está seguro con nosotros.
@@ -97,6 +108,7 @@ const RegistroForm = () => {
             name="password"
             placeholder="Contraseña"
             autoComplete="off"
+            required
           />
         </div>
 
