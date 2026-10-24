@@ -17,6 +17,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading] = useState(false);
 
   const login = async (datos: Record<string, unknown>) => {
+    if (import.meta.env.DEV) {
+      localStorage.setItem("repilche-session", "true");
+      setIsLoggedIn(true);
+      return;
+    }
+
     const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
 
     const payload = {
@@ -46,6 +52,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const register = async (datos: Record<string, unknown>) => {
+    if (import.meta.env.DEV) {
+      return;
+    }
+
     const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
 
     const response = await fetch(`${apiUrl}/registro/`, {

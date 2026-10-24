@@ -80,6 +80,17 @@
   font-family: 'Wix Madefor Display', sans-serif;
 }
 
+.demo-mode-notice {
+  margin: 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff8d6;
+  color: #5c4a00;
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: 'Radio Canada Big', sans-serif;
+}
+
 .login-form button[type="submit"],
 .registro-form button[type="submit"] {
   width: 100%;

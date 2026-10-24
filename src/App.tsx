@@ -10,7 +10,6 @@ import User from "./components/User";
 import Notis from "./components/Notis";
 import SerVendedor from "./components/SerVendedorForm";
 import ProductoDetail from "./components/ProductoDetail";
-import { productos } from "./data/products";
 import EditarPerfil from "./components/EditarPerfil";
 import Products from "./components/Products";
 import ProtectedRoute from "./components/ProtectedRoute";

@@ -16,7 +16,6 @@ const LoginForm = () => {
 
         const data = new FormData(formRef.current)
         const usuario = Object.fromEntries(data)
-        console.log("Datos del formulario:", usuario)
 
         try {
             // Intentamos hacer login

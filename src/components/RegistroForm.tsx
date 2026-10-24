@@ -17,8 +17,6 @@ const RegistroForm = () => {
     const data = new FormData(formRef.current);
     const usuario = Object.fromEntries(data);
 
-    console.log("Datos de registro:", usuario);
-
     try {
       // Llamamos a la función de registro del contexto
       await register(usuario);
@@ -27,9 +25,9 @@ const RegistroForm = () => {
       navigate("/login"); // Redirigimos al login tras registrarse con éxito
       
       formRef.current?.reset();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error al registrarse:", error);
-      alert(error.message || "Hubo un error al procesar el registro.");
+      alert(error instanceof Error ? error.message : "Hubo un error al procesar el registro.");
     }
   };
 
@@ -38,6 +36,11 @@ const RegistroForm = () => {
       <h1>Registro</h1>
 
       <form ref={formRef} onSubmit={handleSubmit} className="registro-form">
+        {import.meta.env.DEV && (
+          <p className="demo-mode-notice" role="status">
+            Modo tutorial local: el registro solo simula el flujo y no crea una cuenta real.
+          </p>
+        )}
         <div>
           <label htmlFor="name" className="form-label mt-4">
             Nombre
