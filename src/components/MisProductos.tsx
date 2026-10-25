@@ -31,7 +31,7 @@ const MisProductos = () => {
                   <p className="lista-desc">{p.descrp}</p>
 
                   <dl className="lista-datos">
-                    <div><dt>Categoría</dt><dd>{p.cat.join(", ")}</dd></div>
+                    <div><dt>Categoria</dt><dd>{p.cat.join(", ")}</dd></div>
                     <div><dt>Stock</dt><dd>{p.stock}</dd></div>
                     <div><dt>Precio</dt><dd>${p.precio}</dd></div>
                   </dl>
