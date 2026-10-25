@@ -1,9 +1,22 @@
+import { useState } from "react";
 import { pedidosMock } from "../data/PedidosEje";
 import "./styles/MisListas.css";
 
 const MisCompras = () => {
-
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const compras = pedidosMock;
+
+  const handleCopy = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      setTimeout(() => {
+        setCopiedCode((current) => (current === code ? null : current));
+      }, 2000);
+    } catch (err) {
+      console.error("Error al copiar el código:", err);
+    }
+  };
 
   return (
     <main className="lista-page">
@@ -35,8 +48,12 @@ const MisCompras = () => {
                   </dl>
 
                   {c.estado === "pendiente" ? (
-                    <div className="codigo-box">
-                      <span>Código para retirar</span>
+                    <div 
+                      className={`codigo-box ${copiedCode === c.codigo ? "copiado" : ""}`}
+                      onClick={() => handleCopy(c.codigo)}
+                      title="Hacé click para copiar el código"
+                    >
+                      <span>{copiedCode === c.codigo ? "¡Código copiado!" : "Código para retirar"}</span>
                       <strong>{c.codigo}</strong>
                     </div>
                   ) : (

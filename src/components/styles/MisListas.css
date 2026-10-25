@@ -136,11 +136,23 @@
   background: #f4eeff;
   border: 2px dashed #f6ca17;
   border-radius: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: 0.25s;
+  user-select: none;
+}
+
+.codigo-box span,
+.codigo-box strong {
+  position: relative;
+  z-index: 1;
 }
 
 .codigo-box span {
   font-size: 13px;
   color: #666;
+  transition: color 0.2s;
 }
 
 .codigo-box strong {
@@ -148,6 +160,40 @@
   letter-spacing: 8px;
   color: #1a1a1a;
   font-family: 'Viga', sans-serif;
+}
+
+.codigo-box:hover {
+  transform: translateY(-2px);
+}
+
+.codigo-box::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #f6c91769;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  transition: 0.25s;
+  border-radius: 12px;
+}
+
+.codigo-box:hover::after {
+  opacity: 1;
+}
+
+.codigo-box:active {
+  transform: scale(0.98);
+}
+
+.codigo-box.copiado {
+  border-color: #2e7d32;
+}
+
+.codigo-box.copiado span {
+  color: #2e7d32;
+  font-weight: 600;
 }
 
 .validar-box label {

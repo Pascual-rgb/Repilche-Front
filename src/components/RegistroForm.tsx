@@ -71,11 +71,16 @@ const RegistroForm = () => {
             Número Telefónico
           </label>
           <input
-            type="text"
+            type="tel"
             className="form-control"
             id="numberPhone"
             name="numberPhone"
-            placeholder="Tu número telefónico"
+            placeholder="Ej: 1123456789"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onInput={(e) => {
+              e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, "");
+            }}
           />
         </div>
 

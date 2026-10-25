@@ -46,8 +46,18 @@ const SerVendedorForm = () => {
                 <input type="text" className="form-control" id="llegoHasta" name="llegoHasta" placeholder="Llego hasta...(localidades)" />
             </div>
             <div>
-                <label htmlFor="cvu" className="form-label">CVU</label>
-                <input type="text" className="form-control" id="cvu" name="cvu" placeholder="CVU(CBU)" />
+                <label htmlFor="alias" className="form-label">Alias</label>
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  id="alias" 
+                  name="alias" 
+                  placeholder="Ej: tu.alias.mp"
+                  maxLength={20}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(/[^a-zA-Z0-9.]/g, "");
+                  }}
+                />
             </div>
             <div>
                 <label htmlFor="description" className="form-label">Descripción</label>
