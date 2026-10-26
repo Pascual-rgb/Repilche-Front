@@ -14,9 +14,20 @@ const CargaProduct = () => {
     const procesarEnvio = (tipo: 'publicar' | 'crear_otra' | 'borrador') => {
         if (!formRef.current) return
 
-        if (!formRef.current.checkValidity()) {
-            formRef.current.reportValidity()
-            return
+        // Para borrador permitimos guardar con al menos el nombre de la prenda
+        if (tipo === 'borrador') {
+            const nameInput = formRef.current.elements.namedItem('name') as HTMLInputElement | null;
+            if (nameInput && !nameInput.value.trim()) {
+                nameInput.setCustomValidity('Ingresá al menos el nombre de la prenda para guardar el borrador.');
+                nameInput.reportValidity();
+                nameInput.setCustomValidity('');
+                return;
+            }
+        } else {
+            if (!formRef.current.checkValidity()) {
+                formRef.current.reportValidity()
+                return
+            }
         }
 
         const data = new FormData(formRef.current)
@@ -95,7 +106,10 @@ const CargaProduct = () => {
                                 type="text" 
                                 className="form-control" 
                                 id="name" 
+                                name="name"
                                 placeholder="Ej: Remera oversize vintage, Jean clásico..." 
+                                required
+                                minLength={3}
                             />
                         </div>
                         <div>
@@ -104,9 +118,11 @@ const CargaProduct = () => {
                                 type="number" 
                                 className="form-control" 
                                 id="price" 
+                                name="price"
                                 placeholder="Ej: 15000"
-                                min="0"
+                                min="1"
                                 step="1"
+                                required
                                 onKeyDown={(e) => {
                                     if (['.', ',', 'e', 'E', '+', '-'].includes(e.key)) {
                                         e.preventDefault();
@@ -115,8 +131,8 @@ const CargaProduct = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="categoria" className="form-label mt-4">Categoria</label>
-                            <select className="form-select" id="categoria" defaultValue="" required>
+                            <label htmlFor="categoria" className="form-label mt-4">Categoría</label>
+                            <select className="form-select" id="categoria" name="categoria" defaultValue="" required>
                                 <option value="" disabled>Seleccioná una categoría</option>
                                 <option value="Pantalones">Pantalones</option>
                                 <option value="Remeras">Remeras</option>
@@ -126,18 +142,30 @@ const CargaProduct = () => {
                             </select>
                         </div>
                         <div>
-                            <label htmlFor="descripcion" className="form-label mt-4">Descripcion</label>
+                            <label htmlFor="descripcion" className="form-label mt-4">Descripción</label>
                             <textarea 
                                 className="form-control" 
                                 id="descripcion" 
+                                name="descripcion"
                                 rows={3} 
                                 placeholder="Ej: Talle M. Medidas: 52cm sisa x 70cm largo. Estado: Impecable, sin roturas ni manchas."
+                                required
+                                minLength={10}
                             />
                             <small className="form-help-text">Detallá el talle real, medidas aproximadas y estado o detalles de uso de la prenda.</small>
                         </div>
                         <div>
                             <label htmlFor="formFile" className="form-label mt-4">Cargar fotos de la prenda</label>
-                            <input className="form-control" type="file" id="formFile" />
+                            <input 
+                                className="form-control" 
+                                type="file" 
+                                id="formFile" 
+                                name="fotos"
+                                accept="image/*"
+                                multiple
+                                required 
+                            />
+                            <small className="form-help-text">Subí fotos nítidas donde se aprecie el frente, dorso y etiquetas o detalles.</small>
                         </div>
 
                         <div className="cargaProduct-buttons">
@@ -158,7 +186,6 @@ const CargaProduct = () => {
                             <button 
                                 type='submit' 
                                 className="btn-primary"
-                                onClick={() => procesarEnvio('publicar')}
                             >
                                 Publicar prenda
                             </button>
