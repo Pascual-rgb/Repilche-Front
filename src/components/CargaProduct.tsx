@@ -1,21 +1,47 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { FaCheck } from 'react-icons/fa'
+import FeedbackCard from './FeedbackCard';
 import './styles/CargaProduct.css';
 
+type ModalTipo = 'publicar' | 'borrador' | null;
+
 const CargaProduct = () => {
+    const [modalTipo, setModalTipo] = useState<ModalTipo>(null)
+    const [toastCrearOtra, setToastCrearOtra] = useState(false)
     const formRef = useRef<HTMLFormElement>(null)
+
+    const procesarEnvio = (tipo: 'publicar' | 'crear_otra' | 'borrador') => {
+        if (!formRef.current) return
+
+        if (!formRef.current.checkValidity()) {
+            formRef.current.reportValidity()
+            return
+        }
+
+        const data = new FormData(formRef.current)
+        const prenda = Object.fromEntries(data)
+        console.log(`Acción: ${tipo}`, prenda)
+
+        formRef.current.reset()
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+
+        if (tipo === 'crear_otra') {
+            setModalTipo(null)
+            setToastCrearOtra(true)
+            setTimeout(() => setToastCrearOtra(false), 3500)
+        } else if (tipo === 'borrador') {
+            setToastCrearOtra(false)
+            setModalTipo('borrador')
+        } else {
+            setToastCrearOtra(false)
+            setModalTipo('publicar')
+        }
+    }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-
-        if (!formRef.current) return
-
-        const data = new FormData(formRef.current)
-        const usuario = Object.fromEntries(data)
-        console.log(usuario)
-
-        formRef.current.reset()
-
+        procesarEnvio('publicar')
     }
 
     return (
@@ -26,7 +52,43 @@ const CargaProduct = () => {
                         <h1 className=''>Carga de Producto</h1>
                     </div>
 
+                    {modalTipo === 'publicar' && (
+                        <FeedbackCard
+                            icon={<FaCheck />}
+                            title="¡Prenda enviada a revisión!"
+                            message="Tu prenda fue cargada con éxito y está pendiente de moderación para ser publicada en el catálogo."
+                            actionText="Publicar otra prenda"
+                            onAction={() => {
+                                setModalTipo(null)
+                                window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+                            }}
+                            secondaryActionText="Ir a Mis Productos"
+                            secondaryActionTo="/mis-productos"
+                        />
+                    )}
+
+                    {modalTipo === 'borrador' && (
+                        <FeedbackCard
+                            icon={<FaCheck />}
+                            title="¡Borrador guardado con éxito!"
+                            message="Tu prenda fue guardada como borrador. Podés editarla y publicarla cuando quieras desde Mis Productos."
+                            actionText="Publicar otra prenda"
+                            onAction={() => {
+                                setModalTipo(null)
+                                window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+                            }}
+                            secondaryActionText="Ir a Mis Productos"
+                            secondaryActionTo="/mis-productos"
+                        />
+                    )}
+
+                    {!modalTipo && (
                     <form ref={formRef} onSubmit={handleSubmit} className='cargaProduct-form'>
+                        {toastCrearOtra && (
+                            <div className="cargaProduct-toast">
+                                <FaCheck /> ¡Prenda enviada a revisión! El formulario quedó listo para cargar otra.
+                            </div>
+                        )}
                         <div>
                             <label htmlFor="name" className="form-label mt-4">Nombre de la prenda</label>
                             <input 
@@ -79,11 +141,30 @@ const CargaProduct = () => {
                         </div>
 
                         <div className="cargaProduct-buttons">
-                            <button type='submit' className="btn-secondary">Guardar borrador</button>
-                            <button type='submit' className="btn-secondary">Publicar y crear otra</button>
-                            <button type='submit' className="btn-primary">Publicar prenda</button>
+                            <button 
+                                type='button' 
+                                className="btn-secondary"
+                                onClick={() => procesarEnvio('borrador')}
+                            >
+                                Guardar borrador
+                            </button>
+                            <button 
+                                type='button' 
+                                className="btn-secondary"
+                                onClick={() => procesarEnvio('crear_otra')}
+                            >
+                                Publicar y crear otra
+                            </button>
+                            <button 
+                                type='submit' 
+                                className="btn-primary"
+                                onClick={() => procesarEnvio('publicar')}
+                            >
+                                Publicar prenda
+                            </button>
                         </div>
                     </form>
+                    )}
                 </div>
             </div>
         </>
