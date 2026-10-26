@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom'
 import { FaCheck } from 'react-icons/fa'
 import FeedbackCard from './FeedbackCard';
 import './styles/SerVendedorForm.css';
@@ -25,10 +24,6 @@ const SerVendedorForm = () => {
   return(
     <div className="serVendedor-page">
       <div className="serVendedor-container">
-        <Link to="/" className="volver-btn">
-          <span>&#8592;</span> Volver al inicio
-        </Link>
-
         <div className="serVendedor-card">
           {registrado ? (
             <FeedbackCard

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaUserCircle, FaSave, FaArrowLeft } from "react-icons/fa";
+import { FaUserCircle, FaSave } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 import "./styles/EditarPerfil.css";
@@ -22,11 +22,6 @@ const EditarPerfil = () => {
   return (
     <main className="editar-perfil-page">
       <section className="editar-perfil-container">
-
-        <Link to="/" className="editar-perfil-volver">
-          <FaArrowLeft />
-          Volver al inicio
-        </Link>
 
         <div className="editar-perfil-card">
 
