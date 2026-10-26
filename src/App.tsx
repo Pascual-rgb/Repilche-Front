@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 import Header from "./components/Header";
 import Cart from "./components/Cart";
 import { Home } from "./components/home";
@@ -28,6 +29,7 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       {!shouldHideHeader && <Header />}
       
       <Cart />
