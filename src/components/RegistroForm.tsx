@@ -75,9 +75,11 @@ const RegistroForm = () => {
             className="form-control"
             id="numberPhone"
             name="numberPhone"
-            placeholder="Ej: 1123456789"
+            placeholder="Ej: 2804123456"
             inputMode="numeric"
             pattern="[0-9]*"
+            required
+            minLength={8}
             onInput={(e) => {
               e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, "");
             }}

@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaCheck } from 'react-icons/fa'
+import { useAuthContext } from '../context/AuthContext';
 import FeedbackCard from './FeedbackCard';
 import './styles/SerVendedorForm.css';
 
@@ -18,6 +19,7 @@ const SerVendedorForm = () => {
     const [registrado, setRegistrado] = useState(false)
     const [enviando, setEnviando] = useState(false)
     const [errorBackend, setErrorBackend] = useState<string>("")
+    const { updateUser } = useAuthContext()
 
     // 🟠 Localidad de origen (Selección simple + Otra ciudad)
     const [localidadSelect, setLocalidadSelect] = useState<string>("")
@@ -109,6 +111,7 @@ const SerVendedorForm = () => {
 
         formRef.current.reset()
         window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+        updateUser({ is_vendedor: true })
         setRegistrado(true)
     }
 

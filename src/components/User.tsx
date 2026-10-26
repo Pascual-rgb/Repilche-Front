@@ -17,7 +17,7 @@ import "./styles/User.css";
 
 const User = () => {
   const [open, setOpen] = useState(false);
-  const { logout } = useAuthContext();
+  const { logout, user } = useAuthContext();
   const navigate = useNavigate();
   const { emptyCart } = useCarritoContext();
 
@@ -47,6 +47,10 @@ const User = () => {
       navigate("/login");
     }
 
+  const nombreUsuario = user
+    ? `${user.name || user.first_name || ""} ${user.lastName || user.last_name || ""}`.trim() || user.username || "Usuario"
+    : "Usuario";
+
   return (
     <div className="user-container" ref={userContainerRef}>
       <button
@@ -64,8 +68,8 @@ const User = () => {
             <FaUserCircle className="user-avatar" />
 
             <div className="user-info">
-              <h3>Usuario</h3>
-              <p>usuario@repilche.com</p>
+              <h3>{nombreUsuario}</h3>
+              <p>{user?.email || "usuario@repilche.com"}</p>
             </div>
           </div>
 
@@ -85,14 +89,16 @@ const User = () => {
             <span>Cargar producto</span>
           </Link>
 
-          <Link
-            to="/ser-vendedor"
-            className="user-menu-link"
-            onClick={() => setOpen(false)}
-          >
-            <FaStore />
-            <span>Ser vendedor</span>
-          </Link>
+          {!user?.is_vendedor && (
+            <Link
+              to="/ser-vendedor"
+              className="user-menu-link"
+              onClick={() => setOpen(false)}
+            >
+              <FaStore />
+              <span>Ser vendedor</span>
+            </Link>
+          )}
 
           <Link to="/mis-productos" className="user-menu-link" onClick={() => setOpen(false)}>
             <FaClipboardList />

@@ -1,11 +1,27 @@
 import { createContext, useContext, useState } from "react";
 
+export interface UserData {
+  id?: number;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  name?: string;
+  lastName?: string;
+  username?: string;
+  phone?: string;
+  numberPhone?: string;
+  celphone?: string;
+  is_vendedor?: boolean;
+}
+
 interface AuthContextType {
   isLoggedIn: boolean;
   isLoading: boolean;
+  user: UserData | null;
   login: (datos: Record<string, unknown>) => Promise<void>;
   register: (datos: Record<string, unknown>) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (newUserData: Partial<UserData>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,7 +30,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     () => localStorage.getItem("repilche-session") === "true"
   );
+  const [user, setUser] = useState<UserData | null>(() => {
+    const saved = localStorage.getItem("repilche-user");
+    if (!saved) return null;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return null;
+    }
+  });
   const [isLoading] = useState(false);
+
+  const updateUser = (newUserData: Partial<UserData>) => {
+    setUser((prev) => {
+      const updated = prev ? { ...prev, ...newUserData } : (newUserData as UserData);
+      localStorage.setItem("repilche-user", JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const login = async (datos: Record<string, unknown>) => {
     const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
@@ -40,6 +73,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const data = await response.json();
     if (data.access) {
       localStorage.setItem("repilche-token", data.access);
+    }
+    if (data.refresh) {
+      localStorage.setItem("repilche-refresh", data.refresh);
+    }
+    if (data.user) {
+      localStorage.setItem("repilche-user", JSON.stringify(data.user));
+      setUser(data.user);
     }
 
     localStorage.setItem("repilche-session", "true");
@@ -70,11 +110,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     localStorage.removeItem("repilche-session");
     localStorage.removeItem("repilche-token");
+    localStorage.removeItem("repilche-refresh");
+    localStorage.removeItem("repilche-user");
+    setUser(null);
     setIsLoggedIn(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, isLoading, user, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
