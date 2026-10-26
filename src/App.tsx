@@ -18,6 +18,7 @@ import MisProductos from "./components/MisProductos";
 import MisCompras from "./components/MisCompras";
 import MisVentas from "./components/MisVentas";
 import { useAuthContext } from "./context/AuthContext";
+//import { Analytics } from "@vercel/analytics/next"
 
 function App() {
   const location = useLocation();
