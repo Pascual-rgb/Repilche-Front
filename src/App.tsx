@@ -18,7 +18,7 @@ import MisProductos from "./components/MisProductos";
 import MisCompras from "./components/MisCompras";
 import MisVentas from "./components/MisVentas";
 import { useAuthContext } from "./context/AuthContext";
-//import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next"
 
 function App() {
   const location = useLocation();
@@ -61,6 +61,7 @@ function App() {
       </main>
 
       {isLoggedIn && location.pathname !== "/contact" && <Contact />}
+      <Analytics />
     </>
   );
 }
