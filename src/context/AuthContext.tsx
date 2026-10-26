@@ -24,7 +24,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       username: datos.email || datos.username, 
     };
 
-    const response = await fetch(`${apiUrl}/token/`, {
+    // CORRECCIÓN: Cambiar /token/ por /login/ (o la ruta exacta de tu urls.py para LoginView)
+    const response = await fetch(`${apiUrl}/login/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
