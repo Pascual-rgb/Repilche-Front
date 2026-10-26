@@ -11,7 +11,6 @@ import User from "./components/User";
 import Notis from "./components/Notis";
 import SerVendedor from "./components/SerVendedorForm";
 import ProductoDetail from "./components/ProductoDetail";
-import { productos } from "./data/products";
 import EditarPerfil from "./components/EditarPerfil";
 import Products from "./components/Products";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -19,7 +18,7 @@ import MisProductos from "./components/MisProductos";
 import MisCompras from "./components/MisCompras";
 import MisVentas from "./components/MisVentas";
 import { useAuthContext } from "./context/AuthContext";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   const location = useLocation();
@@ -32,7 +31,7 @@ function App() {
     <>
       <ScrollToTop />
       {!shouldHideHeader && <Header />}
-      
+
       <Cart />
 
       <main style={{ padding: "20px" }}>
