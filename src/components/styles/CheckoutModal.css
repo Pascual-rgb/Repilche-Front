@@ -1,0 +1,415 @@
+.checkout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.checkout-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 24px;
+  padding: 36px 32px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: 'Radio Canada Big', sans-serif;
+}
+
+.checkout-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f4f4f5;
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkout-modal-close:hover {
+  background: #e4e4e7;
+  color: #111;
+  transform: rotate(90deg);
+}
+
+/* Header */
+.checkout-modal-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.checkout-modal-header h2 {
+  font-family: 'Viga', sans-serif;
+  font-size: 26px;
+  color: #1a1a1a;
+  margin: 0 0 8px;
+}
+
+.checkout-modal-header p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Paso 1: Monto Total */
+.checkout-monto-card {
+  background: #fdfae8;
+  border: 1px solid #f9e68c;
+  border-radius: 16px;
+  padding: 18px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.checkout-monto-label {
+  display: block;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  color: #8c6b04;
+  margin-bottom: 4px;
+}
+
+.checkout-monto-valor {
+  font-family: 'Viga', sans-serif;
+  font-size: 34px;
+  color: #1a1a1a;
+  line-height: 1.1;
+}
+
+/* Paso 1: Alias Box (Click-to-copy en todo el contenedor) */
+.checkout-alias-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 18px 20px;
+  background: #fdfae8;
+  border: 2px dashed #F6C417;
+  border-radius: 16px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: 0.25s;
+  user-select: none;
+  margin-bottom: 20px;
+}
+
+.checkout-alias-box * {
+  position: relative;
+  z-index: 1;
+}
+
+.checkout-alias-box::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #f6c91769;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  transition: 0.25s;
+  border-radius: 14px;
+}
+
+.checkout-alias-box:hover::after {
+  opacity: 1;
+}
+
+.checkout-alias-box:hover {
+  transform: translateY(-2px);
+}
+
+.checkout-alias-box:active {
+  transform: scale(0.99);
+}
+
+.checkout-alias-box.copiado {
+  border-color: #2e7d32;
+  background: #eef7ee;
+}
+
+.checkout-alias-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #7a5c00;
+  transition: color 0.2s;
+}
+
+.checkout-alias-box.copiado .checkout-alias-label {
+  color: #2e7d32;
+}
+
+.checkout-alias-text {
+  font-family: 'Viga', sans-serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: #1a1a1a;
+}
+
+.checkout-alias-titular {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Escrow Security Banner */
+.checkout-escrow-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f9f9f9;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.45;
+}
+
+.checkout-escrow-badge svg {
+  color: #2e7d32;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Confirm Button & Spinner */
+.checkout-confirm-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #F6C417;
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+  font-family: 'Radio Canada Big', sans-serif;
+  box-shadow: 0 4px 14px rgba(246, 196, 23, 0.4);
+}
+
+.checkout-confirm-btn:hover:not(:disabled) {
+  background: #e0b013;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(246, 196, 23, 0.5);
+}
+
+.checkout-confirm-btn:disabled {
+  background: #e5e5e5;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.checkout-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, 0.15);
+  border-top-color: #1a1a1a;
+  border-radius: 50%;
+  animation: checkoutSpin 0.7s linear infinite;
+}
+
+@keyframes checkoutSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error banner */
+.checkout-error {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Paso 2: Éxito y Timeline */
+.checkout-exito-icon {
+  width: 72px;
+  height: 72px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 16px rgba(46, 125, 50, 0.15);
+}
+
+.checkout-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  border-radius: 18px;
+  padding: 20px;
+  margin: 20px 0 28px;
+}
+
+.checkout-timeline-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.checkout-timeline-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #F6C417;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checkout-timeline-content {
+  font-size: 14px;
+  line-height: 1.45;
+  color: #444;
+}
+
+.checkout-timeline-content strong {
+  color: #1a1a1a;
+}
+
+/* Botones de salida Paso 2 */
+.checkout-exito-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkout-btn-compras {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #F6C417;
+  color: #1a1a1a;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Radio Canada Big', sans-serif;
+  display: block;
+  box-sizing: border-box;
+}
+
+.checkout-btn-compras:hover {
+  background: #e0b013;
+  transform: translateY(-1px);
+}
+
+.checkout-btn-seguir {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: #ffffff;
+  color: #444;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Radio Canada Big', sans-serif;
+}
+
+.checkout-btn-seguir:hover {
+  background: #f4f4f4;
+  color: #111;
+}
+
+/* Animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-modal-card {
+    padding: 28px 18px;
+    border-radius: 20px;
+  }
+
+  .checkout-modal-header h2 {
+    font-size: 22px;
+  }
+
+  .checkout-monto-valor {
+    font-size: 28px;
+  }
+
+  .checkout-alias-row {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .checkout-copy-btn {
+    justify-content: center;
+  }
+}
