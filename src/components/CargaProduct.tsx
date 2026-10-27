@@ -34,6 +34,12 @@ const CargaProduct = () => {
   const [estadoCarga, setEstadoCarga] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Estados controlados para los campos del formulario
+  const [nombre, setNombre] = useState<string>('');
+  const [precio, setPrecio] = useState<string>('');
+  const [categoriaId, setCategoriaId] = useState<number | ''>('');
+  const [descripcion, setDescripcion] = useState<string>('');
+
   // Categorías dinámicas desde el backend
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [cargandoCategorias, setCargandoCategorias] = useState(true);
@@ -45,12 +51,18 @@ const CargaProduct = () => {
     let isMounted = true;
     const fetchCategorias = async () => {
       try {
-        const res = await fetch(`${apiUrl}/categories/`);
+        // Consultar categorías del backend con fallback
+        let res = await fetch(`${apiUrl}/categories/`);
+        if (!res.ok) {
+          res = await fetch(`${apiUrl}/categorias/`);
+        }
         if (res.ok) {
           const data = await res.json();
           const lista: Categoria[] = Array.isArray(data) ? data : data.results || [];
           if (isMounted && lista.length > 0) {
             setCategorias(lista);
+            // Preseleccionar la primera categoría si el usuario aún no eligió ninguna
+            setCategoriaId((prev) => (prev === '' ? lista[0].id : prev));
           }
         }
       } catch (err) {
@@ -71,31 +83,61 @@ const CargaProduct = () => {
     if (errorMsg) setErrorMsg(null);
   };
 
-  const procesarEnvio = async (tipo: 'publicar' | 'crear_otra' | 'borrador') => {
-    if (!formRef.current) return;
+  const limpiarFormulario = () => {
+    setNombre('');
+    setPrecio('');
+    setDescripcion('');
+    setCategoriaId(categorias.length > 0 ? categorias[0].id : '');
+    setImages([]);
     setErrorMsg(null);
+  };
+
+  const procesarEnvio = async (tipo: 'publicar' | 'crear_otra' | 'borrador') => {
+    setErrorMsg(null);
+
+    // Captura síncrona de valores controlados antes de cualquier operación asíncrona
+    const nombreFinal = nombre.trim();
+    const descripcionFinal = descripcion.trim();
+    const precioFinal = Number(precio);
+    const categoriaFinal = Number(categoriaId);
 
     // Flujo para guardar borrador local
     if (tipo === 'borrador') {
-      const nameInput = formRef.current.elements.namedItem('name') as HTMLInputElement | null;
-      if (nameInput && !nameInput.value.trim()) {
-        nameInput.setCustomValidity('Ingresá al menos el nombre de la prenda para guardar el borrador.');
-        nameInput.reportValidity();
-        nameInput.setCustomValidity('');
+      if (!nombreFinal) {
+        setErrorMsg('Ingresá al menos el nombre de la prenda para guardar el borrador.');
         return;
       }
 
-      formRef.current.reset();
-      setImages([]);
+      limpiarFormulario();
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       setToastCrearOtra(false);
       setModalTipo('borrador');
       return;
     }
 
-    // Validación de campos estándar
-    if (!formRef.current.checkValidity()) {
-      formRef.current.reportValidity();
+    // Validaciones de negocio en cliente antes de la subida a Storage
+    if (!nombreFinal) {
+      setErrorMsg('El nombre de la prenda no puede estar en blanco.');
+      return;
+    }
+
+    if (!precioFinal || isNaN(precioFinal) || precioFinal <= 0) {
+      setErrorMsg('Por favor, ingresá un precio válido mayor a 0.');
+      return;
+    }
+
+    if (!categoriaFinal || isNaN(categoriaFinal) || categoriaFinal <= 0) {
+      setErrorMsg('Por favor, seleccioná una categoría válida para la prenda.');
+      return;
+    }
+
+    if (!descripcionFinal) {
+      setErrorMsg('La descripción de la prenda no puede estar en blanco.');
+      return;
+    }
+
+    if (descripcionFinal.length < 10) {
+      setErrorMsg('La descripción debe tener al menos 10 caracteres.');
       return;
     }
 
@@ -120,29 +162,27 @@ const CargaProduct = () => {
     setEstadoCarga('Subiendo imagen...');
 
     try {
-      // 1. Subida directa de la imagen nativa File a Supabase Storage
+      // 1. Subida directa del archivo File nativo a Supabase Storage
       const fileToUpload = images[0].file;
       const publicUrl = await uploadProductImage(fileToUpload);
 
-      // 2. Preparación del payload JSON para Django (sin multipart/form-data)
+      // 2. Preparación del payload JSON para Django
+      // Mapea exactamente 'nombre', 'descripcion', 'precio', 'categoria', 'stock' e 'imagen_url'
       setEstadoCarga('Registrando prenda en el catálogo...');
-      const data = new FormData(formRef.current);
-      const nombre = String(data.get('name') || '').trim();
-      const descripcion = String(data.get('descripcion') || '').trim();
-      const precio = Number(data.get('price'));
-      const categoriaId = Number(data.get('categoria'));
 
       const payload = {
-        nombre,
-        name: nombre,
-        descripcion,
-        description: descripcion,
-        precio,
-        price: precio,
-        categoria: categoriaId,
+        nombre: nombreFinal,
+        name: nombreFinal,
+        descripcion: descripcionFinal,
+        description: descripcionFinal,
+        precio: precioFinal,
+        price: precioFinal,
+        categoria: categoriaFinal,
         stock: 1,
         imagen_url: publicUrl,
       };
+
+      console.log('Enviando payload JSON a Django:', payload);
 
       // 3. Envío del POST a Django incluyendo la URL en imagen_url
       const res = await fetch(`${apiUrl}/products/`, {
@@ -160,7 +200,7 @@ const CargaProduct = () => {
 
         let errorDetalle = 'Ocurrió un error al registrar la prenda en el backend.';
         if (res.status === 401) {
-          errorDetalle = 'Tu sesión no es válida. Por favor, volvé a iniciar sesión.';
+          errorDetalle = 'Tu sesión no es válida o expiró. Por favor, volvé a iniciar sesión.';
         } else if (res.status === 403) {
           errorDetalle = 'Debe ser un usuario vendedor registrado para publicar prendas.';
         } else if (errData) {
@@ -180,8 +220,7 @@ const CargaProduct = () => {
       }
 
       // 4. Tras el 201 Created (o respuesta exitosa)
-      formRef.current.reset();
-      setImages([]);
+      limpiarFormulario();
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
       if (tipo === 'crear_otra') {
@@ -265,14 +304,16 @@ const CargaProduct = () => {
               )}
 
               <div>
-                <label htmlFor="name" className="form-label mt-4">
+                <label htmlFor="nombre" className="form-label mt-4">
                   Nombre de la prenda
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  id="name"
-                  name="name"
+                  id="nombre"
+                  name="nombre"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
                   placeholder="Ej: Remera oversize vintage, Jean clásico..."
                   required
                   minLength={3}
@@ -281,14 +322,16 @@ const CargaProduct = () => {
               </div>
 
               <div>
-                <label htmlFor="price" className="form-label mt-4">
-                  Precio
+                <label htmlFor="precio" className="form-label mt-4">
+                  Precio ($)
                 </label>
                 <input
                   type="number"
                   className="form-control"
-                  id="price"
-                  name="price"
+                  id="precio"
+                  name="precio"
+                  value={precio}
+                  onChange={(e) => setPrecio(e.target.value)}
                   placeholder="Ej: 15000"
                   min="1"
                   step="1"
@@ -310,7 +353,8 @@ const CargaProduct = () => {
                   className="form-select"
                   id="categoria"
                   name="categoria"
-                  defaultValue=""
+                  value={categoriaId}
+                  onChange={(e) => setCategoriaId(Number(e.target.value))}
                   required
                   disabled={isSubiendo}
                 >
@@ -333,6 +377,8 @@ const CargaProduct = () => {
                   className="form-control"
                   id="descripcion"
                   name="descripcion"
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
                   rows={3}
                   placeholder="Ej: Talle M. Medidas: 52cm sisa x 70cm largo. Estado: Impecable, sin roturas ni manchas."
                   required

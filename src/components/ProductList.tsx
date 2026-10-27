@@ -3,10 +3,15 @@ import { Link } from 'react-router-dom';
 import type { Products } from '../data/products.ts';
 import "./styles/Home.css";
 
-export const ProductList: React.FC = () => {
-  const [products, setProducts] = useState<Products[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+interface ProductListProps {
+  products?: Products[];
+}
+
+export const ProductList: React.FC<ProductListProps> = ({ products: initialProducts }) => {
+  const [products, setProducts] = useState<Products[]>(initialProducts || []);
+  const [loading, setLoading] = useState<boolean>(!initialProducts);
   const [currentIndex, setCurrentIndex] = useState(0);
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -31,15 +36,12 @@ export const ProductList: React.FC = () => {
 
   const sliderProducts = products.slice(0, 7);
 
-  useEffect(() => {
+  const handleNext = () => {
     if (sliderProducts.length === 0) return;
-
-    const interval = setInterval(() => {
-      handleNext();
-    }, 8000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex, sliderProducts.length]);
+    setCurrentIndex((prevIndex) => 
+      prevIndex === sliderProducts.length - 1 ? 0 : prevIndex + 1
+    );
+  };
 
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -48,17 +50,23 @@ export const ProductList: React.FC = () => {
     );
   };
 
-  const handleNext = () => {
-    if (sliderProducts.length === 0) return;
-    setCurrentIndex((prevIndex) => 
-      prevIndex === sliderProducts.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
   const handleNextBtn = (e: React.MouseEvent) => {
     e.preventDefault();
     handleNext();
   };
+
+  useEffect(() => {
+    if (sliderProducts.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => 
+        prevIndex === sliderProducts.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [sliderProducts.length]);
+
 
   if (loading) {
     return <div className="product-list-container">Cargando productos...</div>;
