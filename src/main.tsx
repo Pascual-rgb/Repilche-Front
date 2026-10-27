@@ -8,6 +8,8 @@ import { CarritoProvider } from './context/CartContext.tsx';
 import { NotificationProvider } from './context/NotificationContext.tsx';
 import { AuthProvider } from './context/AuthContext.tsx';
 
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
@@ -16,14 +18,16 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <CarritoProvider>
-          <NotificationProvider>
-            <App />
-          </NotificationProvider>
-        </CarritoProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <CarritoProvider>
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
+          </CarritoProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   </React.StrictMode>
 );

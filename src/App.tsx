@@ -20,6 +20,8 @@ import MisVentas from "./components/MisVentas";
 import { useAuthContext } from "./context/AuthContext";
 import { Analytics } from "@vercel/analytics/react"
 
+import { ErrorBoundary } from "./components/ErrorBoundary";
+
 function App() {
   const location = useLocation();
   const { isLoggedIn } = useAuthContext();
@@ -35,30 +37,32 @@ function App() {
       <Cart />
 
       <main style={{ padding: "20px" }}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<RegistroForm />} />
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/registro" element={<RegistroForm />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/producto/:id" element={<ProductoDetail />} />
-            <Route path="/cargar-producto" element={<CargaProduct />} />
-            <Route path="/cargaProduct" element={<CargaProduct />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/user" element={<User />} />
-            <Route path="/notifications" element={<Notis />} />
-            <Route path="/notis" element={<Notis />} />
-            <Route path="/ser-vendedor" element={<SerVendedor />} />
-            <Route path="/serVendedor" element={<SerVendedor />} />
-            <Route path="/editar-perfil" element={<EditarPerfil />} />
-            <Route path="/mis-productos" element={<MisProductos />} />
-            <Route path="/mis-compras" element={<MisCompras />} />
-            <Route path="/mis-ventas" element={<MisVentas />} />
-          </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/producto/:id" element={<ProductoDetail />} />
+              <Route path="/cargar-producto" element={<CargaProduct />} />
+              <Route path="/cargaProduct" element={<CargaProduct />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/user" element={<User />} />
+              <Route path="/notifications" element={<Notis />} />
+              <Route path="/notis" element={<Notis />} />
+              <Route path="/ser-vendedor" element={<SerVendedor />} />
+              <Route path="/serVendedor" element={<SerVendedor />} />
+              <Route path="/editar-perfil" element={<EditarPerfil />} />
+              <Route path="/mis-productos" element={<MisProductos />} />
+              <Route path="/mis-compras" element={<MisCompras />} />
+              <Route path="/mis-ventas" element={<MisVentas />} />
+            </Route>
 
-          <Route path="*" element={<Login />} />
-        </Routes>
+            <Route path="*" element={<Login />} />
+          </Routes>
+        </ErrorBoundary>
       </main>
 
       {isLoggedIn && location.pathname !== "/contact" && <Contact />}

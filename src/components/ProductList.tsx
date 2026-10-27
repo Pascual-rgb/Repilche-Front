@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type { Products } from '../data/products.ts';
-import "./styles/Home.css";
+import './styles/Home.css';
 
 interface ProductListProps {
   products?: Products[];
@@ -9,43 +9,78 @@ interface ProductListProps {
 
 export const ProductList: React.FC<ProductListProps> = ({ products: initialProducts }) => {
   const [products, setProducts] = useState<Products[]>(initialProducts || []);
-  const [loading, setLoading] = useState<boolean>(!initialProducts);
+  const [loading, setLoading] = useState<boolean>(!initialProducts || initialProducts.length === 0);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-
   useEffect(() => {
+    let isMounted = true;
     const fetchProducts = async () => {
       try {
         const response = await fetch('https://repilche-backend.onrender.com/api/products/');
-        
+
         if (!response.ok) {
           throw new Error('Error al obtener los productos de la base de datos');
         }
-        
+
         const data = await response.json();
-        setProducts(data);
+
+        // Manejo defensivo: DRF devuelve paginación { count: n, results: [...] } o array directo
+        const rawList = Array.isArray(data) ? data : data?.results || [];
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const normalizedList: Products[] = rawList.map((item: any, idx: number) => ({
+          id: item?.id ?? idx + 1,
+          name: item?.name || item?.nombre || 'Prenda sin nombre',
+          descrp: item?.descrp || item?.descripcion || item?.description || 'Sin descripción disponible',
+          img: item?.img || item?.imagen_url || item?.imagen || '/src/data/img/remera-negra-manga-corta.png',
+          stock: Number(item?.stock ?? 1),
+          cat: Array.isArray(item?.cat)
+            ? item.cat
+            : item?.categoria_detail?.nombre
+            ? [item.categoria_detail.nombre]
+            : typeof item?.categoria === 'string'
+            ? [item.categoria]
+            : ['General'],
+          precio: Number(item?.precio || item?.price || 0),
+          vendedor:
+            typeof item?.vendedor === 'string'
+              ? item.vendedor
+              : item?.vendedor?.first_name
+              ? `${item.vendedor.first_name} ${item.vendedor.last_name || ''}`.trim()
+              : item?.vendedor_nombre || 'Repilche',
+        }));
+
+        if (isMounted && normalizedList.length > 0) {
+          setProducts(normalizedList);
+        }
       } catch (error) {
-        console.error('Hubo un error:', error);
+        console.warn('No se pudieron obtener productos del backend, usando listado inicial:', error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchProducts();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const sliderProducts = products.slice(0, 7);
+  const safeProducts = Array.isArray(products) ? products : [];
+  const sliderProducts = safeProducts.slice(0, 7);
 
   const handleNext = () => {
     if (sliderProducts.length === 0) return;
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === sliderProducts.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? sliderProducts.length - 1 : prevIndex - 1
     );
   };
@@ -59,7 +94,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
     if (sliderProducts.length === 0) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
+      setCurrentIndex((prevIndex) =>
         prevIndex === sliderProducts.length - 1 ? 0 : prevIndex + 1
       );
     }, 8000);
@@ -67,27 +102,39 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
     return () => clearInterval(interval);
   }, [sliderProducts.length]);
 
-
   if (loading) {
     return <div className="product-list-container">Cargando productos...</div>;
   }
 
   if (sliderProducts.length === 0) return null;
 
-  const currentProduct = sliderProducts[currentIndex];
+  const currentProduct = sliderProducts[currentIndex] || sliderProducts[0];
+  if (!currentProduct) return null;
+
   return (
     <div className="product-list-container">
       <button className="slider-btn prev-btn" onClick={handlePrev}>&lt;</button>
-      
-      <Link to={`/producto/${currentProduct.id}`} className="product-list-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+
+      <Link
+        to={`/producto/${currentProduct.id}`}
+        className="product-list-card"
+        style={{ textDecoration: 'none', color: 'inherit' }}
+      >
         <div className="product-list-img-box">
-          <img src={currentProduct.img as string} alt={currentProduct.name as string} />
+          <img
+            src={currentProduct.img || '/src/data/img/remera-negra-manga-corta.png'}
+            alt={currentProduct.name || 'Prenda'}
+          />
         </div>
         <div className="product-list-details">
-          <h2 className="product-list-title">{currentProduct.name}</h2>
-          <p className="product-list-desc"><strong>Descripción:</strong> {currentProduct.descrp}</p>
-          <p className="product-list-seller"><strong>Vendedor:</strong> {currentProduct.vendedor}</p>
-          <div className="product-list-price">${currentProduct.precio}</div>
+          <h2 className="product-list-title">{currentProduct.name || 'Prenda'}</h2>
+          <p className="product-list-desc">
+            <strong>Descripción:</strong> {currentProduct.descrp || 'Sin descripción'}
+          </p>
+          <p className="product-list-seller">
+            <strong>Vendedor:</strong> {currentProduct.vendedor || 'Repilche'}
+          </p>
+          <div className="product-list-price">${currentProduct.precio || 0}</div>
         </div>
       </Link>
 

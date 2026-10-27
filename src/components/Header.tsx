@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import {
@@ -17,9 +17,9 @@ import { useCarritoContext } from "../context/CartContext";
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { unreadCount } = useNotificationContext();
+  const { unreadCount = 0 } = useNotificationContext();
   const { getItemQuantity, openCart } = useCarritoContext();
   const { isLoggedIn } = useAuthContext();
 
@@ -27,18 +27,18 @@ const Header = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+      if (currentScrollY > lastScrollYRef.current && currentScrollY > 80) {
         setShowHeader(false);
       } else {
         setShowHeader(true);
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollYRef.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   return (
     <header className={`header ${showHeader ? "header-visible" : "header-hidden"}`}>

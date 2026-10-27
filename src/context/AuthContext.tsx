@@ -1,4 +1,14 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from 'react';
+
+export interface PerfilVendedorData {
+  id?: number;
+  alias?: string;
+  alias_bancario?: string;
+  locality?: string;
+  llegoHasta?: string;
+  description?: string;
+  [key: string]: unknown;
+}
 
 export interface UserData {
   id?: number;
@@ -8,10 +18,14 @@ export interface UserData {
   name?: string;
   lastName?: string;
   username?: string;
+  usuario?: string;
   phone?: string;
   numberPhone?: string;
   celphone?: string;
   is_vendedor?: boolean;
+  perfil?: PerfilVendedorData | null;
+  perfil_vendedor?: PerfilVendedorData | null;
+  [key: string]: unknown;
 }
 
 interface AuthContextType {
@@ -28,90 +42,172 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(
-    () => localStorage.getItem("repilche-session") === "true"
+    () => localStorage.getItem('repilche-session') === 'true'
   );
+
   const [user, setUser] = useState<UserData | null>(() => {
-    const saved = localStorage.getItem("repilche-user");
+    const saved = localStorage.getItem('repilche-user');
     if (!saved) return null;
     try {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (!parsed || typeof parsed !== 'object') return null;
+      const perfilObj = parsed.perfil || parsed.perfil_vendedor || null;
+      return {
+        ...parsed,
+        name: parsed.name || parsed.first_name || parsed.username || '',
+        lastName: parsed.lastName || parsed.last_name || '',
+        first_name: parsed.first_name || parsed.name || '',
+        last_name: parsed.last_name || parsed.lastName || '',
+        username: parsed.username || parsed.email?.split('@')[0] || '',
+        is_vendedor: Boolean(parsed.is_vendedor),
+        perfil: perfilObj,
+        perfil_vendedor: perfilObj,
+      };
     } catch {
       return null;
     }
   });
+
   const [isLoading] = useState(false);
 
   const updateUser = (newUserData: Partial<UserData>) => {
     setUser((prev) => {
-      const updated = prev ? { ...prev, ...newUserData } : (newUserData as UserData);
-      localStorage.setItem("repilche-user", JSON.stringify(updated));
+      const base = prev || ({} as UserData);
+      const perfilObj =
+        newUserData.perfil !== undefined
+          ? newUserData.perfil
+          : newUserData.perfil_vendedor !== undefined
+          ? newUserData.perfil_vendedor
+          : base.perfil || base.perfil_vendedor || null;
+
+      const updated: UserData = {
+        ...base,
+        ...newUserData,
+        perfil: perfilObj,
+        perfil_vendedor: perfilObj,
+      };
+      localStorage.setItem('repilche-user', JSON.stringify(updated));
       return updated;
     });
   };
 
   const login = async (datos: Record<string, unknown>) => {
-    const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://repilche-backend.onrender.com/api';
 
     const payload = {
       ...datos,
-      username: datos.email || datos.username, 
+      username: datos.email || datos.username,
     };
 
-    // CORRECCIÓN: Cambiar /token/ por /login/ (o la ruta exacta de tu urls.py para LoginView)
     const response = await fetch(`${apiUrl}/login/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      console.error("🔍 Error en login:", errorData);
-      throw new Error("Credenciales inválidas o email no verificado");
+      console.error('🔍 Error en login:', errorData);
+      throw new Error('Credenciales inválidas o email no verificado');
     }
 
     const data = await response.json();
     if (data.access) {
-      localStorage.setItem("repilche-token", data.access);
+      localStorage.setItem('repilche-token', data.access);
     }
     if (data.refresh) {
-      localStorage.setItem("repilche-refresh", data.refresh);
-    }
-    if (data.user) {
-      localStorage.setItem("repilche-user", JSON.stringify(data.user));
-      setUser(data.user);
+      localStorage.setItem('repilche-refresh', data.refresh);
     }
 
-    localStorage.setItem("repilche-session", "true");
+    let userObj = data.user;
+
+    // Si el backend no devolvió el objeto usuario completo en login, lo obtenemos de /usuario/me/
+    if (!userObj && data.access) {
+      try {
+        const meRes = await fetch(`${apiUrl}/usuario/me/`, {
+          headers: { Authorization: `Bearer ${data.access}` },
+        });
+        if (meRes.ok) {
+          userObj = await meRes.json();
+        }
+      } catch (err) {
+        console.warn('No se pudo sincronizar usuario/me en login:', err);
+      }
+    }
+
+    if (userObj) {
+      const perfilObj = userObj.perfil || userObj.perfil_vendedor || null;
+      const normalizedUser: UserData = {
+        ...userObj,
+        name: userObj.name || userObj.first_name || userObj.username || '',
+        lastName: userObj.lastName || userObj.last_name || '',
+        first_name: userObj.first_name || userObj.name || '',
+        last_name: userObj.last_name || userObj.lastName || '',
+        username: userObj.username || userObj.email?.split('@')[0] || '',
+        is_vendedor: Boolean(userObj.is_vendedor),
+        perfil: perfilObj,
+        perfil_vendedor: perfilObj,
+      };
+      localStorage.setItem('repilche-user', JSON.stringify(normalizedUser));
+      setUser(normalizedUser);
+    }
+
+    localStorage.setItem('repilche-session', 'true');
     setIsLoggedIn(true);
   };
 
   const register = async (datos: Record<string, unknown>) => {
-    const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://repilche-backend.onrender.com/api';
 
     const response = await fetch(`${apiUrl}/registro/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datos),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      console.error("🔍 Respuesta de error del backend:", errorData);
-      
-      const mensajeError = errorData 
-        ? JSON.stringify(errorData, null, 2) 
-        : "No se pudo completar el registro.";
-        
+      console.error('🔍 Respuesta de error del backend:', errorData);
+
+      const mensajeError = errorData
+        ? JSON.stringify(errorData, null, 2)
+        : 'No se pudo completar el registro.';
+
       throw new Error(mensajeError);
+    }
+
+    const resData = await response.json().catch(() => null);
+    if (resData?.access) {
+      localStorage.setItem('repilche-token', resData.access);
+    }
+    if (resData?.refresh) {
+      localStorage.setItem('repilche-refresh', resData.refresh);
+    }
+    if (resData?.user) {
+      const perfilObj = resData.user.perfil || resData.user.perfil_vendedor || null;
+      const normalizedUser: UserData = {
+        ...resData.user,
+        name: resData.user.name || resData.user.first_name || resData.user.username || '',
+        lastName: resData.user.lastName || resData.user.last_name || '',
+        first_name: resData.user.first_name || resData.user.name || '',
+        last_name: resData.user.last_name || resData.user.lastName || '',
+        username: resData.user.username || resData.user.email?.split('@')[0] || '',
+        is_vendedor: Boolean(resData.user.is_vendedor),
+        perfil: perfilObj,
+        perfil_vendedor: perfilObj,
+      };
+      localStorage.setItem('repilche-user', JSON.stringify(normalizedUser));
+      setUser(normalizedUser);
+      localStorage.setItem('repilche-session', 'true');
+      setIsLoggedIn(true);
     }
   };
 
   const logout = async () => {
-    localStorage.removeItem("repilche-session");
-    localStorage.removeItem("repilche-token");
-    localStorage.removeItem("repilche-refresh");
-    localStorage.removeItem("repilche-user");
+    localStorage.removeItem('repilche-session');
+    localStorage.removeItem('repilche-token');
+    localStorage.removeItem('repilche-refresh');
+    localStorage.removeItem('repilche-user');
     setUser(null);
     setIsLoggedIn(false);
   };
@@ -123,10 +219,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuthContext debe usarse dentro de AuthProvider");
+    throw new Error('useAuthContext debe usarse dentro de AuthProvider');
   }
   return context;
 };

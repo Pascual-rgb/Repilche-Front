@@ -1,0 +1,110 @@
+.error-boundary-container {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: #f9fafb;
+}
+
+.error-boundary-card {
+  max-width: 520px;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 36px 28px;
+  text-align: center;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+.error-boundary-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fef2f2;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 20px;
+}
+
+.error-boundary-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.error-boundary-message {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.error-boundary-details {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.error-boundary-details-summary {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.error-boundary-details-code {
+  font-size: 12px;
+  color: #dc2626;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0;
+  font-family: monospace;
+}
+
+.error-boundary-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.error-boundary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.error-boundary-btn-primary {
+  background: #F6C417;
+  color: #1f2937;
+}
+
+.error-boundary-btn-primary:hover {
+  background: #eab308;
+}
+
+.error-boundary-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.error-boundary-btn-secondary:hover {
+  background: #e5e7eb;
+}
