@@ -1,35 +1,65 @@
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import type { FormEvent } from "react";
-import './styles/RegistroForm.css'
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
+import '../components/styles/CheckoutModal.css';
+import './styles/RegistroForm.css'
 
 const RegistroForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const { register } = useAuthContext(); // <--- Usamos register en lugar de login
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    show: boolean;
+    type: 'success' | 'error';
+    title: string;
+    message: string;
+  } | null>(null);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formRef.current) return;
 
+    setIsLoading(true);
+    setFeedback(null);
+
     const data = new FormData(formRef.current);
     const usuario = Object.fromEntries(data);
 
-    console.log("Datos de registro:", usuario);
-
     try {
-      // Llamamos a la función de registro del contexto
       await register(usuario);
       
-      alert("¡Registro exitoso! Por favor, inicia sesión con tus nuevas credenciales.");
-      navigate("/login"); // Redirigimos al login tras registrarse con éxito
-      
-      formRef.current?.reset();
+      setIsLoading(false);
+      setFeedback({
+        show: true,
+        type: 'success',
+        title: '¡Registro exitoso!',
+        message: 'Tu cuenta fue creada correctamente. Por favor, inicia sesión con tus credenciales.'
+      });
+
+      setTimeout(() => {
+        navigate("/login");
+        formRef.current?.reset();
+      }, 2500);
+
     } catch (error: any) {
       console.error("Error al registrarse:", error);
-      alert(error.message || "Hubo un error al procesar el registro.");
+      setIsLoading(false);
+
+      const esErrorDeConexion = error?.message?.includes("Failed to fetch") || error?.name === "TypeError";
+
+      setFeedback({
+        show: true,
+        type: 'error',
+        title: 'Aviso de registro',
+        message: esErrorDeConexion
+          ? "Por favor, verificá los datos ingresados. Asegurate de completar todos los campos correctamente o intentá de nuevo más tarde."
+          : (error.message || "Por favor, verificá los datos ingresados.")
+      });
     }
   };
 
@@ -119,11 +149,53 @@ const RegistroForm = () => {
           />
         </div>
 
-        <button type="submit">Enviar</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? <div className="checkout-spinner"></div> : 'Enviar'}
+        </button>
         <Link to="/login" className="registro-link">
           Ya tengo una cuenta
         </Link>
       </form>
+
+      {(isLoading || (feedback && feedback.show)) && (
+        <div className="checkout-modal-overlay">
+          <div className="checkout-modal-card" style={{ textAlign: 'center', alignItems: 'center' }}>
+            
+            {isLoading && (
+              <div style={{ padding: '20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                <div className="checkout-spinner" style={{ width: '40px', height: '40px', borderWidth: '4px' }}></div>
+                <h3 style={{ fontFamily: 'Viga', fontSize: '22px', margin: 0 }}>Creando cuenta...</h3>
+                <p style={{ color: '#666', fontSize: '14px', margin: 0 }}>Estamos registrando tus datos en Repilche.</p>
+              </div>
+            )}
+
+            {!isLoading && feedback && feedback.show && (
+              <>
+                <div className="checkout-exito-icon" style={{
+                  background: feedback.type === 'success' ? '#e8f5e9' : '#ffebee',
+                  color: feedback.type === 'success' ? '#2e7d32' : '#c62828'
+                }}>
+                  {feedback.type === 'success' ? <FaCheck /> : <FaExclamationTriangle />}
+                </div>
+
+                <div className="checkout-modal-header">
+                  <h2>{feedback.title}</h2>
+                  <p>{feedback.message}</p>
+                </div>
+
+                <button 
+                  type="button" 
+                  className="checkout-btn-compras"
+                  onClick={() => setFeedback(null)}
+                >
+                  Entendido
+                </button>
+              </>
+            )}
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,9 @@
-import { useRef } from 'react'
+import { useState, useRef } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
+import { FaCheck, FaExclamationTriangle } from 'react-icons/fa';
+import '../components/styles/CheckoutModal.css';
 import './styles/LoginForm.css'
 
 const LoginForm = () => {
@@ -9,26 +11,53 @@ const LoginForm = () => {
     const { login } = useAuthContext();
     const navigate = useNavigate();
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [feedback, setFeedback] = useState<{
+        show: boolean;
+        type: 'success' | 'error';
+        title: String;
+        message: String;
+    } | null>(null);
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         
-        if (!formRef.current) return
+        if (!formRef.current) return;
+
+        setIsLoading(true);
+        setFeedback(null);
 
         const data = new FormData(formRef.current)
         const usuario = Object.fromEntries(data)
-        console.log("Datos del formulario:", usuario)
 
         try {
-            // Intentamos hacer login
             await login(usuario);
+
+            setIsLoading(false);
+            setFeedback({
+                show: true,
+                type: 'success',
+                title: '¡Bienvenido de nuevo!',
+                message: 'Iniciaste sesión correctamente. Redirigiendo...'
+            });
             
-            // Si sale bien, redirigimos y limpiamos
-            navigate("/");
-            formRef.current?.reset();
-        } catch (error) {
-            // Si el backend rechaza las credenciales, capturamos el error aquí
+            setTimeout(() => {
+                navigate("/");
+                formRef.current?.reset();
+            }, 2000);
+
+        } catch (error: any) {
             console.error("Error al iniciar sesión:", error);
-            alert("Credenciales incorrectas. Por favor, verifica tu email y contraseña.");
+            setIsLoading(false);
+            const esErrorDeConexion = error?.message?.includes("Failed to fetch") || error?.name === "TypeError";
+            setFeedback({
+                show: true,
+                type: 'error',
+                title: 'Aviso de acceso',
+                message: esErrorDeConexion
+                ? "Por favor, verificá tus datos. El correo o la contraseña son incorrectos."
+                : (error.message || "Por favor, verificá los datos ingresados.")
+            });
         }
     }
 
@@ -63,11 +92,49 @@ const LoginForm = () => {
                     required 
                 />
             </div>
-            <button type='submit'>Enviar</button>
+            <button type='submit' disabled={isLoading}>
+                {isLoading ? <div className="checkout-pinner"></div> : 'Enviar'}
+            </button>
             <Link to="/registro" className="login-link">
                 No tengo cuenta
             </Link>
         </form>
+
+        {(isLoading || (feedback && feedback.show)) && (
+            <div className="checkout-modal-overlay">
+                <div className="checkout-modal-card" style={{ textAlign: 'center', alignItems: 'center' }}>
+            
+                {isLoading && (
+                    <div style={{ padding: '20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                        <div className="checkout-spinner" style={{ width: '40px', height: '40px', borderWidth: '4px' }}></div>
+                        <h3 style={{ fontFamily: 'Viga', fontSize: '22px', margin: 0 }}>Iniciando sesión...</h3>
+                        <p style={{ color: '#666', fontSize: '14px', margin: 0 }}>Estamos verificando tus credenciales.</p>
+                    </div>
+                )}
+
+                {!isLoading && feedback && feedback.show && (
+                    <>
+                        <div className="checkout-exito-icon" style={{
+                        background: feedback.type === 'success' ? '#e8f5e9' : '#ffebee',
+                        color: feedback.type === 'success' ? '#2e7d32' : '#c62828'
+                    }}>
+                        {feedback.type === 'success' ? <FaCheck /> : <FaExclamationTriangle />}
+                    </div>
+
+                    <div className="checkout-modal-header">
+                        <h2>{feedback.title}</h2>
+                        <p>{feedback.message}</p>
+                    </div>
+
+                        <button type="button" className="checkout-btn-compras" onClick={() => setFeedback(null)}>
+                            Entendido
+                        </button>
+                    </>
+                    )}
+
+                 </div>
+                </div>
+            )}
         </>
     )
 }
