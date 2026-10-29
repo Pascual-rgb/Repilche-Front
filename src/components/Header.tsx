@@ -25,6 +25,11 @@ const Header = () => {
   const { isLoggedIn, user } = useAuthContext();
 
   const isAdmin = checkIsAdmin(user);
+  const rutaVender = !isLoggedIn
+    ? "/login"
+    : user?.is_vendedor
+    ? "/cargar-producto"
+    : "/ser-vendedor";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -109,7 +114,7 @@ const Header = () => {
           <Link to="/products?category=pantalones" onClick={() => setMenuOpen(false)}>Pantalones</Link>
           <Link to="/products?category=calzado" onClick={() => setMenuOpen(false)}>Calzado</Link>
           <Link to="/products?category=accesorios" onClick={() => setMenuOpen(false)}>Accesorios</Link>
-          <Link to="/ser-vendedor" onClick={() => setMenuOpen(false)}>Vender</Link>
+          <Link to={rutaVender} onClick={() => setMenuOpen(false)}>Vender</Link>
 
           {isAdmin && (
             <Link 
