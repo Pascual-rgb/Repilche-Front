@@ -23,6 +23,10 @@ export interface UserData {
   numberPhone?: string;
   celphone?: string;
   is_vendedor?: boolean;
+  is_staff?: boolean;
+  is_superuser?: boolean;
+  role?: string;
+  es_admin?: boolean;
   perfil?: PerfilVendedorData | null;
   perfil_vendedor?: PerfilVendedorData | null;
   [key: string]: unknown;
@@ -135,6 +139,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
+    let tokenClaims: Record<string, any> = {};
+    if (data.access) {
+      try {
+        const parts = data.access.split('.');
+        if (parts.length === 3) {
+          const base64Url = parts[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          tokenClaims = JSON.parse(decodeURIComponent(escape(atob(base64))));
+        }
+      } catch {
+        // Silencioso
+      }
+    }
+
     if (userObj) {
       const perfilObj = userObj.perfil || userObj.perfil_vendedor || null;
       const normalizedUser: UserData = {
@@ -145,6 +163,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         last_name: userObj.last_name || userObj.lastName || '',
         username: userObj.username || userObj.email?.split('@')[0] || '',
         is_vendedor: Boolean(userObj.is_vendedor),
+        is_staff: Boolean(userObj.is_staff ?? tokenClaims.is_staff),
+        is_superuser: Boolean(userObj.is_superuser ?? tokenClaims.is_superuser),
+        role: userObj.role || tokenClaims.role || undefined,
         perfil: perfilObj,
         perfil_vendedor: perfilObj,
       };

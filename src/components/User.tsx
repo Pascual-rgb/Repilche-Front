@@ -11,7 +11,9 @@ import {
   FaStore,
   FaShoppingBag,
   FaMoneyBillWave,
+  FaShieldAlt,
 } from "react-icons/fa";
+import { checkIsAdmin } from "../utils/auth";
 
 import "./styles/User.css";
 
@@ -20,6 +22,7 @@ const User = () => {
   const { logout, user } = useAuthContext();
   const navigate = useNavigate();
   const { emptyCart } = useCarritoContext();
+  const isAdmin = checkIsAdmin(user);
 
   const userContainerRef = useRef<HTMLDivElement>(null);
 
@@ -79,6 +82,17 @@ const User = () => {
           <FaUserEdit />
           <span>Editar perfil</span>
           </Link>
+
+          {isAdmin && (
+            <Link
+              to="/admin/moderacion"
+              className="user-menu-link"
+              onClick={() => setOpen(false)}
+            >
+              <FaShieldAlt style={{ color: "#e0a800" }} />
+              <span>Panel de Moderación</span>
+            </Link>
+          )}
 
           <Link
             to="/cargar-producto"

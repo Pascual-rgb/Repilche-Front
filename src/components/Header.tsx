@@ -13,6 +13,7 @@ import "./styles/Header.css";
 import logo from "../assets/PICHE.png";
 import { useNotificationContext } from "../context/NotificationContext";
 import { useCarritoContext } from "../context/CartContext";
+import { checkIsAdmin } from "../utils/auth";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,12 +24,7 @@ const Header = () => {
   const { getItemQuantity, openCart } = useCarritoContext();
   const { isLoggedIn, user } = useAuthContext();
 
-  const rawUser = user as any;
-  const isAdmin =
-    rawUser?.is_staff ||
-    rawUser?.is_superuser ||
-    rawUser?.role === "admin" ||
-    rawUser?.es_admin;
+  const isAdmin = checkIsAdmin(user);
 
   useEffect(() => {
     const handleScroll = () => {

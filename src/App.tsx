@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import Header from "./components/Header";
 import Cart from "./components/Cart";
@@ -62,6 +62,8 @@ function App() {
 
               <Route element={<AdminRoute />}>
                 <Route path="/admin/moderacion" element={<AdminModeracion />} />
+                <Route path="/admin" element={<Navigate to="/admin/moderacion" replace />} />
+                <Route path="/panel-admin" element={<Navigate to="/admin/moderacion" replace />} />
               </Route>
             </Route>
 
