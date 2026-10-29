@@ -21,6 +21,57 @@ type ExtendedProduct = Products & {
   estado?: string;
 };
 
+const obtenerRutaCategoria = (prod: ExtendedProduct | null): string => {
+  if (!prod) return "/";
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const raw = prod as any;
+  const rawCat = raw.categoria;
+
+  const candidato: unknown =
+    raw.categoria_slug ||
+    prod.categoria_detail?.slug ||
+    (typeof rawCat === "object" ? rawCat?.slug : undefined) ||
+    prod.categoria_nombre ||
+    prod.categoria_detail?.nombre ||
+    (typeof rawCat === "object" ? rawCat?.nombre : undefined) ||
+    (typeof rawCat === "string" ? rawCat : undefined) ||
+    (Array.isArray(prod.cat)
+      ? prod.cat.find(
+        (c) =>
+          typeof c === "string" &&
+          c.trim() !== "" &&
+          c.trim().toLowerCase() !== "general"
+      )
+      : undefined);
+
+  if (typeof candidato !== "string") return "/";
+
+  const limpio = candidato
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+
+  if (!limpio || limpio === "general") return "/";
+
+  const mapaCanonico: Record<string, string> = {
+    remera: "remeras",
+    remeras: "remeras",
+    abrigo: "abrigos",
+    abrigos: "abrigos",
+    pantalon: "pantalones",
+    pantalones: "pantalones",
+    calzado: "calzado",
+    calzados: "calzado",
+    accesorio: "accesorios",
+    accesorios: "accesorios",
+  };
+
+  const slugCategoria = mapaCanonico[limpio] || limpio;
+  return `/products?category=${encodeURIComponent(slugCategoria)}`;
+};
+
 const ProductoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -83,26 +134,63 @@ const ProductoDetail = () => {
               item.img ||
               "/src/data/img/remera-negra-manga-corta.png";
 
+            const rawCat = item.categoria;
+            const catId =
+              item.categoria_id ??
+              (typeof rawCat === "number" ? rawCat : rawCat?.id);
+            let catNombre =
+              item.categoria_nombre ||
+              item.categoria_detail?.nombre ||
+              (typeof rawCat === "string" ? rawCat : rawCat?.nombre) ||
+              "";
+
+            if (!catNombre && catId) {
+              try {
+                let catRes = await fetch(`${apiUrl}/categories/`);
+                if (!catRes.ok) {
+                  catRes = await fetch(`${apiUrl}/categorias/`);
+                }
+                if (catRes.ok) {
+                  const catData = await catRes.json();
+                  const lista = Array.isArray(catData) ? catData : catData?.results || [];
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const encontrada = lista.find((c: any) => Number(c?.id) === Number(catId));
+                  if (encontrada?.nombre) {
+                    catNombre = encontrada.nombre;
+                  }
+                }
+              } catch {
+                // Fallback silencioso si no se pueden consultar categorías
+              }
+            }
+
+            const catList: string[] =
+              Array.isArray(item.cat) && item.cat.length > 0
+                ? item.cat
+                : catNombre
+                  ? [catNombre]
+                  : ["General"];
+
+            if (!isMounted) return;
+
             setProducto({
               id: item.id,
               name: item.name || item.nombre || "Prenda sin nombre",
               descrp: item.descrp || item.descripcion || item.description || "Sin descripción disponible",
               img: itemImg,
               stock: Number(item.stock ?? 1),
-              cat: Array.isArray(item.cat)
-                ? item.cat
-                : item.categoria_detail?.nombre
-                ? [item.categoria_detail.nombre]
-                : typeof item.categoria === "string"
-                ? [item.categoria]
-                : ["General"],
+              cat: catList,
+              categoria: rawCat,
+              categoria_id: catId,
+              categoria_nombre: catNombre,
+              categoria_detail: item.categoria_detail,
               precio: Number(item.precio || item.price || 0),
               vendedor:
                 typeof item.vendedor === "string"
                   ? item.vendedor
                   : item.vendedor?.first_name
-                  ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
-                  : item.vendedor_nombre || "Repilche",
+                    ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
+                    : item.vendedor_nombre || "Repilche",
               vendedor_id:
                 item.vendedor_id ??
                 (typeof item.vendedor === "number"
@@ -159,6 +247,8 @@ const ProductoDetail = () => {
     rawProduct.img ||
     producto.img ||
     placeholder;
+
+  const rutaCategoria = obtenerRutaCategoria(producto);
 
   // Validaciones de negocio: dueño y disponibilidad
   const currentUserId = user?.id;
@@ -262,8 +352,7 @@ const ProductoDetail = () => {
             errorMsg = Object.entries(resData)
               .map(
                 ([k, v]) =>
-                  `${k === "non_field_errors" ? "" : k + ": "}${
-                    Array.isArray(v) ? v.join(", ") : v
+                  `${k === "non_field_errors" ? "" : k + ": "}${Array.isArray(v) ? v.join(", ") : v
                   }`
               )
               .join(" | ");
@@ -345,7 +434,7 @@ const ProductoDetail = () => {
       };
       pedidosGuardados.unshift(nuevoPedido);
       localStorage.setItem("repilche-pedidos", JSON.stringify(pedidosGuardados));
-      fetchNotificaciones().catch(() => {});
+      fetchNotificaciones().catch(() => { });
     } catch (err) {
       console.warn("No se pudo persistir en localStorage:", err);
     }
@@ -383,111 +472,111 @@ const ProductoDetail = () => {
       )}
 
       <section className="producto-detail-container">
-        <Link to="/" className="volver-btn">
-          <FaArrowLeft />
-          Volver a productos
-        </Link>
+          <Link to={rutaCategoria} className="volver-btn">
+            <FaArrowLeft />
+            Volver a productos
+          </Link>
 
-        <div className="producto-detail">
-          <div className="producto-detail-image">
-            <img
-              src={imagen}
-              alt={producto.name as string}
-              onError={(e) => {
-                const target = e.currentTarget;
-                if (!target.src.includes("remera-negra-manga-corta.png")) {
-                  target.src = placeholder;
-                }
-              }}
-            />
-          </div>
-
-          <div className="producto-detail-info">
-            <span className="producto-detail-category">
-              {producto.cat.join(", ")}
-            </span>
-
-            <h1>{producto.name}</h1>
-
-            <p className="producto-detail-description">{producto.descrp}</p>
-
-            <div className="producto-detail-price">${producto.precio}</div>
-
-            <div className="producto-detail-stock">
-              Stock disponible: <strong>{producto.stock}</strong>
+          <div className="producto-detail">
+            <div className="producto-detail-image">
+              <img
+                src={imagen}
+                alt={producto.name as string}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes("remera-negra-manga-corta.png")) {
+                    target.src = placeholder;
+                  }
+                }}
+              />
             </div>
 
-            <div className="producto-detail-seller">
-              <FaUser />
-              <div>
-                <span>Vendedor</span>
-                <strong>{producto.vendedor}</strong>
+            <div className="producto-detail-info">
+              <span className="producto-detail-category">
+                {producto.cat.join(", ")}
+              </span>
+
+              <h1>{producto.name}</h1>
+
+              <p className="producto-detail-description">{producto.descrp}</p>
+
+              <div className="producto-detail-price">${producto.precio}</div>
+
+              <div className="producto-detail-stock">
+                Stock disponible: <strong>{producto.stock}</strong>
+              </div>
+
+              <div className="producto-detail-seller">
+                <FaUser />
+                <div>
+                  <span>Vendedor</span>
+                  <strong>{producto.vendedor}</strong>
+                </div>
+              </div>
+
+              {/* Acciones de compra directa y carrito */}
+              <div className="producto-detail-actions">
+                {esDuenio ? (
+                  <button
+                    type="button"
+                    className="producto-detail-btn-disabled"
+                    disabled
+                    title="No podés comprar un producto que vos mismo publicaste"
+                  >
+                    <FaShieldAlt /> Esta prenda te pertenece
+                  </button>
+                ) : noDisponible ? (
+                  <button
+                    type="button"
+                    className="producto-detail-btn-disabled"
+                    disabled
+                  >
+                    Vendido / No disponible
+                  </button>
+                ) : adquirido ? (
+                  <button
+                    type="button"
+                    className="producto-detail-btn-adquirido"
+                    disabled
+                  >
+                    <FaCheck /> ¡Adquirido!
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="producto-detail-comprar"
+                    onClick={handleComprarClick}
+                    disabled={isCreandoOrden}
+                    style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  >
+                    {isCreandoOrden ? (
+                      <>
+                        <div className="checkout-spinner" style={{ width: "16px", height: "16px", borderWidth: "2px" }} />
+                        <span>Generando orden...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaBolt /> Comprar ahora
+                      </>
+                    )}
+                  </button>
+                )}
+
+                {!esDuenio && !noDisponible && !adquirido && (
+                  <button
+                    type="button"
+                    className="producto-detail-cart"
+                    onClick={() => {
+                      addToCart(producto, 1);
+                      openCart();
+                    }}
+                  >
+                    <FaShoppingCart /> Agregar al carrito
+                  </button>
+                )}
               </div>
             </div>
-
-            {/* Acciones de compra directa y carrito */}
-            <div className="producto-detail-actions">
-              {esDuenio ? (
-                <button
-                  type="button"
-                  className="producto-detail-btn-disabled"
-                  disabled
-                  title="No podés comprar un producto que vos mismo publicaste"
-                >
-                  <FaShieldAlt /> Esta prenda te pertenece
-                </button>
-              ) : noDisponible ? (
-                <button
-                  type="button"
-                  className="producto-detail-btn-disabled"
-                  disabled
-                >
-                  Vendido / No disponible
-                </button>
-              ) : adquirido ? (
-                <button
-                  type="button"
-                  className="producto-detail-btn-adquirido"
-                  disabled
-                >
-                  <FaCheck /> ¡Adquirido!
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="producto-detail-comprar"
-                  onClick={handleComprarClick}
-                  disabled={isCreandoOrden}
-                  style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
-                >
-                  {isCreandoOrden ? (
-                    <>
-                      <div className="checkout-spinner" style={{ width: "16px", height: "16px", borderWidth: "2px" }} />
-                      <span>Generando orden...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FaBolt /> Comprar ahora
-                    </>
-                  )}
-                </button>
-              )}
-
-              {!esDuenio && !noDisponible && !adquirido && (
-                <button
-                  type="button"
-                  className="producto-detail-cart"
-                  onClick={() => {
-                    addToCart(producto, 1);
-                    openCart();
-                  }}
-                >
-                  <FaShoppingCart /> Agregar al carrito
-                </button>
-              )}
-            </div>
           </div>
-        </div>
       </section>
     </main>
   );
