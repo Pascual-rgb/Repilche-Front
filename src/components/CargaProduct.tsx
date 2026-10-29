@@ -179,7 +179,10 @@ const CargaProduct = () => {
         price: precioFinal,
         categoria: categoriaFinal,
         stock: 1,
+        imagen: publicUrl,
         imagen_url: publicUrl,
+        image: publicUrl,
+        img: publicUrl,
       };
 
       console.log('Enviando payload JSON a Django:', payload);

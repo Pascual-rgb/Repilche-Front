@@ -10,12 +10,21 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   if (!product) return null;
 
+  console.log('Datos del producto recibido:', product);
+
   // Manejo seguro con optional chaining y fallbacks
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawProduct = product as any;
   const nombre = product.name || rawProduct.nombre || 'Prenda';
   const precio = product.precio || rawProduct.price || 0;
-  const imagen = product.img || rawProduct.imagen_url || rawProduct.imagen || '/src/data/img/remera-negra-manga-corta.png';
+  const placeholder = '/src/data/img/remera-negra-manga-corta.png';
+  const imagen =
+    rawProduct.imagen_url ||
+    rawProduct.imagen ||
+    rawProduct.image ||
+    rawProduct.img ||
+    product.img ||
+    placeholder;
   
   const categorias = Array.isArray(product.cat)
     ? product.cat.join(', ')
@@ -39,6 +48,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             src={imagen}
             alt={nombre}
             className="product-card-img"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.includes('remera-negra-manga-corta.png')) {
+                target.src = placeholder;
+              }
+            }}
           />
         </div>
 

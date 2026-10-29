@@ -25,7 +25,7 @@ export async function uploadProductImage(file: File): Promise<string> {
   const fileName = `${Date.now()}-${uniqueId}.${extension}`;
   const filePath = `prendas/${fileName}`;
 
-  const { error: uploadError } = await supabase.storage
+  const { data: uploadData, error: uploadError } = await supabase.storage
     .from('productos')
     .upload(filePath, file, {
       cacheControl: '3600',
@@ -37,13 +37,19 @@ export async function uploadProductImage(file: File): Promise<string> {
     throw new Error(`Error al subir la imagen a Supabase Storage: ${uploadError.message}`);
   }
 
+  // Usar uploadData.path asegurando que se solicita la URL para el path exacto subido
+  const targetPath = uploadData?.path || filePath;
+
   const { data: publicUrlData } = supabase.storage
     .from('productos')
-    .getPublicUrl(filePath);
+    .getPublicUrl(targetPath);
 
-  if (!publicUrlData?.publicUrl) {
+  const publicUrl = publicUrlData?.publicUrl;
+
+  if (!publicUrl) {
     throw new Error('No se pudo obtener la URL pública de la imagen subida.');
   }
 
-  return publicUrlData.publicUrl;
+  console.log('URL pública generada en Supabase Storage:', publicUrl);
+  return publicUrl;
 }

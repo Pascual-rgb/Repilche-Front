@@ -28,27 +28,37 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
         const rawList = Array.isArray(data) ? data : data?.results || [];
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const normalizedList: Products[] = rawList.map((item: any, idx: number) => ({
-          id: item?.id ?? idx + 1,
-          name: item?.name || item?.nombre || 'Prenda sin nombre',
-          descrp: item?.descrp || item?.descripcion || item?.description || 'Sin descripción disponible',
-          img: item?.img || item?.imagen_url || item?.imagen || '/src/data/img/remera-negra-manga-corta.png',
-          stock: Number(item?.stock ?? 1),
-          cat: Array.isArray(item?.cat)
-            ? item.cat
-            : item?.categoria_detail?.nombre
-            ? [item.categoria_detail.nombre]
-            : typeof item?.categoria === 'string'
-            ? [item.categoria]
-            : ['General'],
-          precio: Number(item?.precio || item?.price || 0),
-          vendedor:
-            typeof item?.vendedor === 'string'
-              ? item.vendedor
-              : item?.vendedor?.first_name
-              ? `${item.vendedor.first_name} ${item.vendedor.last_name || ''}`.trim()
-              : item?.vendedor_nombre || 'Repilche',
-        }));
+        const normalizedList: Products[] = rawList.map((item: any, idx: number) => {
+          console.log('Datos del producto recibido:', item);
+          const itemImg =
+            item?.imagen_url ||
+            item?.imagen ||
+            item?.image ||
+            item?.img ||
+            '/src/data/img/remera-negra-manga-corta.png';
+
+          return {
+            id: item?.id ?? idx + 1,
+            name: item?.name || item?.nombre || 'Prenda sin nombre',
+            descrp: item?.descrp || item?.descripcion || item?.description || 'Sin descripción disponible',
+            img: itemImg,
+            stock: Number(item?.stock ?? 1),
+            cat: Array.isArray(item?.cat)
+              ? item.cat
+              : item?.categoria_detail?.nombre
+              ? [item.categoria_detail.nombre]
+              : typeof item?.categoria === 'string'
+              ? [item.categoria]
+              : ['General'],
+            precio: Number(item?.precio || item?.price || 0),
+            vendedor:
+              typeof item?.vendedor === 'string'
+                ? item.vendedor
+                : item?.vendedor?.first_name
+                ? `${item.vendedor.first_name} ${item.vendedor.last_name || ''}`.trim()
+                : item?.vendedor_nombre || 'Repilche',
+          };
+        });
 
         if (isMounted && normalizedList.length > 0) {
           setProducts(normalizedList);
@@ -122,8 +132,20 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
       >
         <div className="product-list-img-box">
           <img
-            src={currentProduct.img || '/src/data/img/remera-negra-manga-corta.png'}
+            src={
+              (currentProduct as any)?.imagen_url ||
+              (currentProduct as any)?.imagen ||
+              (currentProduct as any)?.image ||
+              currentProduct.img ||
+              '/src/data/img/remera-negra-manga-corta.png'
+            }
             alt={currentProduct.name || 'Prenda'}
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.includes('remera-negra-manga-corta.png')) {
+                target.src = '/src/data/img/remera-negra-manga-corta.png';
+              }
+            }}
           />
         </div>
         <div className="product-list-details">
