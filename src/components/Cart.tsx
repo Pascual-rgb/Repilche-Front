@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCarritoContext } from "../context/CartContext";
 import { useAuthContext } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
@@ -7,8 +8,9 @@ import ModalPagoTransferencia from "./ModalPagoTransferencia";
 import "./styles/Cart.css";
 
 export default function Cart() {
+  const navigate = useNavigate();
   const { carrito, removeItem, getTotalPrice, isCartOpen, closeCart, emptyCart } = useCarritoContext();
-  const { user } = useAuthContext();
+  const { user, isLoggedIn } = useAuthContext();
   const { fetchNotificaciones } = useNotificationContext();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isCreandoOrden, setIsCreandoOrden] = useState(false);
@@ -22,6 +24,15 @@ export default function Cart() {
 
   const handleProcederPago = async () => {
     if (carrito.length === 0) return;
+
+    // Lazy Auth: Interceptar usuario anónimo y redirigir a Login conservando el carrito intacto
+    if (!isLoggedIn) {
+      sessionStorage.setItem("repilche-return-url", window.location.pathname + window.location.search);
+      closeCart();
+      navigate("/login", { state: { from: window.location.pathname } });
+      return;
+    }
+
     setIsCreandoOrden(true);
 
     const token = localStorage.getItem("repilche-token");

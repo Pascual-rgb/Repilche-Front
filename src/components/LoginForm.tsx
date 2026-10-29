@@ -42,7 +42,13 @@ const LoginForm = () => {
             });
             
             setTimeout(() => {
-                navigate("/");
+                const returnUrl = sessionStorage.getItem("repilche-return-url");
+                if (returnUrl) {
+                    sessionStorage.removeItem("repilche-return-url");
+                    navigate(returnUrl);
+                } else {
+                    navigate("/");
+                }
                 formRef.current?.reset();
             }, 2000);
 

@@ -43,22 +43,25 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<RegistroForm />} />
 
+            {/* Rutas públicas: navegación y catálogo libres sin login */}
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/producto/:id" element={<ProductoDetail />} />
+            <Route path="/contact" element={<Contact />} />
+
+            {/* Rutas estrictamente protegidas: requieren autenticación previa */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/producto/:id" element={<ProductoDetail />} />
               <Route path="/cargar-producto" element={<CargaProduct />} />
               <Route path="/cargaProduct" element={<CargaProduct />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/user" element={<User />} />
-              <Route path="/notifications" element={<Notis />} />
-              <Route path="/notis" element={<Notis />} />
               <Route path="/ser-vendedor" element={<SerVendedor />} />
               <Route path="/serVendedor" element={<SerVendedor />} />
               <Route path="/editar-perfil" element={<EditarPerfil />} />
               <Route path="/mis-productos" element={<MisProductos />} />
               <Route path="/mis-compras" element={<MisCompras />} />
               <Route path="/mis-ventas" element={<MisVentas />} />
+              <Route path="/user" element={<User />} />
+              <Route path="/notifications" element={<Notis />} />
+              <Route path="/notis" element={<Notis />} />
 
               <Route element={<AdminRoute />}>
                 <Route path="/admin/moderacion" element={<AdminModeracion />} />
@@ -67,7 +70,7 @@ function App() {
               </Route>
             </Route>
 
-            <Route path="*" element={<Login />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </ErrorBoundary>
       </main>

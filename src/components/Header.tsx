@@ -66,18 +66,17 @@ const Header = () => {
 
         {/* ICONOS */}
         <div className="desktop-icons">
-          
-              <button className="header-icon search-toggle" aria-label="Buscar" onClick={() => setSearchOpen(!searchOpen)}>
-                {searchOpen ? <FaTimes /> : <FaSearch />}
-              </button>
+          <button className="header-icon search-toggle" aria-label="Buscar" onClick={() => setSearchOpen(!searchOpen)}>
+            {searchOpen ? <FaTimes /> : <FaSearch />}
+          </button>
 
-            {isLoggedIn ? (
+          <button className="header-icon cart" aria-label="Ir al carrito" onClick={openCart}>
+            <FaShoppingCart />
+            {getItemQuantity() > 0 && <span className="badge">{getItemQuantity()}</span>}
+          </button>
+
+          {isLoggedIn ? (
             <>
-              <button className="header-icon cart" aria-label="Ir al carrito" onClick={openCart}>
-                <FaShoppingCart />
-                {getItemQuantity() > 0 && <span className="badge">{getItemQuantity()}</span>}
-              </button>
-
               <Link to="/notifications" className="header-icon notification" aria-label="Ir a notificaciones">
                 <FaBell />
                 {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
@@ -94,20 +93,17 @@ const Header = () => {
         </div>
 
         {/* MENÚ MÓVIL */}
-        {isLoggedIn && (
-          <button
-            className="mobile-menu"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Abrir menú"
-          >
-            {menuOpen ? <FaTimes /> : <FaBars />}
-          </button>
-        )}
+        <button
+          className="mobile-menu"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Abrir menú"
+        >
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </button>
       </div>
 
       {/* NAVBAR */}
-      {isLoggedIn && (
-        <nav className={`navbar ${menuOpen ? "open" : ""}`}>
+      <nav className={`navbar ${menuOpen ? "open" : ""}`}>
           <Link to="/" onClick={() => setMenuOpen(false)}>Inicio</Link>
           <Link to="/products?category=remeras" onClick={() => setMenuOpen(false)}>Remeras</Link>
           <Link to="/products?category=abrigos" onClick={() => setMenuOpen(false)}>Abrigos</Link>
@@ -126,7 +122,6 @@ const Header = () => {
             </Link>
           )}
         </nav>
-      )}
     </header>
   );
 };
