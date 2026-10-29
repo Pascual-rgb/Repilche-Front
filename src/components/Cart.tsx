@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useCarritoContext } from "../context/CartContext";
 import { useAuthContext } from "../context/AuthContext";
+import { useNotificationContext } from "../context/NotificationContext";
 import { FaTimes, FaTrash } from "react-icons/fa";
 import ModalPagoTransferencia from "./ModalPagoTransferencia";
 import "./styles/Cart.css";
@@ -8,6 +9,7 @@ import "./styles/Cart.css";
 export default function Cart() {
   const { carrito, removeItem, getTotalPrice, isCartOpen, closeCart, emptyCart } = useCarritoContext();
   const { user } = useAuthContext();
+  const { fetchNotificaciones } = useNotificationContext();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isCreandoOrden, setIsCreandoOrden] = useState(false);
   const [datosCheckout, setDatosCheckout] = useState<{
@@ -137,6 +139,7 @@ export default function Cart() {
 
     // 3. Vaciar carrito de inmediato tras tocar 'Ya transferí'
     emptyCart();
+    fetchNotificaciones().catch(() => {});
   };
 
   const handleCloseCheckout = () => {

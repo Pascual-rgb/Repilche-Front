@@ -22,6 +22,8 @@ interface NotificationContextType {
   noLeidas: number;
   loading: boolean;
   fetchNotifications: () => Promise<void>;
+  fetchNotificaciones: () => Promise<void>;
+  recargarNotificaciones: () => Promise<void>;
   markAsRead: (id: number) => Promise<void>;
   marcarComoLeida: (id: number) => Promise<void>;
   markAllAsRead: () => Promise<void>;
@@ -104,7 +106,18 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     fetchNotifications();
-  }, [fetchNotifications]);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && isLoggedIn) {
+        fetchNotifications();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [fetchNotifications, isLoggedIn]);
 
   const markAsRead = async (id: number) => {
     // Actualización optimista del estado local en React
@@ -203,6 +216,8 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         noLeidas,
         loading,
         fetchNotifications,
+        fetchNotificaciones: fetchNotifications,
+        recargarNotificaciones: fetchNotifications,
         markAsRead,
         marcarComoLeida: markAsRead,
         markAllAsRead,

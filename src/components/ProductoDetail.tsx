@@ -12,6 +12,7 @@ import {
 import type { Products } from "../data/products";
 import { useCarritoContext } from "../context/CartContext";
 import { useAuthContext } from "../context/AuthContext";
+import { useNotificationContext } from "../context/NotificationContext";
 import ModalPagoTransferencia from "./ModalPagoTransferencia";
 import "./styles/ProductoDetail.css";
 
@@ -25,6 +26,7 @@ const ProductoDetail = () => {
   const navigate = useNavigate();
   const { addToCart, openCart } = useCarritoContext();
   const { isLoggedIn, user } = useAuthContext();
+  const { fetchNotificaciones } = useNotificationContext();
 
   const [producto, setProducto] = useState<ExtendedProduct | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -343,6 +345,7 @@ const ProductoDetail = () => {
       };
       pedidosGuardados.unshift(nuevoPedido);
       localStorage.setItem("repilche-pedidos", JSON.stringify(pedidosGuardados));
+      fetchNotificaciones().catch(() => {});
     } catch (err) {
       console.warn("No se pudo persistir en localStorage:", err);
     }

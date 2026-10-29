@@ -4,6 +4,7 @@ import { FaCheck, FaCloudUploadAlt, FaEdit, FaTrash, FaSpinner, FaExclamationTri
 import ImageUploadingComponent, { type ImageListType } from 'react-images-uploading';
 import FeedbackCard from './FeedbackCard';
 import { uploadProductImage } from '../services/storageService';
+import { useNotificationContext } from '../context/NotificationContext';
 import './styles/CargaProduct.css';
 
 // Compatibilidad interop ESM / CJS para Vite/Rollup
@@ -38,6 +39,7 @@ const CargaProduct = () => {
 
   const formRef = useRef<HTMLFormElement>(null);
   const apiUrl = import.meta.env.VITE_API_URL || 'https://repilche-backend.onrender.com/api';
+  const { fetchNotificaciones } = useNotificationContext();
 
   useEffect(() => {
     let isMounted = true;
@@ -215,6 +217,7 @@ const CargaProduct = () => {
       // 4. Tras el 201 Created (o respuesta exitosa)
       limpiarFormulario();
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      fetchNotificaciones().catch(() => {});
 
       if (tipo === 'crear_otra') {
         setModalTipo(null);
