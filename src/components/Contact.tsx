@@ -112,4 +112,5 @@ const Contact = () => {
   );
 };
 
+export const Footer = Contact;
 export default Contact;
