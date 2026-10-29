@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCarritoContext } from "../context/CartContext";
 import { FaTimes, FaTrash } from "react-icons/fa";
-import CheckoutModal from "./CheckoutModal";
+import ModalPagoTransferencia from "./ModalPagoTransferencia";
 import "./styles/Cart.css";
 
 export default function Cart() {
@@ -75,11 +75,11 @@ export default function Cart() {
       )}
 
       {isCheckoutOpen && (
-        <CheckoutModal
+        <ModalPagoTransferencia
           isOpen={isCheckoutOpen}
           onClose={handleCloseCheckout}
-          totalPrice={checkoutTotal}
-          onConfirmOrder={handleConfirmarPedido}
+          monto={checkoutTotal}
+          onConfirmarTransferencia={handleConfirmarPedido}
         />
       )}
     </>
