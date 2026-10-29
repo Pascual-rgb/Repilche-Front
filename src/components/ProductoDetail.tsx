@@ -280,8 +280,8 @@ const ProductoDetail = () => {
       const pedidoId = resData?.pedido_id ?? resData?.id;
       const total = Number(resData?.total ?? resData?.monto ?? producto.precio);
       const codigoSecreto = resData?.codigo_secreto ?? resData?.codigo ?? resData?.codigo_retiro;
-      const aliasTransferencia = resData?.alias_transferencia || "repilche.oficial.mp";
-      const titular = resData?.titular || "Repilche Moda Circular";
+      const aliasTransferencia = resData?.alias_transferencia || "repilche";
+      const titular = resData?.titular || "Maia Hernandez";
 
       setDatosCheckout({
         pedidoId,
@@ -300,8 +300,8 @@ const ProductoDetail = () => {
         pedidoId: Date.now(),
         total: Number(producto.precio),
         codigoSecreto: codigoFallback,
-        alias: "repilche.oficial.mp",
-        titular: "Repilche Moda Circular",
+        alias: "repilche",
+        titular: "Maia Hernandez",
       });
       setShowModalTransferencia(true);
     } finally {

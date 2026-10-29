@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTimes, FaShieldAlt, FaCheck, FaCopy, FaKey } from "react-icons/fa";
+import { FaTimes, FaCheck, FaCopy, FaKey } from "react-icons/fa";
 import { useCarritoContext } from "../context/CartContext";
 import "./styles/CheckoutModal.css";
 
-export const ALIAS_OFICIAL = "repilche.oficial.mp";
-export const TITULAR_OFICIAL = "Repilche Moda Circular";
+export const ALIAS_OFICIAL = "repilche";
+export const TITULAR_OFICIAL = "Maia Hernandez";
 
 export interface ModalPagoTransferenciaProps {
   isOpen: boolean;
@@ -189,13 +189,6 @@ export default function ModalPagoTransferencia({
               <span className="checkout-alias-titular">
                 Titular: {titular}
               </span>
-            </div>
-
-            <div className="checkout-escrow-badge">
-              <FaShieldAlt />
-              <div>
-                <strong>Protección C2C Repilche:</strong> El dinero permanece en custodia y no se le entrega al vendedor hasta que te encuentres con él y le muestres tu código de seguridad tras revisar la prenda.
-              </div>
             </div>
 
             {error && (

@@ -69,8 +69,8 @@ export default function Cart() {
       const pedidoId = resData?.pedido_id ?? resData?.id;
       const total = Number(resData?.total ?? resData?.monto ?? totalLocal);
       const codigoSecreto = resData?.codigo_secreto ?? resData?.codigo ?? String(Math.floor(100000 + Math.random() * 900000));
-      const alias = resData?.alias_transferencia || "repilche.oficial.mp";
-      const titular = resData?.titular || "Repilche Moda Circular";
+      const alias = resData?.alias_transferencia || "repilche";
+      const titular = resData?.titular || "Maia Hernandez";
 
       setDatosCheckout({
         pedidoId,
@@ -89,8 +89,8 @@ export default function Cart() {
         pedidoId: Date.now(),
         total: totalLocal,
         codigoSecreto: String(Math.floor(100000 + Math.random() * 900000)),
-        alias: "repilche.oficial.mp",
-        titular: "Repilche Moda Circular",
+        alias: "repilche",
+        titular: "Maia Hernandez",
       });
       closeCart();
       setIsCheckoutOpen(true);
