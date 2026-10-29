@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTimes, FaShieldAlt, FaCheck, FaCopy } from "react-icons/fa";
+import { FaTimes, FaShieldAlt, FaCheck, FaCopy, FaKey } from "react-icons/fa";
 import "./styles/CheckoutModal.css";
 
-export const ALIAS_OFICIAL = "REPILCHE.OFICIAL";
-export const TITULAR_OFICIAL = "Repilche Marketplace | Cuenta de Custodia Oficial";
+export const ALIAS_OFICIAL = "repilche.oficial.mp";
+export const TITULAR_OFICIAL = "Repilche Moda Circular";
 
 export interface ModalPagoTransferenciaProps {
   isOpen: boolean;
@@ -12,7 +12,9 @@ export interface ModalPagoTransferenciaProps {
   monto: number;
   alias?: string;
   titular?: string;
-  onConfirmarTransferencia: () => Promise<void> | void;
+  codigoSecreto?: string;
+  pedidoId?: number | string;
+  onConfirmarTransferencia?: () => Promise<void> | void;
 }
 
 export default function ModalPagoTransferencia({
@@ -21,10 +23,13 @@ export default function ModalPagoTransferencia({
   monto,
   alias = ALIAS_OFICIAL,
   titular = TITULAR_OFICIAL,
+  codigoSecreto,
+  pedidoId,
   onConfirmarTransferencia,
 }: ModalPagoTransferenciaProps) {
   const [paso, setPaso] = useState<1 | 2>(1);
   const [copiado, setCopiado] = useState(false);
+  const [codigoCopiado, setCodigoCopiado] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +40,7 @@ export default function ModalPagoTransferencia({
     if (isOpen) {
       setPaso(1);
       setCopiado(false);
+      setCodigoCopiado(false);
       setIsSubmitting(false);
       setError(null);
     }
@@ -46,6 +52,7 @@ export default function ModalPagoTransferencia({
     if (isSubmitting) return;
     setPaso(1);
     setCopiado(false);
+    setCodigoCopiado(false);
     setError(null);
     onClose();
   };
@@ -68,12 +75,31 @@ export default function ModalPagoTransferencia({
     }
   };
 
+  const handleCopyCodigo = async () => {
+    if (!codigoSecreto) return;
+    try {
+      await navigator.clipboard.writeText(codigoSecreto);
+      setCodigoCopiado(true);
+      setTimeout(() => setCodigoCopiado(false), 2200);
+    } catch (err) {
+      console.error("Error al copiar código al portapapeles:", err);
+    }
+  };
+
   const handleConfirmar = async () => {
+    if (isSubmitting) return;
     setError(null);
     setIsSubmitting(true);
 
     try {
-      await onConfirmarTransferencia();
+      // Ejecutar la confirmación/limpieza de carrito si existe
+      if (onConfirmarTransferencia) {
+        await onConfirmarTransferencia();
+      }
+
+      // Temporizador de 2.8 segundos (entre 2.5 y 3s) con spinner de verificación
+      await new Promise((resolve) => setTimeout(resolve, 2800));
+
       setPaso(2);
     } catch (err: unknown) {
       console.error("Error al confirmar transferencia:", err);
@@ -122,6 +148,11 @@ export default function ModalPagoTransferencia({
             <div className="checkout-modal-header">
               <h2 id="transferencia-modal-title">Completá tu transferencia</h2>
               <p>Tus fondos quedan protegidos por Repilche hasta que retires tu prenda mano a mano.</p>
+              {pedidoId && (
+                <small style={{ display: "block", marginTop: "4px", color: "#888", fontSize: "12px" }}>
+                  Orden #{pedidoId}
+                </small>
+              )}
             </div>
 
             <div className="checkout-monto-card">
@@ -185,10 +216,10 @@ export default function ModalPagoTransferencia({
               {isSubmitting ? (
                 <>
                   <div className="checkout-spinner" style={{ width: "18px", height: "18px", borderWidth: "2px" }}></div>
-                  <span>Registrando pedido...</span>
+                  <span>Verificando transferencia...</span>
                 </>
               ) : (
-                "Ya realicé la transferencia"
+                "Ya transferí"
               )}
             </button>
           </>
@@ -198,10 +229,45 @@ export default function ModalPagoTransferencia({
               <FaCheck />
             </div>
 
-            <div className="checkout-modal-header" style={{ textAlign: "center", marginBottom: "20px" }}>
+            <div className="checkout-modal-header" style={{ textAlign: "center", marginBottom: "16px" }}>
               <h2>¡Pedido recibido con éxito!</h2>
               <p>Tu compra quedó registrada en estado de verificación y custodia segura.</p>
+              {pedidoId && (
+                <span style={{ fontSize: "13px", color: "#666", fontWeight: 600 }}>
+                  Orden identificadora: #{pedidoId}
+                </span>
+              )}
             </div>
+
+            {codigoSecreto && (
+              <div
+                className={`checkout-codigo-box ${codigoCopiado ? "copiado" : ""}`}
+                onClick={handleCopyCodigo}
+                title="Hacé click para copiar el código secreto"
+                role="button"
+                tabIndex={0}
+                style={{
+                  background: "#fdfae8",
+                  border: "2px dashed #f6c417",
+                  borderRadius: "14px",
+                  padding: "16px",
+                  textAlign: "center",
+                  cursor: "pointer",
+                  margin: "16px 0",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#8c6b04", fontWeight: 700 }}>
+                  <FaKey /> {codigoCopiado ? "¡Código copiado!" : "Código de seguridad para entrega (Click para copiar)"}
+                </span>
+                <strong style={{ display: "block", fontSize: "28px", letterSpacing: "4px", margin: "6px 0", color: "#1a1a1a", fontFamily: "'Viga', sans-serif" }}>
+                  {codigoSecreto}
+                </strong>
+                <small style={{ display: "block", color: "#666", fontSize: "12px" }}>
+                  Guardalo o consultalo luego en la sección <strong>Mis Compras</strong>.
+                </small>
+              </div>
+            )}
 
             <div className="checkout-timeline">
               <div className="checkout-timeline-item">
@@ -221,7 +287,7 @@ export default function ModalPagoTransferencia({
               <div className="checkout-timeline-item">
                 <div className="checkout-timeline-num">3</div>
                 <div className="checkout-timeline-content">
-                  <strong>Entrega protegida:</strong> En la sección <strong>Mis Compras</strong> vas a tener tu código de seguridad de 6 dígitos para mostrarle al vendedor al retirar la prenda.
+                  <strong>Entrega protegida:</strong> En la sección <strong>Mis Compras</strong> vas a tener tu código de seguridad para mostrarle al vendedor al retirar la prenda.
                 </div>
               </div>
             </div>

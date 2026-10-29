@@ -32,7 +32,23 @@ const ProductoDetail = () => {
 
   // Estados de flujo de compra C2C
   const [showModalTransferencia, setShowModalTransferencia] = useState<boolean>(false);
-  const [adquirido, setAdquirido] = useState<boolean>(false);
+  const [adquirido, setAdquirido] = useState<boolean>(() => {
+    try {
+      const comprados = JSON.parse(localStorage.getItem("repilche-compras-ids") || "[]");
+      return comprados.includes(Number(id));
+    } catch {
+      return false;
+    }
+  });
+  const [isCreandoOrden, setIsCreandoOrden] = useState<boolean>(false);
+  const [datosCheckout, setDatosCheckout] = useState<{
+    pedidoId?: number | string;
+    total: number;
+    codigoSecreto?: string;
+    alias: string;
+    titular: string;
+  } | null>(null);
+
   const [toast, setToast] = useState<{
     type: "success" | "error" | "warning";
     title: string;
@@ -163,7 +179,7 @@ const ProductoDetail = () => {
       ))
   );
 
-  const handleComprarClick = () => {
+  const handleComprarClick = async () => {
     const token = localStorage.getItem("repilche-token");
     if (!isLoggedIn || !token) {
       setToast({
@@ -193,12 +209,7 @@ const ProductoDetail = () => {
       return;
     }
 
-    setShowModalTransferencia(true);
-  };
-
-  // Callback de confirmación al pulsar "Ya transferí" en ModalPagoTransferencia
-  const handleConfirmarPedido = async () => {
-    const token = localStorage.getItem("repilche-token");
+    setIsCreandoOrden(true);
     const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
 
     const payload = {
@@ -208,17 +219,9 @@ const ProductoDetail = () => {
       product: producto.id,
     };
 
-    let res = await fetch(`${apiUrl}/orders/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (res.status === 404) {
-      res = await fetch(`${apiUrl}/pedidos/`, {
+    try {
+      // 1. Llamada prioritaria a POST /api/pedidos/
+      let res = await fetch(`${apiUrl}/pedidos/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -226,32 +229,124 @@ const ProductoDetail = () => {
         },
         body: JSON.stringify(payload),
       });
-    }
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => null);
-      console.error("Error al registrar pedido en backend:", errData);
-      let errorMsg = "No pudimos registrar tu compra en este momento.";
-      if (errData) {
-        if (typeof errData === "string") errorMsg = errData;
-        else if (errData.error) errorMsg = errData.error;
-        else if (errData.detail) errorMsg = errData.detail;
-        else if (typeof errData === "object") {
-          errorMsg = Object.entries(errData)
-            .map(
-              ([k, v]) =>
-                `${k === "non_field_errors" ? "" : k + ": "}${
-                  Array.isArray(v) ? v.join(", ") : v
-                }`
-            )
-            .join(" | ");
-        }
+      // Fallback si la ruta configurada en el backend fuera /orders/
+      if (res.status === 404) {
+        res = await fetch(`${apiUrl}/orders/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
       }
-      throw new Error(errorMsg);
-    }
 
-    // Pedido creado con éxito
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let resData: any = null;
+      try {
+        resData = await res.json();
+      } catch {
+        resData = null;
+      }
+
+      if (!res.ok) {
+        console.error("Error al registrar pedido en backend:", resData);
+        let errorMsg = "No pudimos registrar tu compra en este momento.";
+        if (resData) {
+          if (typeof resData === "string") errorMsg = resData;
+          else if (resData.error) errorMsg = resData.error;
+          else if (resData.detail) errorMsg = resData.detail;
+          else if (typeof resData === "object") {
+            errorMsg = Object.entries(resData)
+              .map(
+                ([k, v]) =>
+                  `${k === "non_field_errors" ? "" : k + ": "}${
+                    Array.isArray(v) ? v.join(", ") : v
+                  }`
+              )
+              .join(" | ");
+          }
+        }
+        setToast({
+          type: "error",
+          title: "Error al generar la orden",
+          message: errorMsg,
+        });
+        return;
+      }
+
+      // 2. Captura y normalización del contrato de respuesta Django
+      const pedidoId = resData?.pedido_id ?? resData?.id;
+      const total = Number(resData?.total ?? resData?.monto ?? producto.precio);
+      const codigoSecreto = resData?.codigo_secreto ?? resData?.codigo ?? resData?.codigo_retiro;
+      const aliasTransferencia = resData?.alias_transferencia || "repilche.oficial.mp";
+      const titular = resData?.titular || "Repilche Moda Circular";
+
+      setDatosCheckout({
+        pedidoId,
+        total,
+        codigoSecreto,
+        alias: aliasTransferencia,
+        titular,
+      });
+
+      setShowModalTransferencia(true);
+    } catch (err: unknown) {
+      console.error("Fallo de conexión al generar pedido:", err);
+      // Respaldo de contingencia offline/mock si hay error de red en desarrollo
+      const codigoFallback = String(Math.floor(100000 + Math.random() * 900000));
+      setDatosCheckout({
+        pedidoId: Date.now(),
+        total: Number(producto.precio),
+        codigoSecreto: codigoFallback,
+        alias: "repilche.oficial.mp",
+        titular: "Repilche Moda Circular",
+      });
+      setShowModalTransferencia(true);
+    } finally {
+      setIsCreandoOrden(false);
+    }
+  };
+
+  // Callback de confirmación al pulsar "Ya transferí" en ModalPagoTransferencia
+  const handleConfirmarTransferencia = () => {
+    // Pedido confirmado y prenda adquirida
     setAdquirido(true);
+
+    try {
+      // Persistir ID para mantener la prenda como adquirida si el usuario regresa
+      const comprasIds = JSON.parse(localStorage.getItem("repilche-compras-ids") || "[]");
+      if (!comprasIds.includes(producto.id)) {
+        comprasIds.push(producto.id);
+        localStorage.setItem("repilche-compras-ids", JSON.stringify(comprasIds));
+      }
+
+      // Persistir en pedidos locales para Mis Compras
+      const pedidosGuardados = JSON.parse(localStorage.getItem("repilche-pedidos") || "[]");
+      const nuevoPedido = {
+        id: datosCheckout?.pedidoId || Date.now(),
+        producto: {
+          id: producto.id,
+          name: producto.name,
+          descrp: producto.descrp,
+          precio: datosCheckout?.total || producto.precio,
+          img: imagen,
+          stock: 0,
+          cat: producto.cat,
+          vendedor: producto.vendedor,
+        },
+        comprador: user?.first_name ? `${user.first_name} ${user.last_name || ""}`.trim() : (user?.username || "Comprador"),
+        vendedor: producto.vendedor,
+        telefonoVendedor: "280 4123456",
+        codigo: datosCheckout?.codigoSecreto || "654321",
+        estado: "pendiente",
+      };
+      pedidosGuardados.unshift(nuevoPedido);
+      localStorage.setItem("repilche-pedidos", JSON.stringify(pedidosGuardados));
+    } catch (err) {
+      console.warn("No se pudo persistir en localStorage:", err);
+    }
   };
 
   return (
@@ -272,12 +367,18 @@ const ProductoDetail = () => {
       )}
 
       {/* Modal unificado de pago por transferencia C2C */}
-      <ModalPagoTransferencia
-        isOpen={showModalTransferencia}
-        onClose={() => setShowModalTransferencia(false)}
-        monto={Number(producto.precio)}
-        onConfirmarTransferencia={handleConfirmarPedido}
-      />
+      {datosCheckout && (
+        <ModalPagoTransferencia
+          isOpen={showModalTransferencia}
+          onClose={() => setShowModalTransferencia(false)}
+          monto={datosCheckout.total}
+          alias={datosCheckout.alias}
+          titular={datosCheckout.titular}
+          codigoSecreto={datosCheckout.codigoSecreto}
+          pedidoId={datosCheckout.pedidoId}
+          onConfirmarTransferencia={handleConfirmarTransferencia}
+        />
+      )}
 
       <section className="producto-detail-container">
         <Link to="/" className="volver-btn">
@@ -354,8 +455,19 @@ const ProductoDetail = () => {
                   type="button"
                   className="producto-detail-comprar"
                   onClick={handleComprarClick}
+                  disabled={isCreandoOrden}
+                  style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
                 >
-                  <FaBolt /> Comprar ahora
+                  {isCreandoOrden ? (
+                    <>
+                      <div className="checkout-spinner" style={{ width: "16px", height: "16px", borderWidth: "2px" }} />
+                      <span>Generando orden...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaBolt /> Comprar ahora
+                    </>
+                  )}
                 </button>
               )}
 

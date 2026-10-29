@@ -4,7 +4,14 @@ import "./styles/MisListas.css";
 
 const MisCompras = () => {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const compras = pedidosMock;
+  const compras = (() => {
+    try {
+      const guardados = JSON.parse(localStorage.getItem("repilche-pedidos") || "[]");
+      return [...guardados, ...pedidosMock];
+    } catch {
+      return pedidosMock;
+    }
+  })();
 
   const handleCopy = async (code: string) => {
     try {
