@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTimes, FaShieldAlt, FaCheck, FaCopy, FaKey } from "react-icons/fa";
+import { useCarritoContext } from "../context/CartContext";
 import "./styles/CheckoutModal.css";
 
 export const ALIAS_OFICIAL = "repilche.oficial.mp";
@@ -34,6 +35,7 @@ export default function ModalPagoTransferencia({
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const { emptyCart } = useCarritoContext();
 
   // Resetear estados al abrir el modal
   useEffect(() => {
@@ -92,14 +94,15 @@ export default function ModalPagoTransferencia({
     setIsSubmitting(true);
 
     try {
-      // Ejecutar la confirmación/limpieza de carrito si existe
+      // 1. Ejecutar callback previo si existe
       if (onConfirmarTransferencia) {
         await onConfirmarTransferencia();
       }
 
-      // Temporizador de 2.8 segundos (entre 2.5 y 3s) con spinner de verificación
+      // 2. Simula la espera con timer de 2.5 a 3 segundos (2800ms) mostrando "Verificando comprobante con la red bancaria..."
       await new Promise((resolve) => setTimeout(resolve, 2800));
 
+      // 3. Cambiar a estado de éxito con fondos en custodia
       setPaso(2);
     } catch (err: unknown) {
       console.error("Error al confirmar transferencia:", err);
@@ -111,6 +114,12 @@ export default function ModalPagoTransferencia({
   };
 
   const handleIrAMisCompras = () => {
+    // 5. Limpia el carrito si la compra provino de allí y redirige a /mis-compras
+    try {
+      emptyCart();
+    } catch (err) {
+      console.warn("Error vaciando carrito al ir a Mis Compras:", err);
+    }
     handleClose();
     navigate("/mis-compras");
   };
@@ -216,7 +225,7 @@ export default function ModalPagoTransferencia({
               {isSubmitting ? (
                 <>
                   <div className="checkout-spinner" style={{ width: "18px", height: "18px", borderWidth: "2px" }}></div>
-                  <span>Verificando transferencia...</span>
+                  <span>Verificando comprobante con la red bancaria...</span>
                 </>
               ) : (
                 "Ya transferí"
@@ -225,18 +234,12 @@ export default function ModalPagoTransferencia({
           </>
         ) : (
           <>
-            <div className="checkout-exito-icon" style={{ background: "#e8f5e9", color: "#2e7d32", margin: "10px auto 16px" }}>
+            <div className="checkout-exito-icon" style={{ background: "#e8f5e9", color: "#2e7d32", margin: "8px auto 14px" }}>
               <FaCheck />
             </div>
 
             <div className="checkout-modal-header" style={{ textAlign: "center", marginBottom: "16px" }}>
-              <h2>¡Pedido recibido con éxito!</h2>
-              <p>Tu compra quedó registrada en estado de verificación y custodia segura.</p>
-              {pedidoId && (
-                <span style={{ fontSize: "13px", color: "#666", fontWeight: 600 }}>
-                  Orden identificadora: #{pedidoId}
-                </span>
-              )}
+              <h2>¡Transferencia registrada!</h2>
             </div>
 
             {codigoSecreto && (
@@ -246,59 +249,74 @@ export default function ModalPagoTransferencia({
                 title="Hacé click para copiar el código secreto"
                 role="button"
                 tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleCopyCodigo();
+                  }
+                }}
                 style={{
-                  background: "#fdfae8",
-                  border: "2px dashed #f6c417",
+                  background: codigoCopiado ? "#eef7ee" : "#fdfae8",
+                  border: `2px dashed ${codigoCopiado ? "#2e7d32" : "#f6c417"}`,
                   borderRadius: "14px",
-                  padding: "16px",
+                  padding: "16px 20px",
                   textAlign: "center",
                   cursor: "pointer",
-                  margin: "16px 0",
+                  margin: "12px 0 18px",
                   transition: "all 0.2s ease",
+                  userSelect: "none",
                 }}
               >
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#8c6b04", fontWeight: 700 }}>
-                  <FaKey /> {codigoCopiado ? "¡Código copiado!" : "Código de seguridad para entrega (Click para copiar)"}
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "13px",
+                    color: codigoCopiado ? "#2e7d32" : "#8c6b04",
+                    fontWeight: 700,
+                  }}
+                >
+                  <FaKey /> {codigoCopiado ? "¡Código copiado al portapapeles!" : "Código de retiro (Click para copiar)"}
                 </span>
-                <strong style={{ display: "block", fontSize: "28px", letterSpacing: "4px", margin: "6px 0", color: "#1a1a1a", fontFamily: "'Viga', sans-serif" }}>
+                <strong
+                  style={{
+                    display: "block",
+                    fontSize: "34px",
+                    letterSpacing: "6px",
+                    margin: "6px 0 2px",
+                    color: "#1a1a1a",
+                    fontFamily: "'Viga', sans-serif",
+                  }}
+                >
                   {codigoSecreto}
                 </strong>
-                <small style={{ display: "block", color: "#666", fontSize: "12px" }}>
-                  Guardalo o consultalo luego en la sección <strong>Mis Compras</strong>.
-                </small>
               </div>
             )}
 
-            <div className="checkout-timeline">
+            <div className="checkout-timeline" style={{ margin: "14px 0 20px" }}>
               <div className="checkout-timeline-item">
                 <div className="checkout-timeline-num">1</div>
                 <div className="checkout-timeline-content">
-                  <strong>Verificación:</strong> Nuestro equipo revisará el comprobante de acreditación de la transferencia.
+                  <strong>Coordinación:</strong> Un moderador de Repilche creará un grupo entre el vendedor y vos para coordinar el punto y horario de entrega.
                 </div>
               </div>
 
               <div className="checkout-timeline-item">
                 <div className="checkout-timeline-num">2</div>
                 <div className="checkout-timeline-content">
-                  <strong>Coordinación:</strong> Te contactaremos para coordinar el punto de encuentro con el vendedor.
-                </div>
-              </div>
-
-              <div className="checkout-timeline-item">
-                <div className="checkout-timeline-num">3</div>
-                <div className="checkout-timeline-content">
-                  <strong>Entrega protegida:</strong> En la sección <strong>Mis Compras</strong> vas a tener tu código de seguridad para mostrarle al vendedor al retirar la prenda.
+                  <strong>Entrega protegida:</strong> Mostrale este código de seguridad al vendedor recién cuando tengas la prenda en mano y confirmes su estado.
                 </div>
               </div>
             </div>
 
-            <div className="checkout-exito-actions" style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
+            <div className="checkout-exito-actions" style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}>
               <button
                 type="button"
                 className="checkout-btn-compras"
                 onClick={handleIrAMisCompras}
               >
-                Ir a Mis Compras
+                Ver Mis Compras
               </button>
               <button
                 type="button"
