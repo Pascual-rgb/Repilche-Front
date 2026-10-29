@@ -18,14 +18,6 @@ interface Categoria {
   slug?: string;
 }
 
-const DEFAULT_CATEGORIAS: Categoria[] = [
-  { id: 1, nombre: 'Remeras' },
-  { id: 2, nombre: 'Pantalones' },
-  { id: 3, nombre: 'Calzado' },
-  { id: 4, nombre: 'Accesorios' },
-  { id: 5, nombre: 'Abrigo' },
-];
-
 const CargaProduct = () => {
   const [modalTipo, setModalTipo] = useState<ModalTipo>(null);
   const [toastCrearOtra, setToastCrearOtra] = useState(false);
@@ -61,8 +53,6 @@ const CargaProduct = () => {
           const lista: Categoria[] = Array.isArray(data) ? data : data.results || [];
           if (isMounted && lista.length > 0) {
             setCategorias(lista);
-            // Preseleccionar la primera categoría si el usuario aún no eligió ninguna
-            setCategoriaId((prev) => (prev === '' ? lista[0].id : prev));
           }
         }
       } catch (err) {
@@ -87,7 +77,7 @@ const CargaProduct = () => {
     setNombre('');
     setPrecio('');
     setDescripcion('');
-    setCategoriaId(categorias.length > 0 ? categorias[0].id : '');
+    setCategoriaId('');
     setImages([]);
     setErrorMsg(null);
   };
@@ -251,8 +241,6 @@ const CargaProduct = () => {
     }
   };
 
-  const listaCategoriasDisponibles = categorias.length > 0 ? categorias : DEFAULT_CATEGORIAS;
-
   return (
     <>
       <div className="cargaProduct-page">
@@ -357,14 +345,14 @@ const CargaProduct = () => {
                   id="categoria"
                   name="categoria"
                   value={categoriaId}
-                  onChange={(e) => setCategoriaId(Number(e.target.value))}
+                  onChange={(e) => setCategoriaId(e.target.value === '' ? '' : Number(e.target.value))}
                   required
                   disabled={isSubiendo}
                 >
                   <option value="" disabled>
                     {cargandoCategorias ? 'Cargando categorías...' : 'Seleccioná una categoría'}
                   </option>
-                  {listaCategoriasDisponibles.map((cat) => (
+                  {categorias.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.nombre}
                     </option>

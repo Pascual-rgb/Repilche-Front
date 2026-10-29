@@ -46,19 +46,31 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
             item?.img ||
             '/src/data/img/remera-negra-manga-corta.png';
 
+          const rawCat = item?.categoria;
+          const catId = item?.categoria_id ?? (typeof rawCat === 'number' ? rawCat : rawCat?.id);
+          const catNombre =
+            item?.categoria_nombre ||
+            item?.categoria_detail?.nombre ||
+            (typeof rawCat === 'string' ? rawCat : rawCat?.nombre) ||
+            '';
+
+          const catList: string[] = Array.isArray(item?.cat)
+            ? item.cat
+            : catNombre
+            ? [catNombre]
+            : ['General'];
+
           return {
             id: item?.id ?? idx + 1,
             name: item?.name || item?.nombre || 'Prenda sin nombre',
             descrp: item?.descrp || item?.descripcion || item?.description || 'Sin descripción disponible',
             img: itemImg,
             stock: Number(item?.stock ?? 1),
-            cat: Array.isArray(item?.cat)
-              ? item.cat
-              : item?.categoria_detail?.nombre
-              ? [item.categoria_detail.nombre]
-              : typeof item?.categoria === 'string'
-              ? [item.categoria]
-              : ['General'],
+            cat: catList,
+            categoria: rawCat,
+            categoria_id: catId,
+            categoria_nombre: catNombre,
+            categoria_detail: item?.categoria_detail,
             precio: Number(item?.precio || item?.price || 0),
             vendedor:
               typeof item?.vendedor === 'string'

@@ -104,10 +104,11 @@ const Header = () => {
       {isLoggedIn && (
         <nav className={`navbar ${menuOpen ? "open" : ""}`}>
           <Link to="/" onClick={() => setMenuOpen(false)}>Inicio</Link>
-          <Link to="/products?category=remera" onClick={() => setMenuOpen(false)}>Remeras</Link>
-          <Link to="/products?category=pantalón" onClick={() => setMenuOpen(false)}>Pantalones</Link>
+          <Link to="/products?category=remeras" onClick={() => setMenuOpen(false)}>Remeras</Link>
+          <Link to="/products?category=abrigos" onClick={() => setMenuOpen(false)}>Abrigos</Link>
+          <Link to="/products?category=pantalones" onClick={() => setMenuOpen(false)}>Pantalones</Link>
           <Link to="/products?category=calzado" onClick={() => setMenuOpen(false)}>Calzado</Link>
-          <Link to="/products?category=accesorio" onClick={() => setMenuOpen(false)}>Accesorios</Link>
+          <Link to="/products?category=accesorios" onClick={() => setMenuOpen(false)}>Accesorios</Link>
           <Link to="/ser-vendedor" onClick={() => setMenuOpen(false)}>Vender</Link>
 
           {isAdmin && (

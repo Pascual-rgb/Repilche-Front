@@ -28,28 +28,42 @@ const MisProductos = () => {
           const rawList = Array.isArray(data) ? data : data?.results || [];
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const normalized: Products[] = rawList.map((item: any, idx: number) => ({
-            id: item?.id ?? idx + 1,
-            name: item?.name || item?.nombre || "Prenda sin nombre",
-            descrp: item?.descrp || item?.descripcion || item?.description || "Sin descripción disponible",
-            img: item?.imagen_url || item?.imagen || item?.image || item?.img || "/src/data/img/remera-negra-manga-corta.png",
-            stock: Number(item?.stock ?? 1),
-            cat: Array.isArray(item?.cat)
+          const normalized: Products[] = rawList.map((item: any, idx: number) => {
+            const rawCat = item?.categoria;
+            const catId = item?.categoria_id ?? (typeof rawCat === 'number' ? rawCat : rawCat?.id);
+            const catNombre =
+              item?.categoria_nombre ||
+              item?.categoria_detail?.nombre ||
+              (typeof rawCat === 'string' ? rawCat : rawCat?.nombre) ||
+              '';
+
+            const catList: string[] = Array.isArray(item?.cat)
               ? item.cat
-              : item?.categoria_detail?.nombre
-              ? [item.categoria_detail.nombre]
-              : typeof item?.categoria === "string"
-              ? [item.categoria]
-              : ["General"],
-            precio: Number(item?.precio || item?.price || 0),
-            vendedor:
-              typeof item?.vendedor === "string"
-                ? item.vendedor
-                : item?.vendedor?.first_name
-                ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
-                : item?.vendedor_nombre || "Repilche",
-            vendedor_id: item?.vendedor_id ?? (typeof item?.vendedor === "number" ? item?.vendedor : item?.vendedor?.id),
-          }));
+              : catNombre
+              ? [catNombre]
+              : ['General'];
+
+            return {
+              id: item?.id ?? idx + 1,
+              name: item?.name || item?.nombre || "Prenda sin nombre",
+              descrp: item?.descrp || item?.descripcion || item?.description || "Sin descripción disponible",
+              img: item?.imagen_url || item?.imagen || item?.image || item?.img || "/src/data/img/remera-negra-manga-corta.png",
+              stock: Number(item?.stock ?? 1),
+              cat: catList,
+              categoria: rawCat,
+              categoria_id: catId,
+              categoria_nombre: catNombre,
+              categoria_detail: item?.categoria_detail,
+              precio: Number(item?.precio || item?.price || 0),
+              vendedor:
+                typeof item?.vendedor === "string"
+                  ? item.vendedor
+                  : item?.vendedor?.first_name
+                  ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
+                  : item?.vendedor_nombre || "Repilche",
+              vendedor_id: item?.vendedor_id ?? (typeof item?.vendedor === "number" ? item?.vendedor : item?.vendedor?.id),
+            };
+          });
 
           // Filtrar por el usuario actual si hay sesión iniciada
           const propios = user?.id

@@ -1,12 +1,17 @@
 export interface Products {
     id: number;
-    name: string,
-    descrp: string,
-    img: string,
-    stock: number,
-    cat: string[],
-    precio: number,
-    vendedor: string,
+    name: string;
+    descrp: string;
+    img: string;
+    stock: number;
+    cat: string[];
+    precio: number;
+    vendedor: string;
+    categoria?: number | string | { id?: number; nombre?: string };
+    categoria_id?: number;
+    categoria_nombre?: string;
+    categoria_detail?: { id?: number; nombre?: string; slug?: string };
+    [key: string]: unknown;
 };
 
 export const productos : Products[] = [

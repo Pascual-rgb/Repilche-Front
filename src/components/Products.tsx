@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ProductCard } from "./ProductCard";
 import type { Products as ProductType } from "../data/products";
+import { coincideCategoria } from "../utils/categories";
 import "./styles/Home.css";
 
 const Products = () => {
@@ -21,27 +22,41 @@ const Products = () => {
           const data = await res.json();
           const rawList = Array.isArray(data) ? data : data?.results || [];
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const normalized: ProductType[] = rawList.map((item: any, idx: number) => ({
-            id: item?.id ?? idx + 1,
-            name: item?.name || item?.nombre || "Prenda sin nombre",
-            descrp: item?.descrp || item?.descripcion || item?.description || "Sin descripción disponible",
-            img: item?.imagen_url || item?.imagen || item?.image || item?.img || "/src/data/img/remera-negra-manga-corta.png",
-            stock: Number(item?.stock ?? 1),
-            cat: Array.isArray(item?.cat)
+          const normalized: ProductType[] = rawList.map((item: any, idx: number) => {
+            const rawCat = item?.categoria;
+            const catId = item?.categoria_id ?? (typeof rawCat === 'number' ? rawCat : rawCat?.id);
+            const catNombre =
+              item?.categoria_nombre ||
+              item?.categoria_detail?.nombre ||
+              (typeof rawCat === 'string' ? rawCat : rawCat?.nombre) ||
+              '';
+
+            const catList: string[] = Array.isArray(item?.cat)
               ? item.cat
-              : item?.categoria_detail?.nombre
-              ? [item.categoria_detail.nombre]
-              : typeof item?.categoria === "string"
-              ? [item.categoria]
-              : ["General"],
-            precio: Number(item?.precio || item?.price || 0),
-            vendedor:
-              typeof item?.vendedor === "string"
-                ? item.vendedor
-                : item?.vendedor?.first_name
-                ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
-                : item?.vendedor_nombre || "Repilche",
-          }));
+              : catNombre
+              ? [catNombre]
+              : ['General'];
+
+            return {
+              id: item?.id ?? idx + 1,
+              name: item?.name || item?.nombre || "Prenda sin nombre",
+              descrp: item?.descrp || item?.descripcion || item?.description || "Sin descripción disponible",
+              img: item?.imagen_url || item?.imagen || item?.image || item?.img || "/src/data/img/remera-negra-manga-corta.png",
+              stock: Number(item?.stock ?? 1),
+              cat: catList,
+              categoria: rawCat,
+              categoria_id: catId,
+              categoria_nombre: catNombre,
+              categoria_detail: item?.categoria_detail,
+              precio: Number(item?.precio || item?.price || 0),
+              vendedor:
+                typeof item?.vendedor === "string"
+                  ? item.vendedor
+                  : item?.vendedor?.first_name
+                  ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
+                  : item?.vendedor_nombre || "Repilche",
+            };
+          });
 
           if (isMounted) {
             setProducts(normalized);
@@ -63,15 +78,17 @@ const Products = () => {
   }, []);
 
   const filtrados = category
-    ? products.filter((p) =>
-        p.cat.some((c) => c.toLowerCase().includes(category))
-      )
+    ? products.filter((p) => coincideCategoria(p, category))
     : products;
+
+  const tituloSeccion = category
+    ? category.charAt(0).toUpperCase() + category.slice(1)
+    : "Todos los productos";
 
   return (
     <div className="home-container">
       <h2 className="section-title">
-        {category ? category : "Todos los productos"}
+        {tituloSeccion}
       </h2>
 
       {loading ? (
