@@ -51,14 +51,32 @@ const RegistroForm = () => {
       setIsLoading(false);
 
       const esErrorDeConexion = error?.message?.includes("Failed to fetch") || error?.name === "TypeError";
+      let mensajeAmigable = "Por favor, verificá los datos ingresados.";
+
+      if (esErrorDeConexion) {
+        mensajeAmigable = "No pudimos conectar con el servidor. Por favor, revisá tu conexión o intentá de nuevo más tarde.";
+      } else if (error?.message) {
+        try {
+          const parsed = JSON.parse(error.message);
+          if (typeof parsed === "string") {
+            mensajeAmigable = parsed;
+          } else if (Array.isArray(parsed)) {
+            mensajeAmigable = parsed.join(" ");
+          } else if (typeof parsed === "object" && parsed !== null) {
+            mensajeAmigable = Object.entries(parsed)
+              .map(([key, val]) => `${key === "detail" ? "" : key + ": "}${Array.isArray(val) ? val.join(", ") : val}`)
+              .join(" | ");
+          }
+        } catch {
+          mensajeAmigable = error.message;
+        }
+      }
 
       setFeedback({
         show: true,
         type: 'error',
         title: 'Aviso de registro',
-        message: esErrorDeConexion
-          ? "Por favor, verificá los datos ingresados. Asegurate de completar todos los campos correctamente o intentá de nuevo más tarde."
-          : (error.message || "Por favor, verificá los datos ingresados.")
+        message: mensajeAmigable
       });
     }
   };

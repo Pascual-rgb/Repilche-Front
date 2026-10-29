@@ -15,8 +15,8 @@ const LoginForm = () => {
     const [feedback, setFeedback] = useState<{
         show: boolean;
         type: 'success' | 'error';
-        title: String;
-        message: String;
+        title: string;
+        message: string;
     } | null>(null);
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -93,7 +93,7 @@ const LoginForm = () => {
                 />
             </div>
             <button type='submit' disabled={isLoading}>
-                {isLoading ? <div className="checkout-pinner"></div> : 'Enviar'}
+                {isLoading ? <div className="checkout-spinner"></div> : 'Enviar'}
             </button>
             <Link to="/registro" className="login-link">
                 No tengo cuenta

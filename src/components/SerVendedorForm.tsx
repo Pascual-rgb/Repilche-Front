@@ -97,10 +97,21 @@ const SerVendedorForm = () => {
                 if (!res.ok) {
                     const errData = await res.json().catch(() => null)
                     console.error("Error al registrar vendedor en backend:", errData)
-                    const msg = errData ? (errData.detail || JSON.stringify(errData)) : "Ocurrió un error al enviar tu solicitud."
-                    setErrorBackend(msg)
-                    setEnviando(false)
-                    return
+                    let msg = "Ocurrió un error al enviar tu solicitud.";
+                    if (errData) {
+                        if (typeof errData === "string") {
+                            msg = errData;
+                        } else if (errData.detail) {
+                            msg = errData.detail;
+                        } else if (typeof errData === "object") {
+                            msg = Object.entries(errData)
+                                .map(([k, v]) => `${k === "non_field_errors" ? "" : k + ": "}${Array.isArray(v) ? v.join(", ") : v}`)
+                                .join(" | ");
+                        }
+                    }
+                    setErrorBackend(msg);
+                    setEnviando(false);
+                    return;
                 }
             } catch (err) {
                 console.warn("Fallo de red al conectar con el backend de vendedor, guardando localmente.", err)
