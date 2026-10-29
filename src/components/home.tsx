@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ProductList } from './ProductList';
 import { ProductCard } from './ProductCard';
-import { productos, type Products } from '../data/products.ts';
+import type { Products } from '../data/products.ts';
 import './styles/Home.css';
 
 export const Home: React.FC = () => {
   const [backendProducts, setBackendProducts] = useState<Products[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -39,12 +40,16 @@ export const Home: React.FC = () => {
                 : item?.vendedor_nombre || 'Repilche',
           }));
 
-          if (isMounted && normalized.length > 0) {
+          if (isMounted) {
             setBackendProducts(normalized);
           }
         }
       } catch (err) {
         console.warn('No se pudieron obtener productos para la home:', err);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -54,23 +59,40 @@ export const Home: React.FC = () => {
     };
   }, []);
 
-  const displayProducts = backendProducts.length > 0 ? backendProducts : productos;
+  const displayProducts = backendProducts;
+
+  if (loading) {
+    return (
+      <div className="home-container" style={{ textAlign: 'center', padding: '80px 20px', color: '#666' }}>
+        <p>Cargando catálogo oficial de Repilche...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="home-container">
-      <section className="home-section-top">
-        <h2 className="section-title">Productos Destacados</h2>
-        <ProductList products={displayProducts} />
-      </section>
+      {displayProducts.length > 0 ? (
+        <>
+          <section className="home-section-top">
+            <h2 className="section-title">Productos Destacados</h2>
+            <ProductList products={displayProducts} />
+          </section>
 
-      <section className="home-section-grid">
-        <h2 className="section-title">Productos</h2>
-        <div className="product-grid">
-          {displayProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
+          <section className="home-section-grid">
+            <h2 className="section-title">Productos</h2>
+            <div className="product-grid">
+              {displayProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        </>
+      ) : (
+        <section className="home-section-grid" style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <h2 className="section-title">Productos</h2>
+          <p style={{ color: '#666' }}>No hay prendas disponibles en este momento.</p>
+        </section>
+      )}
     </div>
   );
 }; 

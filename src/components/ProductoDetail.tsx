@@ -9,7 +9,7 @@ import {
   FaBolt,
   FaShieldAlt,
 } from "react-icons/fa";
-import { productos, type Products } from "../data/products";
+import type { Products } from "../data/products";
 import { useCarritoContext } from "../context/CartContext";
 import { useAuthContext } from "../context/AuthContext";
 import ModalPagoTransferencia from "./ModalPagoTransferencia";
@@ -26,9 +26,8 @@ const ProductoDetail = () => {
   const { addToCart, openCart } = useCarritoContext();
   const { isLoggedIn, user } = useAuthContext();
 
-  const localProducto = productos.find((p) => p.id === Number(id));
-  const [producto, setProducto] = useState<ExtendedProduct | null>(localProducto || null);
-  const [loading, setLoading] = useState<boolean>(!localProducto);
+  const [producto, setProducto] = useState<ExtendedProduct | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Estados de flujo de compra C2C
   const [showModalTransferencia, setShowModalTransferencia] = useState<boolean>(false);

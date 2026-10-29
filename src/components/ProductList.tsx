@@ -13,10 +13,20 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
+    if (initialProducts) {
+      setProducts(initialProducts);
+      setLoading(false);
+    }
+  }, [initialProducts]);
+
+  useEffect(() => {
+    if (initialProducts && initialProducts.length > 0) return;
+
     let isMounted = true;
     const fetchProducts = async () => {
       try {
-        const response = await fetch('https://repilche-backend.onrender.com/api/products/');
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://repilche-backend.onrender.com/api';
+        const response = await fetch(`${apiUrl}/products/`);
 
         if (!response.ok) {
           throw new Error('Error al obtener los productos de la base de datos');
@@ -29,7 +39,6 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const normalizedList: Products[] = rawList.map((item: any, idx: number) => {
-          console.log('Datos del producto recibido:', item);
           const itemImg =
             item?.imagen_url ||
             item?.imagen ||
@@ -60,11 +69,11 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
           };
         });
 
-        if (isMounted && normalizedList.length > 0) {
+        if (isMounted) {
           setProducts(normalizedList);
         }
       } catch (error) {
-        console.warn('No se pudieron obtener productos del backend, usando listado inicial:', error);
+        console.warn('No se pudieron obtener productos del backend:', error);
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -76,7 +85,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [initialProducts]);
 
   const safeProducts = Array.isArray(products) ? products : [];
   const sliderProducts = safeProducts.slice(0, 7);
