@@ -7,65 +7,25 @@ import {
   FaTag,
 } from "react-icons/fa";
 
-import { useNotificationContext } from "../context/NotificationContext";
-
-interface Notificacion {
-  id: number;
-  tipo: "producto" | "favorito" | "oferta";
-  titulo: string;
-  descripcion: string;
-  tiempo: string;
-  leida: boolean;
-}
+import { useNotificationContext, type NotificacionBackend } from "../context/NotificationContext";
 
 const Notis = () => {
   const {
+    notifications,
     unreadCount,
+    loading,
     markAsRead,
     markAllAsRead,
   } = useNotificationContext();
 
-  const notificaciones: Notificacion[] = [
-    {
-      id: 1,
-      tipo: "producto",
-      titulo: "Nuevo interés en tu producto",
-      descripcion:
-        "Un usuario mostró interés en uno de los productos que publicaste.",
-      tiempo: "Hace unos minutos",
-      leida: unreadCount === 0,
-    },
-    {
-      id: 2,
-      tipo: "favorito",
-      titulo: "Agregaron un producto a favoritos",
-      descripcion:
-        "A un usuario le gustó uno de los productos que publicaste.",
-      tiempo: "Hace 1 hora",
-      leida: unreadCount === 0,
-    },
-    {
-      id: 3,
-      tipo: "oferta",
-      titulo: "Encontramos productos para vos",
-      descripcion:
-        "Hay nuevas prendas que podrían interesarte. ¡Entrá a descubrirlas!",
-      tiempo: "Hace 1 día",
-      leida: true,
-    },
-  ];
-
-  const obtenerIcono = (tipo: Notificacion["tipo"]) => {
+  const obtenerIcono = (tipo: NotificacionBackend["tipo"]) => {
     switch (tipo) {
       case "producto":
         return <FaShoppingBag />;
-
       case "favorito":
         return <FaHeart />;
-
       case "oferta":
         return <FaTag />;
-
       default:
         return <FaBell />;
     }
@@ -104,8 +64,16 @@ const Notis = () => {
         </div>
 
         <div className="notis-list">
-
-          {notificaciones.map((notificacion) => (
+            {loading && notifications.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px", color: "#666" }}>
+              <p>Cargando notificaciones...</p>
+            </div>
+          ) : notifications.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px", color: "#666" }}>
+              <p>No tenés notificaciones en este momento.</p>
+            </div>
+          ) : (
+          notifications.map((notificacion) => (
             <div
               key={notificacion.id}
               className={`notis-card ${
@@ -136,19 +104,19 @@ const Notis = () => {
 
                 <p>{notificacion.descripcion}</p>
 
-                <span>{notificacion.tiempo}</span>
-
+                <span>
+                  {notificacion.tiempo ||
+                  (notificacion.created_at
+                        ? new Date(notificacion.created_at).toLocaleDateString()
+                        : "Hace momentos")}
+                </span>
               </div>
 
-              {!notificacion.leida && (
-                <div className="notis-dot"></div>
-              )}
-
+              {!notificacion.leida && <div className="notis-dot"></div>}
             </div>
-          ))}
-
+          ))
+        )}
         </div>
-
       </section>
     </main>
   );

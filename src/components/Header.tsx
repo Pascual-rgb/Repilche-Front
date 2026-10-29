@@ -21,7 +21,14 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const { unreadCount = 0 } = useNotificationContext();
   const { getItemQuantity, openCart } = useCarritoContext();
-  const { isLoggedIn } = useAuthContext();
+  const { isLoggedIn, user } = useAuthContext();
+
+  const rawUser = user as any;
+  const isAdmin =
+    rawUser?.is_staff ||
+    rawUser?.is_superuser ||
+    rawUser?.role === "admin" ||
+    rawUser?.es_admin;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,6 +113,16 @@ const Header = () => {
           <Link to="/products?category=calzado" onClick={() => setMenuOpen(false)}>Calzado</Link>
           <Link to="/products?category=accesorio" onClick={() => setMenuOpen(false)}>Accesorios</Link>
           <Link to="/ser-vendedor" onClick={() => setMenuOpen(false)}>Vender</Link>
+
+          {isAdmin && (
+            <Link 
+              to="/admin/moderacion" 
+              onClick={() => setMenuOpen(false)} 
+              style={{ color: '#F6C417', fontWeight: 'bold' }}
+            >
+              Moderación
+            </Link>
+          )}
         </nav>
       )}
     </header>

@@ -1,0 +1,146 @@
+.admin-mod-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Radio Canada Big', sans-serif;
+}
+
+.admin-mod-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.admin-mod-header h1 {
+  font-family: 'Viga', sans-serif;
+  font-size: 32px;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.admin-mod-header p {
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.admin-mod-vacio {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.admin-mod-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.admin-mod-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #eaeaea;
+}
+
+.admin-mod-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.admin-mod-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.admin-mod-card-info {
+  padding: 16px;
+}
+
+.admin-mod-card-info h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px;
+}
+
+.admin-mod-card-info p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 10px;
+}
+
+.admin-mod-precio {
+  font-family: 'Viga', sans-serif;
+  font-size: 18px;
+  color: #111827;
+}
+
+/* Modal de detalle adaptado */
+.admin-detalle-modal {
+  max-width: 700px !important;
+  padding: 30px !important;
+}
+
+.admin-detalle-content {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.admin-detalle-img {
+  width: 50%;
+  border-radius: 14px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.admin-detalle-img img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-detalle-info {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-detalle-info h2 {
+  font-family: 'Viga', sans-serif;
+  font-size: 24px;
+  margin: 0 0 10px;
+  color: #111827;
+}
+
+.admin-detalle-desc {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.admin-acciones-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  .admin-detalle-content {
+    flex-direction: column;
+  }
+  .admin-detalle-img, .admin-detalle-info {
+    width: 100%;
+  }
+  .admin-detalle-img img {
+    height: 200px;
+  }
+}

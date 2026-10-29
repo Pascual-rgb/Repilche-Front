@@ -19,7 +19,8 @@ import MisCompras from "./components/MisCompras";
 import MisVentas from "./components/MisVentas";
 import { useAuthContext } from "./context/AuthContext";
 import { Analytics } from "@vercel/analytics/react"
-
+import AdminRoute from "./components/AdminRoute";
+import AdminModeracion from "./components/AdminModeracion";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
 function App() {
@@ -58,6 +59,10 @@ function App() {
               <Route path="/mis-productos" element={<MisProductos />} />
               <Route path="/mis-compras" element={<MisCompras />} />
               <Route path="/mis-ventas" element={<MisVentas />} />
+
+              <Route element={<AdminRoute />}>
+                <Route path="/admin/moderacion" element={<AdminModeracion />} />
+              </Route>
             </Route>
 
             <Route path="*" element={<Login />} />
