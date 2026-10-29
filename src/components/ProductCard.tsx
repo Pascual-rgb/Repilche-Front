@@ -18,13 +18,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const nombre = product.name || rawProduct.nombre || 'Prenda';
   const precio = product.precio || rawProduct.price || 0;
   const placeholder = '/src/data/img/remera-negra-manga-corta.png';
-  const imagen =
-    rawProduct.imagen_url ||
+  const rawImg = String(
     rawProduct.imagen ||
+    rawProduct.imagen_url ||
     rawProduct.image ||
     rawProduct.img ||
     product.img ||
-    placeholder;
+    ''
+  );
+  const portada =
+    rawImg
+      .split(',')
+      .map((url: string) => url.trim())
+      .filter(Boolean)[0] || placeholder;
   
   const categorias = Array.isArray(product.cat)
     ? product.cat.join(', ')
@@ -45,7 +51,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         <div className="product-card-img-container">
           <img
-            src={imagen}
+            src={portada}
             alt={nombre}
             className="product-card-img"
             onError={(e) => {

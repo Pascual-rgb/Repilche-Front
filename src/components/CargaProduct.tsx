@@ -133,9 +133,9 @@ const CargaProduct = () => {
       return;
     }
 
-    // Validación de imagen requerida
-    if (images.length === 0 || !images[0]?.file) {
-      setErrorMsg('Por favor, seleccioná una foto para la prenda.');
+    // Validación de imagen requerida (al menos 1 y hasta 3 fotos)
+    if (images.length === 0 || images.some((img) => !img.file)) {
+      setErrorMsg('Por favor, seleccioná al menos una foto para la prenda.');
       const fileSection = document.getElementById('seccion-fotos');
       if (fileSection) {
         fileSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -151,15 +151,21 @@ const CargaProduct = () => {
     }
 
     setIsSubiendo(true);
-    setEstadoCarga('Subiendo imagen...');
+    setEstadoCarga(
+      images.length > 1
+        ? `Subiendo ${images.length} imágenes...`
+        : 'Subiendo imagen...'
+    );
 
     try {
-      // 1. Subida directa del archivo File nativo a Supabase Storage
-      const fileToUpload = images[0].file;
-      const publicUrl = await uploadProductImage(fileToUpload);
+      // 1. Subida paralela de archivos File nativos a Supabase Storage
+      const uploadedUrls = await Promise.all(
+        images.map((img) => uploadProductImage(img.file!))
+      );
+      const imagenPayload = uploadedUrls.join(",");
 
       // 2. Preparación del payload JSON para Django
-      // Mapea exactamente 'nombre', 'descripcion', 'precio', 'categoria', 'stock' e 'imagen_url'
+      // Mapea exactamente 'nombre', 'descripcion', 'precio', 'categoria', 'stock' e 'imagen'
       setEstadoCarga('Registrando prenda en el catálogo...');
 
       const payload = {
@@ -171,10 +177,10 @@ const CargaProduct = () => {
         price: precioFinal,
         categoria: categoriaFinal,
         stock: 1,
-        imagen: publicUrl,
-        imagen_url: publicUrl,
-        image: publicUrl,
-        img: publicUrl,
+        imagen: imagenPayload,
+        imagen_url: imagenPayload,
+        image: imagenPayload,
+        img: imagenPayload,
       };
 
       console.log('Enviando payload JSON a Django:', payload);
@@ -384,14 +390,17 @@ const CargaProduct = () => {
                 </small>
               </div>
 
-              {/* Selector de imágenes con react-images-uploading */}
+              {/* Selector de imágenes con react-images-uploading (hasta 3 fotos) */}
               <div id="seccion-fotos" className="upload-section">
-                <label className="form-label mt-4">Foto de la prenda</label>
+                <label className="form-label mt-4">
+                  Fotos de la prenda ({images.length}/3)
+                </label>
 
                 <ImageUploading
+                  multiple={true}
                   value={images}
                   onChange={handleImageChange}
-                  maxNumber={1}
+                  maxNumber={3}
                   dataURLKey="data_url"
                   acceptType={['jpg', 'jpeg', 'png', 'webp']}
                   maxFileSize={5 * 1024 * 1024} // 5 MB
@@ -416,10 +425,10 @@ const CargaProduct = () => {
                             <FaCloudUploadAlt />
                           </div>
                           <p className="upload-prompt">
-                            <strong>Hacé clic para seleccionar</strong> o arrastrá una foto acá
+                            <strong>Hacé clic para seleccionar</strong> o arrastrá hasta 3 fotos acá
                           </p>
                           <span className="upload-specs">
-                            Formatos soportados: JPG, PNG o WebP (Máx. 5 MB)
+                            Formatos soportados: JPG, PNG o WebP (Máx. 3 fotos, 5 MB c/u)
                           </span>
                         </div>
                       ) : (
@@ -429,14 +438,15 @@ const CargaProduct = () => {
                               <div className="upload-preview-image-container">
                                 <img
                                   src={image.data_url || image.dataURL}
-                                  alt="Previsualización de la prenda"
+                                  alt={`Previsualización ${index + 1} de la prenda`}
                                   className="upload-preview-img"
                                 />
                               </div>
                               <div className="upload-preview-details">
                                 <div className="upload-preview-info">
                                   <span className="upload-filename">
-                                    {image.file?.name || 'prenda-seleccionada.jpg'}
+                                    {index === 0 ? '★ Portada: ' : `Foto ${index + 1}: `}
+                                    {image.file?.name || `prenda-${index + 1}.jpg`}
                                   </span>
                                   {image.file && (
                                     <span className="upload-filesize">
@@ -467,6 +477,18 @@ const CargaProduct = () => {
                               </div>
                             </div>
                           ))}
+
+                          {imageList.length < 3 && (
+                            <button
+                              type="button"
+                              className={`upload-add-more-btn ${isDragging ? 'is-dragging' : ''}`}
+                              onClick={!isSubiendo ? onImageUpload : undefined}
+                              disabled={isSubiendo}
+                              {...(!isSubiendo ? dragProps : {})}
+                            >
+                              <FaCloudUploadAlt /> Agregar otra foto ({imageList.length}/3)
+                            </button>
+                          )}
                         </div>
                       )}
 
@@ -475,7 +497,7 @@ const CargaProduct = () => {
                         <div className="upload-errors-container">
                           {errors.maxFileSize && (
                             <p className="upload-error-tag">
-                              ⚠️ El archivo supera el peso máximo permitido de 5 MB.
+                              ⚠️ Algún archivo supera el peso máximo permitido de 5 MB.
                             </p>
                           )}
                           {errors.acceptType && (
@@ -485,7 +507,7 @@ const CargaProduct = () => {
                           )}
                           {errors.maxNumber && (
                             <p className="upload-error-tag">
-                              ⚠️ Solo podés subir 1 foto por prenda.
+                              ⚠️ Podés subir hasta 3 fotos por prenda.
                             </p>
                           )}
                         </div>
@@ -495,7 +517,7 @@ const CargaProduct = () => {
                 </ImageUploading>
 
                 <small className="form-help-text">
-                  Subí una foto nítida donde se aprecie claramente el estado y los detalles de la prenda.
+                  Subí hasta 3 fotos nítidas (ej. frente, dorso y etiqueta/detalle). La primera será la portada.
                 </small>
               </div>
 

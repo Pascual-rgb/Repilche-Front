@@ -80,6 +80,7 @@ const ProductoDetail = () => {
   const { fetchNotificaciones } = useNotificationContext();
 
   const [producto, setProducto] = useState<ExtendedProduct | null>(null);
+  const [imagenSeleccionada, setImagenSeleccionada] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   // Estados de flujo de compra C2C
@@ -127,12 +128,21 @@ const ProductoDetail = () => {
           const item: any = await res.json();
           if (isMounted && item) {
             console.log("Datos del producto recibido:", item);
-            const itemImg =
-              item.imagen_url ||
+            const rawItemImg = String(
               item.imagen ||
+              item.imagen_url ||
               item.image ||
               item.img ||
-              "/src/data/img/remera-negra-manga-corta.png";
+              ""
+            );
+            const parsedItemImgs = rawItemImg.includes(",")
+              ? rawItemImg
+                  .split(",")
+                  .map((url: string) => url.trim())
+                  .filter(Boolean)
+              : [rawItemImg.trim()].filter(Boolean);
+            const itemImg =
+              parsedItemImgs[0] || "/src/data/img/remera-negra-manga-corta.png";
 
             const rawCat = item.categoria;
             const catId =
@@ -178,6 +188,11 @@ const ProductoDetail = () => {
               name: item.name || item.nombre || "Prenda sin nombre",
               descrp: item.descrp || item.descripcion || item.description || "Sin descripción disponible",
               img: itemImg,
+              imagen: rawItemImg || itemImg,
+              imagen_url:
+                typeof item.imagen_url === "string" && item.imagen_url
+                  ? item.imagen_url
+                  : rawItemImg || itemImg,
               stock: Number(item.stock ?? 1),
               cat: catList,
               categoria: rawCat,
@@ -198,6 +213,7 @@ const ProductoDetail = () => {
                   : item.vendedor?.id),
               estado: item.estado,
             });
+            setImagenSeleccionada(itemImg);
           }
         }
       } catch (err) {
@@ -240,13 +256,26 @@ const ProductoDetail = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawProduct = producto as any;
   const placeholder = "/src/data/img/remera-negra-manga-corta.png";
-  const imagen =
-    rawProduct.imagen_url ||
+  const rawImg = String(
     rawProduct.imagen ||
+    rawProduct.imagen_url ||
     rawProduct.image ||
     rawProduct.img ||
     producto.img ||
-    placeholder;
+    ""
+  );
+  const imagenes: string[] = rawImg.includes(",")
+    ? rawImg
+        .split(",")
+        .map((url: string) => url.trim())
+        .filter(Boolean)
+    : [rawImg.trim()].filter(Boolean);
+
+  const imagen = imagenes[0] || placeholder;
+  const imagenActiva =
+    imagenSeleccionada && imagenes.includes(imagenSeleccionada)
+      ? imagenSeleccionada
+      : imagen;
 
   const rutaCategoria = obtenerRutaCategoria(producto);
 
@@ -478,17 +507,47 @@ const ProductoDetail = () => {
           </Link>
 
           <div className="producto-detail">
-            <div className="producto-detail-image">
-              <img
-                src={imagen}
-                alt={producto.name as string}
-                onError={(e) => {
-                  const target = e.currentTarget;
-                  if (!target.src.includes("remera-negra-manga-corta.png")) {
-                    target.src = placeholder;
-                  }
-                }}
-              />
+            <div className="producto-detail-gallery">
+              <div className="producto-detail-image">
+                <img
+                  src={imagenActiva}
+                  alt={producto.name as string}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.src.includes("remera-negra-manga-corta.png")) {
+                      target.src = placeholder;
+                    }
+                  }}
+                />
+              </div>
+
+              {imagenes.length > 1 && (
+                <div className="producto-detail-thumbnails">
+                  {imagenes.map((url, idx) => {
+                    const esActiva = imagenActiva === url;
+                    return (
+                      <button
+                        key={`${url}-${idx}`}
+                        type="button"
+                        className={`producto-detail-thumb ${esActiva ? "active" : ""}`}
+                        onClick={() => setImagenSeleccionada(url)}
+                        aria-label={`Ver foto ${idx + 1} de ${producto.name}`}
+                      >
+                        <img
+                          src={url}
+                          alt={`${producto.name} - vista ${idx + 1}`}
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.src.includes("remera-negra-manga-corta.png")) {
+                              target.src = placeholder;
+                            }
+                          }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <div className="producto-detail-info">

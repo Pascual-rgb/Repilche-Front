@@ -39,11 +39,18 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const normalizedList: Products[] = rawList.map((item: any, idx: number) => {
-          const itemImg =
-            item?.imagen_url ||
+          const rawItemImg = String(
             item?.imagen ||
+            item?.imagen_url ||
             item?.image ||
             item?.img ||
+            ''
+          );
+          const itemImg =
+            rawItemImg
+              .split(',')
+              .map((url: string) => url.trim())
+              .filter(Boolean)[0] ||
             '/src/data/img/remera-negra-manga-corta.png';
 
           const rawCat = item?.categoria;
@@ -142,6 +149,22 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
   const currentProduct = sliderProducts[currentIndex] || sliderProducts[0];
   if (!currentProduct) return null;
 
+  const placeholder = '/src/data/img/remera-negra-manga-corta.png';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawCurrent = currentProduct as any;
+  const rawCurrentImg = String(
+    rawCurrent?.imagen ||
+    rawCurrent?.imagen_url ||
+    rawCurrent?.image ||
+    currentProduct.img ||
+    ''
+  );
+  const portada =
+    rawCurrentImg
+      .split(',')
+      .map((url: string) => url.trim())
+      .filter(Boolean)[0] || placeholder;
+
   return (
     <div className="product-list-container">
       <button className="slider-btn prev-btn" onClick={handlePrev}>&lt;</button>
@@ -153,18 +176,12 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
       >
         <div className="product-list-img-box">
           <img
-            src={
-              (currentProduct as any)?.imagen_url ||
-              (currentProduct as any)?.imagen ||
-              (currentProduct as any)?.image ||
-              currentProduct.img ||
-              '/src/data/img/remera-negra-manga-corta.png'
-            }
+            src={portada}
             alt={currentProduct.name || 'Prenda'}
             onError={(e) => {
               const target = e.currentTarget;
               if (!target.src.includes('remera-negra-manga-corta.png')) {
-                target.src = '/src/data/img/remera-negra-manga-corta.png';
+                target.src = placeholder;
               }
             }}
           />

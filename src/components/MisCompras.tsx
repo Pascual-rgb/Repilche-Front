@@ -82,9 +82,15 @@ const MisCompras = () => {
             descripcion: g.producto?.descrp || g.descripcion || "",
             precio: Number(g.producto?.precio || g.total || 0),
             imagen:
-              g.producto?.img ||
-              g.producto?.imagen ||
-              g.producto?.imagen_url ||
+              String(
+                g.producto?.img ||
+                g.producto?.imagen ||
+                g.producto?.imagen_url ||
+                ""
+              )
+                .split(",")
+                .map((url: string) => url.trim())
+                .filter(Boolean)[0] ||
               "/src/data/img/remera-negra-manga-corta.png",
             vendedor: g.vendedor || "Repilche Moda Circular",
             codigoSecreto: g.codigo || g.codigo_secreto || "000000",
@@ -131,6 +137,9 @@ const MisCompras = () => {
                 const imagenFinal =
                   rawImg && typeof rawImg === "string" && rawImg.trim() !== ""
                     ? rawImg
+                        .split(",")
+                        .map((url: string) => url.trim())
+                        .filter(Boolean)[0] || "/src/data/img/remera-negra-manga-corta.png"
                     : "/src/data/img/remera-negra-manga-corta.png";
 
                 const nombre =

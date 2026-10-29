@@ -124,16 +124,23 @@ export const AdminModeracion = () => {
         </div>
       ) : (
         <div className="admin-mod-grid">
-          {pendientes.map((product) => (
+          {pendientes.map((product) => {
+            const portada =
+              (product.imagen || '')
+                .split(',')
+                .map((url: string) => url.trim())
+                .filter(Boolean)[0] || '/src/data/img/remera-negra-manga-corta.png';
+            return (
             <div key={product.id} className="admin-mod-card" onClick={() => setSelectedProduct(product)}>
-              <img src={product.imagen} alt={product.nombre} />
+              <img src={portada} alt={product.nombre} />
               <div className="admin-mod-card-info">
                 <h3>{product.nombre}</h3>
                 <p><strong>Vendedor:</strong> {product.vendedor}</p>
                 <span className="admin-mod-precio">${product.precio}</span>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -144,7 +151,15 @@ export const AdminModeracion = () => {
 
             <div className="admin-detalle-content">
               <div className="admin-detalle-img">
-                <img src={selectedProduct.imagen} alt={selectedProduct.nombre} />
+                <img
+                  src={
+                    (selectedProduct.imagen || '')
+                      .split(',')
+                      .map((url: string) => url.trim())
+                      .filter(Boolean)[0] || '/src/data/img/remera-negra-manga-corta.png'
+                  }
+                  alt={selectedProduct.nombre}
+                />
               </div>
               <div className="admin-detalle-info">
                 <h2>{selectedProduct.nombre}</h2>
