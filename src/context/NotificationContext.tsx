@@ -4,28 +4,36 @@ import { useAuthContext } from "./AuthContext";
 
 export interface NotificacionBackend {
   id: number;
-  tipo: "producto" | "favorito" | "oferta";
+  tipo?: "producto" | "favorito" | "oferta" | string;
   titulo: string;
   descripcion: string;
   tiempo?: string;
   created_at?: string;
   leida: boolean;
+  leido?: boolean;
 }
 
+export type Notificacion = NotificacionBackend;
+
 interface NotificationContextType {
-  notifications: NotificacionBackend[];
+  notifications: Notificacion[];
+  notificaciones: Notificacion[];
   unreadCount: number;
+  noLeidas: number;
   loading: boolean;
   fetchNotifications: () => Promise<void>;
-  markAsRead: (id: number) => void;
-  markAllAsRead: () => void;
+  markAsRead: (id: number) => Promise<void>;
+  marcarComoLeida: (id: number) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
+  marcarTodasComoLeidas: () => Promise<void>;
 }
 
 const NotificationContext =
   createContext<NotificationContextType | undefined>(undefined);
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
-  const [notifications, setNotifications] = useState<NotificacionBackend[]>([]);
+  // Estado inicial limpio sin mocks
+  const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const { isLoggedIn } = useAuthContext();
 
@@ -33,24 +41,59 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchNotifications = useCallback(async () => {
     if (!isLoggedIn) {
-      setNotifications([]);
+      setNotificaciones([]);
       return;
     }
 
     setLoading(true);
     try {
       const token = localStorage.getItem("repilche-token");
-      const res = await fetch(`${apiUrl}/notifications/`, {
+      
+      // 1. Intenta consultar el endpoint real /api/notificaciones/
+      let res = await fetch(`${apiUrl}/notificaciones/`, {
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
 
+      // Fallback si la ruta en el backend está en inglés /api/notifications/
+      if (res.status === 404) {
+        res = await fetch(`${apiUrl}/notifications/`, {
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+      }
+
       if (res.ok) {
         const data = await res.json();
-        const lista: NotificacionBackend[] = Array.isArray(data) ? data : data.results || [];
-        setNotifications(lista);
+        // Mapea correctamente si viene paginada (results) o array plano
+        const listaRaw: any[] = Array.isArray(data) ? data : data.results || [];
+        
+        const listaNormalizada: Notificacion[] = listaRaw.map((item) => {
+          const esLeida = Boolean(
+            item.leida !== undefined
+              ? item.leida
+              : item.leido !== undefined
+              ? item.leido
+              : false
+          );
+
+          return {
+            id: item.id,
+            tipo: item.tipo || "producto",
+            titulo: item.titulo || item.title || "Notificación",
+            descripcion: item.descripcion || item.mensaje || item.message || "",
+            tiempo: item.tiempo,
+            created_at: item.created_at || item.fecha_creacion || item.fecha,
+            leida: esLeida,
+            leido: esLeida,
+          };
+        });
+
+        setNotificaciones(listaNormalizada);
       }
     } catch (err) {
       console.warn("Error al cargar notificaciones:", err);
@@ -64,54 +107,106 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchNotifications]);
 
   const markAsRead = async (id: number) => {
-    setNotifications((actuales) =>
-      actuales.map((n) => (n.id === id ? { ...n, leida: true } : n))
+    // Actualización optimista del estado local en React
+    setNotificaciones((actuales) =>
+      actuales.map((n) => (n.id === id ? { ...n, leida: true, leido: true } : n))
     );
 
     try {
       const token = localStorage.getItem("repilche-token");
-      await fetch(`${apiUrl}/notifications/${id}/read/`, {
-        method: "POST",
+      if (!token) return;
+
+      // PATCH a la API real
+      let res = await fetch(`${apiUrl}/notificaciones/${id}/leer/`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          Authorization: `Bearer ${token}`,
         },
       });
+
+      // Fallback a POST si el backend no admite PATCH
+      if (res.status === 405) {
+        res = await fetch(`${apiUrl}/notificaciones/${id}/leer/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else if (res.status === 404) {
+        await fetch(`${apiUrl}/notifications/${id}/read/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
     } catch (err) {
       console.warn(`Error al marcar notificación ${id} como leída:`, err);
     }
   };
 
   const markAllAsRead = async () => {
-    setNotifications((actuales) =>
-      actuales.map((n) => ({ ...n, leida: true }))
+    // Actualización optimista del estado local en React
+    setNotificaciones((actuales) =>
+      actuales.map((n) => ({ ...n, leida: true, leido: true }))
     );
 
     try {
       const token = localStorage.getItem("repilche-token");
-      await fetch(`${apiUrl}/notifications/read-all/`, {
-        method: "POST",
+      if (!token) return;
+
+      let res = await fetch(`${apiUrl}/notificaciones/leer-todas/`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          Authorization: `Bearer ${token}`,
         },
       });
+
+      if (!res.ok) {
+        res = await fetch(`${apiUrl}/notificaciones/leer-todas/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+
+      if (!res.ok) {
+        await fetch(`${apiUrl}/notifications/read-all/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
     } catch (err) {
       console.warn("Error al marcar todas las notificaciones como leídas:", err);
     }
   };
 
-  const unreadCount = notifications.filter((n) => !n.leida).length;
+  // Contador de no leídas dinámico según especificación
+  const noLeidas = notificaciones.filter((n) => !n.leida && !n.leido).length;
+  const unreadCount = noLeidas;
 
   return (
     <NotificationContext.Provider
       value={{
-        notifications,
+        notifications: notificaciones,
+        notificaciones,
         unreadCount,
+        noLeidas,
         loading,
         fetchNotifications,
         markAsRead,
+        marcarComoLeida: markAsRead,
         markAllAsRead,
+        marcarTodasComoLeidas: markAllAsRead,
       }}
     >
       {children}

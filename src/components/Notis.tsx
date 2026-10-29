@@ -70,51 +70,50 @@ const Notis = () => {
             </div>
           ) : notifications.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px", color: "#666" }}>
-              <p>No tenés notificaciones en este momento.</p>
+              <p>No tenés notificaciones pendientes</p>
             </div>
           ) : (
-          notifications.map((notificacion) => (
-            <div
-              key={notificacion.id}
-              className={`notis-card ${
-                !notificacion.leida ? "unread" : ""
-              }`}
-              onClick={() => {
-                if (!notificacion.leida) {
-                  markAsRead(notificacion.id);
-                }
-              }}
-            >
-
+          notifications.map((notificacion) => {
+            const esNoLeida = !notificacion.leida && !notificacion.leido;
+            return (
               <div
-                className={`notis-icon ${
-                  notificacion.tipo === "producto"
-                    ? "product-icon"
-                    : notificacion.tipo === "favorito"
-                    ? "heart-icon"
-                    : "tag-icon"
-                }`}
+                key={notificacion.id}
+                className={`notis-card ${esNoLeida ? "unread" : ""}`}
+                onClick={() => {
+                  if (esNoLeida) {
+                    markAsRead(notificacion.id);
+                  }
+                }}
               >
-                {obtenerIcono(notificacion.tipo)}
+                <div
+                  className={`notis-icon ${
+                    notificacion.tipo === "producto"
+                      ? "product-icon"
+                      : notificacion.tipo === "favorito"
+                      ? "heart-icon"
+                      : "tag-icon"
+                  }`}
+                >
+                  {obtenerIcono(notificacion.tipo)}
+                </div>
+
+                <div className="notis-content">
+                  <h3>{notificacion.titulo}</h3>
+
+                  <p>{notificacion.descripcion}</p>
+
+                  <span>
+                    {notificacion.tiempo ||
+                    (notificacion.created_at
+                          ? new Date(notificacion.created_at).toLocaleDateString()
+                          : "Hace momentos")}
+                  </span>
+                </div>
+
+                {esNoLeida && <div className="notis-dot"></div>}
               </div>
-
-              <div className="notis-content">
-
-                <h3>{notificacion.titulo}</h3>
-
-                <p>{notificacion.descripcion}</p>
-
-                <span>
-                  {notificacion.tiempo ||
-                  (notificacion.created_at
-                        ? new Date(notificacion.created_at).toLocaleDateString()
-                        : "Hace momentos")}
-                </span>
-              </div>
-
-              {!notificacion.leida && <div className="notis-dot"></div>}
-            </div>
-          ))
+            );
+          })
         )}
         </div>
       </section>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaCheck, FaTimes, FaShieldAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaShieldAlt } from 'react-icons/fa';
 import '../components/styles/CheckoutModal.css'; 
 import './styles/AdminModeracion.css';
 
