@@ -117,9 +117,30 @@
 
 .cargaProduct-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 24px;
+}
+
+.cargaProduct-buttons .btn-submit-publicar {
+  min-width: 240px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(246, 196, 23, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cargaProduct-buttons .btn-submit-publicar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(246, 196, 23, 0.45);
 }
 
 .form-control,

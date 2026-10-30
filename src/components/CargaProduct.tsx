@@ -11,7 +11,7 @@ import './styles/CargaProduct.css';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ImageUploading = ((ImageUploadingComponent as any).default || ImageUploadingComponent) as typeof ImageUploadingComponent;
 
-type ModalTipo = 'publicar' | 'borrador' | null;
+type ModalTipo = 'publicar' | null;
 
 interface Categoria {
   id: number;
@@ -21,7 +21,6 @@ interface Categoria {
 
 const CargaProduct = () => {
   const [modalTipo, setModalTipo] = useState<ModalTipo>(null);
-  const [toastCrearOtra, setToastCrearOtra] = useState(false);
   const [images, setImages] = useState<ImageListType>([]);
   const [isSubiendo, setIsSubiendo] = useState(false);
   const [estadoCarga, setEstadoCarga] = useState<string>('');
@@ -84,7 +83,7 @@ const CargaProduct = () => {
     setErrorMsg(null);
   };
 
-  const procesarEnvio = async (tipo: 'publicar' | 'crear_otra' | 'borrador') => {
+  const procesarEnvio = async () => {
     setErrorMsg(null);
 
     // Captura síncrona de valores controlados antes de cualquier operación asíncrona
@@ -92,20 +91,6 @@ const CargaProduct = () => {
     const descripcionFinal = descripcion.trim();
     const precioFinal = Number(precio);
     const categoriaFinal = Number(categoriaId);
-
-    // Flujo para guardar borrador local
-    if (tipo === 'borrador') {
-      if (!nombreFinal) {
-        setErrorMsg('Ingresá al menos el nombre de la prenda para guardar el borrador.');
-        return;
-      }
-
-      limpiarFormulario();
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      setToastCrearOtra(false);
-      setModalTipo('borrador');
-      return;
-    }
 
     // Validaciones de negocio en cliente antes de la subida a Storage
     if (!nombreFinal) {
@@ -224,15 +209,7 @@ const CargaProduct = () => {
       limpiarFormulario();
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       fetchNotificaciones().catch(() => {});
-
-      if (tipo === 'crear_otra') {
-        setModalTipo(null);
-        setToastCrearOtra(true);
-        setTimeout(() => setToastCrearOtra(false), 4000);
-      } else {
-        setToastCrearOtra(false);
-        setModalTipo('publicar');
-      }
+      setModalTipo('publicar');
     } catch (err: unknown) {
       console.error('Error durante el proceso de publicación:', err);
       const mensaje = err instanceof Error ? err.message : 'Error inesperado durante la publicación.';
@@ -246,7 +223,7 @@ const CargaProduct = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isSubiendo) {
-      procesarEnvio('publicar');
+      procesarEnvio();
     }
   };
 
@@ -273,29 +250,8 @@ const CargaProduct = () => {
             />
           )}
 
-          {modalTipo === 'borrador' && (
-            <FeedbackCard
-              icon={<FaCheck />}
-              title="¡Borrador guardado con éxito!"
-              message="Tu prenda fue guardada como borrador. Podés editarla y publicarla cuando quieras desde Mis Productos."
-              actionText="Publicar otra prenda"
-              onAction={() => {
-                setModalTipo(null);
-                window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-              }}
-              secondaryActionText="Ir a Mis Productos"
-              secondaryActionTo="/mis-productos"
-            />
-          )}
-
           {!modalTipo && (
             <form ref={formRef} onSubmit={handleSubmit} className="cargaProduct-form">
-              {toastCrearOtra && (
-                <div className="cargaProduct-toast">
-                  <FaCheck /> ¡Prenda enviada a revisión! El formulario quedó listo para cargar otra.
-                </div>
-              )}
-
               {errorMsg && (
                 <div className="cargaProduct-alert-error" role="alert">
                   <FaExclamationTriangle className="alert-icon" />
@@ -530,22 +486,6 @@ const CargaProduct = () => {
               )}
 
               <div className="cargaProduct-buttons">
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => procesarEnvio('borrador')}
-                  disabled={isSubiendo}
-                >
-                  Guardar borrador
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => procesarEnvio('crear_otra')}
-                  disabled={isSubiendo}
-                >
-                  Publicar y crear otra
-                </button>
                 <button
                   type="submit"
                   className="btn-primary btn-submit-publicar"
