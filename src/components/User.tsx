@@ -51,7 +51,7 @@ const User = () => {
     }
 
   const nombreUsuario = user
-    ? `${user.name || user.first_name || ""} ${user.lastName || user.last_name || ""}`.trim() || user.username || "Usuario"
+    ? `${user.name || user.first_name || ""} ${user.lastName || user.last_name || ""}`.trim() || user.name || user.first_name || "Usuario"
     : "Usuario";
 
   return (

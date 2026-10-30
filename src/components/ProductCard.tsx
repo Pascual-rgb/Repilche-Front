@@ -36,11 +36,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ? product.cat.join(', ')
     : rawProduct.categoria_detail?.nombre || rawProduct.categoria || 'General';
 
-  const vendedor = typeof product.vendedor === 'string'
-    ? product.vendedor
-    : rawProduct.vendedor?.first_name
-    ? `${rawProduct.vendedor.first_name} ${rawProduct.vendedor.last_name || ''}`.trim()
-    : rawProduct.vendedor_nombre || 'Repilche';
+  const vendedorNombre =
+    rawProduct.vendedor_nombre ||
+    rawProduct.vendedor?.first_name ||
+    rawProduct.vendedor?.nombre ||
+    (typeof product.vendedor === 'string' && product.vendedor !== 'Repilche' ? product.vendedor : '') ||
+    'Vendedor';
 
   return (
     <Link to={`/producto/${product.id}`} className="product-card-link">
@@ -70,7 +71,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
 
             <span className="product-card-seller">
-              {vendedor}
+              {vendedorNombre}
             </span>
           </div>
 

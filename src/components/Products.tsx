@@ -60,11 +60,11 @@ const Products = () => {
               categoria_detail: item?.categoria_detail,
               precio: Number(item?.precio || item?.price || 0),
               vendedor:
-                typeof item?.vendedor === "string"
-                  ? item.vendedor
-                  : item?.vendedor?.first_name
-                    ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
-                    : item?.vendedor_nombre || "Repilche",
+                item?.vendedor_nombre ||
+                item?.vendedor?.first_name ||
+                item?.vendedor?.nombre ||
+                (typeof item?.vendedor === "string" && item?.vendedor !== "Repilche" ? item.vendedor : "") ||
+                "Vendedor",
             };
           });
 

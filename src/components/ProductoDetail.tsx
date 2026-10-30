@@ -202,11 +202,11 @@ const ProductoDetail = () => {
               categoria_detail: item.categoria_detail,
               precio: Number(item.precio || item.price || 0),
               vendedor:
-                typeof item.vendedor === "string"
-                  ? item.vendedor
-                  : item.vendedor?.first_name
-                    ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
-                    : item.vendedor_nombre || "Repilche",
+                item.vendedor_nombre ||
+                item.vendedor?.first_name ||
+                item.vendedor?.nombre ||
+                (typeof item.vendedor === "string" && item.vendedor !== "Repilche" ? item.vendedor : "") ||
+                "Vendedor",
               vendedor_id:
                 item.vendedor_id ??
                 (typeof item.vendedor === "number"
@@ -456,7 +456,7 @@ const ProductoDetail = () => {
           cat: producto.cat,
           vendedor: producto.vendedor,
         },
-        comprador: user?.first_name ? `${user.first_name} ${user.last_name || ""}`.trim() : (user?.username || "Comprador"),
+        comprador: user?.first_name ? `${user.first_name} ${user.last_name || ""}`.trim() : (user?.name || "Comprador"),
         vendedor: producto.vendedor,
         telefonoVendedor: "280 4123456",
         codigo: datosCheckout?.codigoSecreto || "654321",
@@ -570,7 +570,15 @@ const ProductoDetail = () => {
               <FaUser />
               <div>
                 <span>Vendedor</span>
-                <strong>{producto.vendedor}</strong>
+                <strong>
+                  {rawProduct.vendedor_nombre ||
+                    rawProduct.vendedor?.first_name ||
+                    rawProduct.vendedor?.nombre ||
+                    (typeof producto.vendedor === "string" && producto.vendedor !== "Repilche"
+                      ? producto.vendedor
+                      : "") ||
+                    "Vendedor"}
+                </strong>
               </div>
             </div>
 

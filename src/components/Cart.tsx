@@ -137,7 +137,7 @@ export default function Cart() {
             cat: ["Carrito"],
             vendedor: "Repilche Moda Circular",
           },
-          comprador: user?.first_name ? `${user.first_name} ${user.last_name || ""}`.trim() : (user?.username || "Comprador"),
+          comprador: user?.first_name ? `${user.first_name} ${user.last_name || ""}`.trim() : (user?.name || "Comprador"),
           vendedor: "Repilche Moda Circular",
           telefonoVendedor: "280 4123456",
           codigo: datosCheckout?.codigoSecreto || "654321",

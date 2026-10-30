@@ -1,18 +1,33 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { FaUserCircle, FaSave, FaCheck } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 import FeedbackCard from "./FeedbackCard";
 import "./styles/EditarPerfil.css";
 
 const EditarPerfil = () => {
+  const { user, updateUser } = useAuthContext();
   const [nombre, setNombre] = useState("");
-  const [usuario, setUsuario] = useState("");
+  const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
-  const [numberPhone, setNumberPhone] = useState("");
+  const [telefono, setTelefono] = useState("");
   const [actualizado, setActualizado] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // Inicializar campos con los datos reales del usuario logueado
+  useEffect(() => {
+    if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const rawUser = user as any;
+      setNombre(user.first_name || user.name || rawUser.nombre || "");
+      setApellido(user.last_name || user.lastName || rawUser.apellido || "");
+      setEmail(user.email || "");
+      setTelefono(user.phone || user.numberPhone || user.celphone || rawUser.telefono || "");
+    }
+  }, [user]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formRef.current) return;
@@ -21,12 +36,43 @@ const EditarPerfil = () => {
       return;
     }
 
-    const data = new FormData(formRef.current);
-    const datos = Object.fromEntries(data);
-    console.log("Perfil actualizado:", datos);
+    setGuardando(true);
+    try {
+      const token = localStorage.getItem("repilche-token");
+      const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
 
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    setActualizado(true);
+      if (token) {
+        await fetch(`${apiUrl}/usuario/me/`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            first_name: nombre,
+            last_name: apellido,
+            email,
+            phone: telefono,
+            numberPhone: telefono,
+          }),
+        }).catch((err) => console.warn("No se pudo actualizar en API:", err));
+      }
+
+      updateUser({
+        first_name: nombre,
+        name: nombre,
+        last_name: apellido,
+        lastName: apellido,
+        email,
+        phone: telefono,
+        numberPhone: telefono,
+      });
+
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      setActualizado(true);
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
@@ -60,31 +106,30 @@ const EditarPerfil = () => {
                 onSubmit={handleSubmit}
               >
                 <div className="editar-perfil-field">
-                  <label htmlFor="nombre">Nombre completo</label>
+                  <label htmlFor="nombre">Nombre</label>
                   <input
                     type="text"
                     id="nombre"
                     name="nombre"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
-                    placeholder="Ej: Juan Pérez"
+                    placeholder="Ej: Juan"
                     required
-                    minLength={3}
+                    minLength={2}
                   />
                 </div>
 
                 <div className="editar-perfil-field">
-                  <label htmlFor="usuario">Nombre de usuario</label>
+                  <label htmlFor="apellido">Apellido</label>
                   <input
                     type="text"
-                    id="usuario"
-                    name="usuario"
-                    value={usuario}
-                    onChange={(e) => setUsuario(e.target.value)}
-                    placeholder="Ej: juanperez23"
+                    id="apellido"
+                    name="apellido"
+                    value={apellido}
+                    onChange={(e) => setApellido(e.target.value)}
+                    placeholder="Ej: Pérez"
                     required
-                    minLength={3}
-                    maxLength={20}
+                    minLength={2}
                   />
                 </div>
 
@@ -102,13 +147,13 @@ const EditarPerfil = () => {
                 </div>
 
                 <div className="editar-perfil-field">
-                  <label htmlFor="numberPhone">Número Telefónico</label>
+                  <label htmlFor="telefono">Teléfono</label>
                   <input
                     type="tel"
-                    id="numberPhone"
-                    name="numberPhone"
-                    value={numberPhone}
-                    onChange={(e) => setNumberPhone(e.target.value)}
+                    id="telefono"
+                    name="telefono"
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
                     placeholder="Ej: 2804123456"
                     inputMode="numeric"
                     pattern="[0-9]*"
@@ -126,9 +171,13 @@ const EditarPerfil = () => {
                     Cancelar
                   </Link>
 
-                  <button type="submit" className="editar-perfil-guardar">
+                  <button
+                    type="submit"
+                    className="editar-perfil-guardar"
+                    disabled={guardando}
+                  >
                     <FaSave />
-                    Guardar cambios
+                    {guardando ? "Guardando..." : "Guardar cambios"}
                   </button>
                 </div>
               </form>

@@ -80,11 +80,11 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
             categoria_detail: item?.categoria_detail,
             precio: Number(item?.precio || item?.price || 0),
             vendedor:
-              typeof item?.vendedor === 'string'
-                ? item.vendedor
-                : item?.vendedor?.first_name
-                ? `${item.vendedor.first_name} ${item.vendedor.last_name || ''}`.trim()
-                : item?.vendedor_nombre || 'Repilche',
+              item?.vendedor_nombre ||
+              item?.vendedor?.first_name ||
+              item?.vendedor?.nombre ||
+              (typeof item?.vendedor === 'string' && item?.vendedor !== 'Repilche' ? item.vendedor : '') ||
+              'Vendedor',
           };
         });
 
@@ -192,7 +192,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
             <strong>Descripción:</strong> {currentProduct.descrp || 'Sin descripción'}
           </p>
           <p className="product-list-seller">
-            <strong>Vendedor:</strong> {currentProduct.vendedor || 'Repilche'}
+            <strong>Vendedor:</strong> {currentProduct.vendedor || 'Vendedor'}
           </p>
           <div className="product-list-price">${currentProduct.precio || 0}</div>
         </div>
