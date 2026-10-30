@@ -22,6 +22,8 @@ export interface UserData {
   phone?: string;
   numberPhone?: string;
   celphone?: string;
+  avatar?: string;
+  foto?: string;
   is_vendedor?: boolean;
   is_staff?: boolean;
   is_superuser?: boolean;

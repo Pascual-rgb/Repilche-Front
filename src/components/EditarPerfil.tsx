@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from "react";
-import { FaUserCircle, FaSave, FaCheck, FaCamera } from "react-icons/fa";
+import { FaUserCircle, FaSave, FaCheck, FaCamera, FaSpinner, FaExclamationTriangle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import { uploadAvatarImage } from "../services/storageService";
 import FeedbackCard from "./FeedbackCard";
 import "./styles/EditarPerfil.css";
 
@@ -15,6 +16,7 @@ const EditarPerfil = () => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [actualizado, setActualizado] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   // Inicializar campos con los datos reales del usuario logueado
@@ -46,6 +48,7 @@ const EditarPerfil = () => {
     if (file) {
       setAvatarFile(file);
       setAvatarPreview(URL.createObjectURL(file));
+      setErrorMsg(null);
     }
   };
 
@@ -59,31 +62,52 @@ const EditarPerfil = () => {
     }
 
     setGuardando(true);
+    setErrorMsg(null);
     try {
       const token = localStorage.getItem("repilche-token");
       const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
 
-      const formData = new FormData();
-      formData.append("first_name", nombre);
-      formData.append("last_name", apellido);
-      formData.append("email", email);
-      formData.append("phone", telefono);
-      formData.append("numberPhone", telefono);
-      
+      // 1. Si hay una nueva imagen seleccionada, subir directamente a Supabase Storage
+      let urlPublicaAvatar = avatarPreview;
       if (avatarFile) {
-        formData.append("avatar", avatarFile); // Ajustá 'avatar' si tu backend Django espera otro nombre (ej. 'foto')
+        try {
+          urlPublicaAvatar = await uploadAvatarImage(avatarFile, user?.id);
+        } catch (storageErr) {
+          console.error("Error al subir avatar a Supabase:", storageErr);
+          throw new Error("No se pudo subir la foto de perfil a Supabase Storage. Verificá tu conexión e intentá de nuevo.");
+        }
       }
+
+      // 2. Enviar JSON estándar al backend Django (sin FormData binario)
+      const payload = {
+        first_name: nombre,
+        nombre: nombre,
+        last_name: apellido,
+        apellido: apellido,
+        email,
+        phone: telefono,
+        telefono: telefono,
+        numberPhone: telefono,
+        avatar: urlPublicaAvatar || "",
+        foto: urlPublicaAvatar || "",
+      };
 
       if (token) {
-        await fetch(`${apiUrl}/usuario/me/`, {
+        const res = await fetch(`${apiUrl}/usuario/me/`, {
           method: "PATCH",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: formData,
-        }).catch((err) => console.warn("No se pudo actualizar en API:", err));
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          console.warn("Respuesta no OK de /usuario/me/:", res.status);
+        }
       }
 
+      // 3. Persistir en el AuthContext y localStorage
       updateUser({
         first_name: nombre,
         name: nombre,
@@ -92,11 +116,18 @@ const EditarPerfil = () => {
         email,
         phone: telefono,
         numberPhone: telefono,
-        avatar: avatarPreview || undefined,
+        avatar: urlPublicaAvatar || undefined,
+        foto: urlPublicaAvatar || undefined,
       });
 
+      setAvatarFile(null);
+      setAvatarPreview(urlPublicaAvatar);
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
       setActualizado(true);
+    } catch (err: unknown) {
+      console.error("Error al actualizar perfil:", err);
+      const msg = err instanceof Error ? err.message : "Ocurrió un error al actualizar tus datos.";
+      setErrorMsg(msg);
     } finally {
       setGuardando(false);
     }
@@ -148,6 +179,26 @@ const EditarPerfil = () => {
                 className="editar-perfil-form"
                 onSubmit={handleSubmit}
               >
+                {errorMsg && (
+                  <div
+                    style={{
+                      background: "#fef2f2",
+                      border: "1px solid #fecaca",
+                      color: "#dc2626",
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      fontSize: "14px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                    role="alert"
+                  >
+                    <FaExclamationTriangle style={{ flexShrink: 0 }} />
+                    <span>{errorMsg}</span>
+                  </div>
+                )}
+
                 <div className="editar-perfil-field">
                   <label htmlFor="nombre">Nombre</label>
                   <input
@@ -219,8 +270,17 @@ const EditarPerfil = () => {
                     className="editar-perfil-guardar"
                     disabled={guardando}
                   >
-                    <FaSave />
-                    {guardando ? "Guardando..." : "Guardar cambios"}
+                    {guardando ? (
+                      <>
+                        <FaSpinner className="spin-icon" />
+                        <span>Guardando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaSave />
+                        <span>Guardar cambios</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
