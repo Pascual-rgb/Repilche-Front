@@ -55,8 +55,8 @@ const User = () => {
     : "Usuario";
 
   const rawUser = user as any;
-  const potentialAvatar = user?.avatar || user?.foto || rawUser?.avatar || rawUser?.foto;
-  const userAvatar = typeof potentialAvatar === "string" && potentialAvatar.trim() !== "" ? potentialAvatar : null;
+  const rawAvatar = user?.avatar || user?.foto || rawUser?.avatar || rawUser?.foto;
+  const userAvatar = typeof rawAvatar === "string" && rawAvatar.trim() !== "" && rawAvatar.toLowerCase() !== "avatar" && (rawAvatar.startsWith("http") || rawAvatar.startsWith("blob") || rawAvatar.startsWith("data")) ? rawAvatar : null;
   
   return (
     <div className="user-container" ref={userContainerRef}>

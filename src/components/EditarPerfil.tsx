@@ -26,11 +26,17 @@ const EditarPerfil = () => {
       setApellido(user.last_name || user.lastName || rawUser.apellido || "");
       setEmail(user.email || "");
       setTelefono(user.phone || user.numberPhone || user.celphone || rawUser.telefono || "");
-      const existingAvatar = user.avatar || user.foto || rawUser.avatar || rawUser.foto;
-      if (existingAvatar && typeof existingAvatar === "string" && existingAvatar.trim() !== "") {
-        setAvatarPreview(existingAvatar);
+      const rawAvatar = user.avatar || user.foto || rawUser.avatar || rawUser.foto;
+      if (
+        rawAvatar &&
+        typeof rawAvatar === "string" &&
+        rawAvatar.trim() !== "" &&
+        rawAvatar.toLowerCase() !== "avatar" &&
+        (rawAvatar.startsWith("http") || rawAvatar.startsWith("blob") || rawAvatar.startsWith("data"))
+      ) {
+        setAvatarPreview(rawAvatar);
       } else {
-        setAvatarPreview(null); // Fuerza a mostrar el FaUserCircle si no hay foto
+        setAvatarPreview(null); 
       }
     }
   }, [user]);
