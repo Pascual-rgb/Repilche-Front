@@ -24,22 +24,23 @@ const EditarPerfil = () => {
     if (user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rawUser = user as any;
-      setNombre(user.first_name || user.name || rawUser.nombre || "");
-      setApellido(user.last_name || user.lastName || rawUser.apellido || "");
+      setNombre(user.nombre || user.first_name || rawUser.nombre || "");
+      setApellido(user.apellido || user.last_name || rawUser.apellido || "");
       setEmail(user.email || "");
-      setTelefono(user.phone || user.numberPhone || user.celphone || rawUser.telefono || "");
-      const rawAvatar = user.avatar || user.foto || rawUser.avatar || rawUser.foto;
-      if (
-        rawAvatar &&
-        typeof rawAvatar === "string" &&
-        rawAvatar.trim() !== "" &&
-        rawAvatar.toLowerCase() !== "avatar" &&
-        (rawAvatar.startsWith("http") || rawAvatar.startsWith("blob") || rawAvatar.startsWith("data"))
-      ) {
-        setAvatarPreview(rawAvatar);
-      } else {
-        setAvatarPreview(null); 
-      }
+      setTelefono(user.telefono || user.phone || user.numberPhone || user.celphone || rawUser.telefono || "");
+      
+      const avatarUrl =
+        user.avatar ||
+        user.foto ||
+        user.avatar_url ||
+        user.image ||
+        rawUser.avatar ||
+        rawUser.foto ||
+        rawUser.avatar_url ||
+        rawUser.image ||
+        null;
+
+      setAvatarPreview(avatarUrl);
     }
   }, [user]);
 
@@ -111,13 +112,18 @@ const EditarPerfil = () => {
       updateUser({
         first_name: nombre,
         name: nombre,
+        nombre: nombre,
         last_name: apellido,
         lastName: apellido,
+        apellido: apellido,
         email,
         phone: telefono,
+        telefono: telefono,
         numberPhone: telefono,
         avatar: urlPublicaAvatar || undefined,
         foto: urlPublicaAvatar || undefined,
+        avatar_url: urlPublicaAvatar || undefined,
+        image: urlPublicaAvatar || undefined,
       });
 
       setAvatarFile(null);

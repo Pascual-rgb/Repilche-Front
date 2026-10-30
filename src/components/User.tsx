@@ -54,9 +54,18 @@ const User = () => {
     ? `${user.name || user.first_name || ""} ${user.lastName || user.last_name || ""}`.trim() || user.name || user.first_name || "Usuario"
     : "Usuario";
 
-  const rawUser = user as any;
-  const rawAvatar = user?.avatar || user?.foto || rawUser?.avatar || rawUser?.foto;
-  const userAvatar = typeof rawAvatar === "string" && rawAvatar.trim() !== "" && rawAvatar.toLowerCase() !== "avatar" && (rawAvatar.startsWith("http") || rawAvatar.startsWith("blob") || rawAvatar.startsWith("data")) ? rawAvatar : null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawUser = (user || {}) as any;
+  const avatarUrl =
+    user?.avatar ||
+    user?.foto ||
+    user?.image ||
+    user?.avatar_url ||
+    rawUser?.avatar ||
+    rawUser?.foto ||
+    rawUser?.image ||
+    rawUser?.avatar_url ||
+    "";
   
   return (
     <div className="user-container" ref={userContainerRef}>
@@ -65,10 +74,12 @@ const User = () => {
         onClick={() => setOpen(!open)}
         aria-label="Abrir menú de usuario"
       >
-        {userAvatar ? (
-          <img src={userAvatar} alt="Avatar" className="user-button-img" />
+        {avatarUrl ? (
+          <img src={avatarUrl} alt="Avatar" className="user-button-img" />
         ) : (
-          <FaUserCircle />
+          <div className="user-avatar-placeholder">
+            <FaUserCircle />
+          </div>
         )}
       </button>
 
@@ -76,10 +87,12 @@ const User = () => {
         <div className="user-menu">
 
           <div className="user-header">
-            {userAvatar ? (
-              <img src={userAvatar} alt="Avatar" className="user-avatar-img" />
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Avatar" className="user-avatar-img" />
             ) : (
-              <FaUserCircle className="user-avatar" />
+              <div className="user-avatar-placeholder">
+                <FaUserCircle className="user-avatar" />
+              </div>
             )}
 
             <div className="user-info">

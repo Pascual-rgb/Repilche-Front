@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 export interface PerfilVendedorData {
   id?: number;
@@ -15,15 +15,20 @@ export interface UserData {
   email?: string;
   first_name?: string;
   last_name?: string;
+  nombre?: string;
+  apellido?: string;
   name?: string;
   lastName?: string;
   username?: string;
   usuario?: string;
   phone?: string;
+  telefono?: string;
   numberPhone?: string;
   celphone?: string;
   avatar?: string;
   foto?: string;
+  avatar_url?: string;
+  image?: string;
   is_vendedor?: boolean;
   is_staff?: boolean;
   is_superuser?: boolean;
@@ -58,6 +63,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const parsed = JSON.parse(saved);
       if (!parsed || typeof parsed !== 'object') return null;
       const perfilObj = parsed.perfil || parsed.perfil_vendedor || null;
+      const avatarVal =
+        parsed.avatar ||
+        parsed.foto ||
+        parsed.avatar_url ||
+        parsed.image ||
+        perfilObj?.avatar ||
+        perfilObj?.foto ||
+        '';
       return {
         ...parsed,
         name: parsed.name || parsed.first_name || parsed.username || '',
@@ -65,6 +78,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         first_name: parsed.first_name || parsed.name || '',
         last_name: parsed.last_name || parsed.lastName || '',
         username: parsed.username || parsed.email?.split('@')[0] || '',
+        avatar: avatarVal,
+        foto: avatarVal,
+        avatar_url: avatarVal,
+        image: avatarVal,
         is_vendedor: Boolean(parsed.is_vendedor),
         perfil: perfilObj,
         perfil_vendedor: perfilObj,
@@ -86,9 +103,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           ? newUserData.perfil_vendedor
           : base.perfil || base.perfil_vendedor || null;
 
+      const avatarVal =
+        newUserData.avatar ||
+        newUserData.foto ||
+        (newUserData as any).avatar_url ||
+        (newUserData as any).image ||
+        base.avatar ||
+        base.foto ||
+        (base as any).avatar_url ||
+        (base as any).image ||
+        '';
+
       const updated: UserData = {
         ...base,
         ...newUserData,
+        avatar: avatarVal,
+        foto: avatarVal,
+        avatar_url: avatarVal,
+        image: avatarVal,
         perfil: perfilObj,
         perfil_vendedor: perfilObj,
       };
@@ -96,6 +128,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return updated;
     });
   };
+
+  // Sincronizar en segundo plano con el backend al recargar si hay sesión activa
+  useEffect(() => {
+    const token = localStorage.getItem('repilche-token');
+    if (!token) return;
+
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://repilche-backend.onrender.com/api';
+    fetch(`${apiUrl}/usuario/me/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((meData) => {
+        if (meData && typeof meData === 'object') {
+          updateUser(meData);
+        }
+      })
+      .catch((err) => {
+        console.warn('No se pudo refrescar usuario/me en segundo plano:', err);
+      });
+  }, []);
 
   const login = async (datos: Record<string, unknown>) => {
     const apiUrl = import.meta.env.VITE_API_URL || 'https://repilche-backend.onrender.com/api';
@@ -157,6 +209,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (userObj) {
       const perfilObj = userObj.perfil || userObj.perfil_vendedor || null;
+      const avatarVal =
+        userObj.avatar ||
+        userObj.foto ||
+        userObj.image ||
+        userObj.avatar_url ||
+        perfilObj?.avatar ||
+        perfilObj?.foto ||
+        '';
       const normalizedUser: UserData = {
         ...userObj,
         name: userObj.name || userObj.first_name || userObj.username || '',
@@ -164,6 +224,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         first_name: userObj.first_name || userObj.name || '',
         last_name: userObj.last_name || userObj.lastName || '',
         username: userObj.username || userObj.email?.split('@')[0] || '',
+        avatar: avatarVal,
+        foto: avatarVal,
+        avatar_url: avatarVal,
+        image: avatarVal,
         is_vendedor: Boolean(userObj.is_vendedor),
         is_staff: Boolean(userObj.is_staff ?? tokenClaims.is_staff),
         is_superuser: Boolean(userObj.is_superuser ?? tokenClaims.is_superuser),
@@ -208,6 +272,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     if (resData?.user) {
       const perfilObj = resData.user.perfil || resData.user.perfil_vendedor || null;
+      const avatarVal =
+        resData.user.avatar ||
+        resData.user.foto ||
+        resData.user.image ||
+        resData.user.avatar_url ||
+        perfilObj?.avatar ||
+        perfilObj?.foto ||
+        '';
       const normalizedUser: UserData = {
         ...resData.user,
         name: resData.user.name || resData.user.first_name || resData.user.username || '',
@@ -215,6 +287,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         first_name: resData.user.first_name || resData.user.name || '',
         last_name: resData.user.last_name || resData.user.lastName || '',
         username: resData.user.username || resData.user.email?.split('@')[0] || '',
+        avatar: avatarVal,
+        foto: avatarVal,
+        avatar_url: avatarVal,
+        image: avatarVal,
         is_vendedor: Boolean(resData.user.is_vendedor),
         perfil: perfilObj,
         perfil_vendedor: perfilObj,

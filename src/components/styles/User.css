@@ -16,6 +16,8 @@
   color: #202020;
   transition: 0.25s;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  padding: 0;
 }
 
 .user-button:hover {
@@ -46,6 +48,14 @@
 .user-avatar {
   font-size: 75px;
   color: #888;
+}
+
+.user-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .user-button-img {
