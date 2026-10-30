@@ -390,26 +390,48 @@
 }
 
 @media (max-width: 480px) {
+ .checkout-modal-overlay {
+    padding: 12px;
+  }
+
   .checkout-modal-card {
-    padding: 28px 18px;
+    padding: 22px 14px;
     border-radius: 20px;
   }
 
   .checkout-modal-header h2 {
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .checkout-modal-header p {
+    font-size: 13px;
   }
 
   .checkout-monto-valor {
-    font-size: 28px;
+    font-size: 26px;
   }
 
-  .checkout-alias-row {
-    flex-direction: column;
-    align-items: stretch;
+  .checkout-alias-box {
+    padding: 14px 10px;
+  }
+
+  .checkout-alias-text {
+    font-size: 17px; 
+    letter-spacing: 1px; 
+    word-break: break-all;
     text-align: center;
   }
 
-  .checkout-copy-btn {
-    justify-content: center;
+  .checkout-alias-label {
+    font-size: 11px;
+  }
+
+  .checkout-alias-titular {
+    font-size: 11px;
+  }
+
+  .checkout-confirm-btn {
+    padding: 13px;
+    font-size: 15px;
   }
 }

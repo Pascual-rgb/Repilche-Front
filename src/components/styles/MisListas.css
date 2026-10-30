@@ -402,9 +402,25 @@
 
   .lista-datos { grid-template-columns: 1fr; }
 
+  .lista-header-row {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .lista-info h2 {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+  
+  .voucher-codigo-digits {
+    font-size: 26px;
+    letter-spacing: 4px;
+  }
+
   .codigo-box strong {
-    font-size: 28px;
-    letter-spacing: 6px;
+    font-size: 26px;
+    letter-spacing: 4px;
   }
 
   .validar-fila { flex-direction: column; }
