@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { FaUserCircle, FaSave, FaCheck } from "react-icons/fa";
+import { FaUserCircle, FaSave, FaCheck, FaCamera } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import FeedbackCard from "./FeedbackCard";
@@ -11,6 +11,8 @@ const EditarPerfil = () => {
   const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [actualizado, setActualizado] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -24,8 +26,20 @@ const EditarPerfil = () => {
       setApellido(user.last_name || user.lastName || rawUser.apellido || "");
       setEmail(user.email || "");
       setTelefono(user.phone || user.numberPhone || user.celphone || rawUser.telefono || "");
+      const existingAvatar = user.avatar || user.foto || rawUser.avatar || rawUser.foto;
+      if (existingAvatar && typeof existingAvatar === "string") {
+        setAvatarPreview(existingAvatar);
+      }
     }
   }, [user]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,20 +55,24 @@ const EditarPerfil = () => {
       const token = localStorage.getItem("repilche-token");
       const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
 
+      const formData = new FormData();
+      formData.append("first_name", nombre);
+      formData.append("last_name", apellido);
+      formData.append("email", email);
+      formData.append("phone", telefono);
+      formData.append("numberPhone", telefono);
+      
+      if (avatarFile) {
+        formData.append("avatar", avatarFile); // Ajustá 'avatar' si tu backend Django espera otro nombre (ej. 'foto')
+      }
+
       if (token) {
         await fetch(`${apiUrl}/usuario/me/`, {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            first_name: nombre,
-            last_name: apellido,
-            email,
-            phone: telefono,
-            numberPhone: telefono,
-          }),
+          body: formData,
         }).catch((err) => console.warn("No se pudo actualizar en API:", err));
       }
 
@@ -66,6 +84,7 @@ const EditarPerfil = () => {
         email,
         phone: telefono,
         numberPhone: telefono,
+        avatar: avatarPreview || undefined,
       });
 
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -92,8 +111,24 @@ const EditarPerfil = () => {
           ) : (
             <>
               <div className="editar-perfil-header">
-                <FaUserCircle className="editar-perfil-avatar" />
+                <div className="avatar-upload-container">
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt="Avatar" className="avatar-img-preview" />
+                  ) : (
+                    <FaUserCircle className="editar-perfil-avatar" />
+                  )}
 
+                  <label htmlFor="avatar-input" className="avatar-upload-badge" title="Cambiar foto de perfil">
+                    <FaCamera />
+                  </label>
+                  <input
+                    id="avatar-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                </div>
                 <div>
                   <h1>Editar perfil</h1>
                   <p>Modificá tus datos personales de Repilche.</p>
