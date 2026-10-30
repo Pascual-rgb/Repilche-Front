@@ -2,17 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTimes, FaCheck, FaCopy, FaKey } from "react-icons/fa";
 import { useCarritoContext } from "../context/CartContext";
+import { DATOS_PAGO_REPILCHE } from "../config/constants";
 import "./styles/CheckoutModal.css";
 
-export const ALIAS_OFICIAL = "repilche";
-export const TITULAR_OFICIAL = "Maia Hernandez";
+export const ALIAS_OFICIAL = DATOS_PAGO_REPILCHE.ALIAS;
+export const TITULAR_OFICIAL = DATOS_PAGO_REPILCHE.TITULAR;
 
 export interface ModalPagoTransferenciaProps {
   isOpen: boolean;
   onClose: () => void;
   monto: number;
-  alias?: string;
-  titular?: string;
+  alias?: string; // Fallback: DATOS_PAGO_REPILCHE.ALIAS ("repilche")
+  titular?: string; // Fallback: DATOS_PAGO_REPILCHE.TITULAR
   codigoSecreto?: string;
   pedidoId?: number | string;
   onConfirmarTransferencia?: () => Promise<void> | void;
@@ -22,8 +23,8 @@ export default function ModalPagoTransferencia({
   isOpen,
   onClose,
   monto,
-  alias = ALIAS_OFICIAL,
-  titular = TITULAR_OFICIAL,
+  alias = DATOS_PAGO_REPILCHE.ALIAS,
+  titular = DATOS_PAGO_REPILCHE.TITULAR,
   codigoSecreto,
   pedidoId,
   onConfirmarTransferencia,
@@ -189,6 +190,31 @@ export default function ModalPagoTransferencia({
               <span className="checkout-alias-titular">
                 Titular: {titular}
               </span>
+              <div style={{ marginTop: "4px" }}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyAlias();
+                  }}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "6px 16px",
+                    borderRadius: "8px",
+                    border: "1px solid #d4a709",
+                    background: copiado ? "#2e7d32" : "#f6ca17",
+                    color: copiado ? "#fff" : "#1a1a1a",
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {copiado ? <FaCheck /> : <FaCopy />} {copiado ? "¡Copiado!" : "Copiar"}
+                </button>
+              </div>
             </div>
 
             {error && (

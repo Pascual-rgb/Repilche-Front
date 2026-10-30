@@ -5,6 +5,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import { FaTimes, FaTrash } from "react-icons/fa";
 import ModalPagoTransferencia from "./ModalPagoTransferencia";
+import { DATOS_PAGO_REPILCHE } from "../config/constants";
 import "./styles/Cart.css";
 
 export default function Cart() {
@@ -82,8 +83,8 @@ export default function Cart() {
       const pedidoId = resData?.pedido_id ?? resData?.id;
       const total = Number(resData?.total ?? resData?.monto ?? totalLocal);
       const codigoSecreto = resData?.codigo_secreto ?? resData?.codigo ?? String(Math.floor(100000 + Math.random() * 900000));
-      const alias = resData?.alias_transferencia || "repilche";
-      const titular = resData?.titular || "Maia Hernandez";
+      const alias = resData?.alias_transferencia || DATOS_PAGO_REPILCHE.ALIAS;
+      const titular = resData?.titular || DATOS_PAGO_REPILCHE.TITULAR;
 
       setDatosCheckout({
         pedidoId,
@@ -102,8 +103,8 @@ export default function Cart() {
         pedidoId: Date.now(),
         total: totalLocal,
         codigoSecreto: String(Math.floor(100000 + Math.random() * 900000)),
-        alias: "repilche",
-        titular: "Maia Hernandez",
+        alias: DATOS_PAGO_REPILCHE.ALIAS,
+        titular: DATOS_PAGO_REPILCHE.TITULAR,
       });
       closeCart();
       setIsCheckoutOpen(true);
@@ -150,7 +151,7 @@ export default function Cart() {
 
     // 3. Vaciar carrito de inmediato tras tocar 'Ya transferí'
     emptyCart();
-    fetchNotificaciones().catch(() => {});
+    fetchNotificaciones().catch(() => { });
   };
 
   const handleCloseCheckout = () => {
@@ -194,8 +195,8 @@ export default function Cart() {
                 <span>Total:</span>
                 <strong>${getTotalPrice()}</strong>
               </div>
-              <button 
-                className="checkout-btn" 
+              <button
+                className="checkout-btn"
                 onClick={handleProcederPago}
                 disabled={carrito.length === 0 || isCreandoOrden}
                 style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}

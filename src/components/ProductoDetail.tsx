@@ -14,6 +14,7 @@ import { useCarritoContext } from "../context/CartContext";
 import { useAuthContext } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import ModalPagoTransferencia from "./ModalPagoTransferencia";
+import { DATOS_PAGO_REPILCHE } from "../config/constants";
 import "./styles/ProductoDetail.css";
 
 type ExtendedProduct = Products & {
@@ -137,9 +138,9 @@ const ProductoDetail = () => {
             );
             const parsedItemImgs = rawItemImg.includes(",")
               ? rawItemImg
-                  .split(",")
-                  .map((url: string) => url.trim())
-                  .filter(Boolean)
+                .split(",")
+                .map((url: string) => url.trim())
+                .filter(Boolean)
               : [rawItemImg.trim()].filter(Boolean);
             const itemImg =
               parsedItemImgs[0] || "/src/data/img/remera-negra-manga-corta.png";
@@ -266,9 +267,9 @@ const ProductoDetail = () => {
   );
   const imagenes: string[] = rawImg.includes(",")
     ? rawImg
-        .split(",")
-        .map((url: string) => url.trim())
-        .filter(Boolean)
+      .split(",")
+      .map((url: string) => url.trim())
+      .filter(Boolean)
     : [rawImg.trim()].filter(Boolean);
 
   const imagen = imagenes[0] || placeholder;
@@ -399,8 +400,8 @@ const ProductoDetail = () => {
       const pedidoId = resData?.pedido_id ?? resData?.id;
       const total = Number(resData?.total ?? resData?.monto ?? producto.precio);
       const codigoSecreto = resData?.codigo_secreto ?? resData?.codigo ?? resData?.codigo_retiro;
-      const aliasTransferencia = resData?.alias_transferencia || "repilche";
-      const titular = resData?.titular || "Maia Hernandez";
+      const aliasTransferencia = resData?.alias_transferencia || DATOS_PAGO_REPILCHE.ALIAS;
+      const titular = resData?.titular || DATOS_PAGO_REPILCHE.TITULAR;
 
       setDatosCheckout({
         pedidoId,
@@ -419,8 +420,8 @@ const ProductoDetail = () => {
         pedidoId: Date.now(),
         total: Number(producto.precio),
         codigoSecreto: codigoFallback,
-        alias: "repilche",
-        titular: "Maia Hernandez",
+        alias: DATOS_PAGO_REPILCHE.ALIAS,
+        titular: DATOS_PAGO_REPILCHE.TITULAR,
       });
       setShowModalTransferencia(true);
     } finally {
@@ -501,141 +502,141 @@ const ProductoDetail = () => {
       )}
 
       <section className="producto-detail-container">
-          <Link to={rutaCategoria} className="volver-btn">
-            <FaArrowLeft />
-            Volver a productos
-          </Link>
+        <Link to={rutaCategoria} className="volver-btn">
+          <FaArrowLeft />
+          Volver a productos
+        </Link>
 
-          <div className="producto-detail">
-            <div className="producto-detail-gallery">
-              <div className="producto-detail-image">
-                <img
-                  src={imagenActiva}
-                  alt={producto.name as string}
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    if (!target.src.includes("remera-negra-manga-corta.png")) {
-                      target.src = placeholder;
-                    }
-                  }}
-                />
+        <div className="producto-detail">
+          <div className="producto-detail-gallery">
+            <div className="producto-detail-image">
+              <img
+                src={imagenActiva}
+                alt={producto.name as string}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes("remera-negra-manga-corta.png")) {
+                    target.src = placeholder;
+                  }
+                }}
+              />
+            </div>
+
+            {imagenes.length > 1 && (
+              <div className="producto-detail-thumbnails">
+                {imagenes.map((url, idx) => {
+                  const esActiva = imagenActiva === url;
+                  return (
+                    <button
+                      key={`${url}-${idx}`}
+                      type="button"
+                      className={`producto-detail-thumb ${esActiva ? "active" : ""}`}
+                      onClick={() => setImagenSeleccionada(url)}
+                      aria-label={`Ver foto ${idx + 1} de ${producto.name}`}
+                    >
+                      <img
+                        src={url}
+                        alt={`${producto.name} - vista ${idx + 1}`}
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (!target.src.includes("remera-negra-manga-corta.png")) {
+                            target.src = placeholder;
+                          }
+                        }}
+                      />
+                    </button>
+                  );
+                })}
               </div>
+            )}
+          </div>
 
-              {imagenes.length > 1 && (
-                <div className="producto-detail-thumbnails">
-                  {imagenes.map((url, idx) => {
-                    const esActiva = imagenActiva === url;
-                    return (
-                      <button
-                        key={`${url}-${idx}`}
-                        type="button"
-                        className={`producto-detail-thumb ${esActiva ? "active" : ""}`}
-                        onClick={() => setImagenSeleccionada(url)}
-                        aria-label={`Ver foto ${idx + 1} de ${producto.name}`}
-                      >
-                        <img
-                          src={url}
-                          alt={`${producto.name} - vista ${idx + 1}`}
-                          onError={(e) => {
-                            const target = e.currentTarget;
-                            if (!target.src.includes("remera-negra-manga-corta.png")) {
-                              target.src = placeholder;
-                            }
-                          }}
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
+          <div className="producto-detail-info">
+            <span className="producto-detail-category">
+              {producto.cat.join(", ")}
+            </span>
+
+            <h1>{producto.name}</h1>
+
+            <p className="producto-detail-description">{producto.descrp}</p>
+
+            <div className="producto-detail-price">${producto.precio}</div>
+
+            <div className="producto-detail-stock">
+              Stock disponible: <strong>{producto.stock}</strong>
+            </div>
+
+            <div className="producto-detail-seller">
+              <FaUser />
+              <div>
+                <span>Vendedor</span>
+                <strong>{producto.vendedor}</strong>
+              </div>
+            </div>
+
+            {/* Acciones de compra directa y carrito */}
+            <div className="producto-detail-actions">
+              {esDuenio ? (
+                <button
+                  type="button"
+                  className="producto-detail-btn-disabled"
+                  disabled
+                  title="No podés comprar un producto que vos mismo publicaste"
+                >
+                  <FaShieldAlt /> Esta prenda te pertenece
+                </button>
+              ) : noDisponible ? (
+                <button
+                  type="button"
+                  className="producto-detail-btn-disabled"
+                  disabled
+                >
+                  Vendido / No disponible
+                </button>
+              ) : adquirido ? (
+                <button
+                  type="button"
+                  className="producto-detail-btn-adquirido"
+                  disabled
+                >
+                  <FaCheck /> ¡Adquirido!
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="producto-detail-comprar"
+                  onClick={handleComprarClick}
+                  disabled={isCreandoOrden}
+                  style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                >
+                  {isCreandoOrden ? (
+                    <>
+                      <div className="checkout-spinner" style={{ width: "16px", height: "16px", borderWidth: "2px" }} />
+                      <span>Generando orden...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaBolt /> Comprar ahora
+                    </>
+                  )}
+                </button>
+              )}
+
+              {!esDuenio && !noDisponible && !adquirido && (
+                <button
+                  type="button"
+                  className="producto-detail-cart"
+                  onClick={() => {
+                    addToCart(producto, 1);
+                    openCart();
+                  }}
+                >
+                  <FaShoppingCart /> Agregar al carrito
+                </button>
               )}
             </div>
-
-            <div className="producto-detail-info">
-              <span className="producto-detail-category">
-                {producto.cat.join(", ")}
-              </span>
-
-              <h1>{producto.name}</h1>
-
-              <p className="producto-detail-description">{producto.descrp}</p>
-
-              <div className="producto-detail-price">${producto.precio}</div>
-
-              <div className="producto-detail-stock">
-                Stock disponible: <strong>{producto.stock}</strong>
-              </div>
-
-              <div className="producto-detail-seller">
-                <FaUser />
-                <div>
-                  <span>Vendedor</span>
-                  <strong>{producto.vendedor}</strong>
-                </div>
-              </div>
-
-              {/* Acciones de compra directa y carrito */}
-              <div className="producto-detail-actions">
-                {esDuenio ? (
-                  <button
-                    type="button"
-                    className="producto-detail-btn-disabled"
-                    disabled
-                    title="No podés comprar un producto que vos mismo publicaste"
-                  >
-                    <FaShieldAlt /> Esta prenda te pertenece
-                  </button>
-                ) : noDisponible ? (
-                  <button
-                    type="button"
-                    className="producto-detail-btn-disabled"
-                    disabled
-                  >
-                    Vendido / No disponible
-                  </button>
-                ) : adquirido ? (
-                  <button
-                    type="button"
-                    className="producto-detail-btn-adquirido"
-                    disabled
-                  >
-                    <FaCheck /> ¡Adquirido!
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="producto-detail-comprar"
-                    onClick={handleComprarClick}
-                    disabled={isCreandoOrden}
-                    style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
-                  >
-                    {isCreandoOrden ? (
-                      <>
-                        <div className="checkout-spinner" style={{ width: "16px", height: "16px", borderWidth: "2px" }} />
-                        <span>Generando orden...</span>
-                      </>
-                    ) : (
-                      <>
-                        <FaBolt /> Comprar ahora
-                      </>
-                    )}
-                  </button>
-                )}
-
-                {!esDuenio && !noDisponible && !adquirido && (
-                  <button
-                    type="button"
-                    className="producto-detail-cart"
-                    onClick={() => {
-                      addToCart(producto, 1);
-                      openCart();
-                    }}
-                  >
-                    <FaShoppingCart /> Agregar al carrito
-                  </button>
-                )}
-              </div>
-            </div>
           </div>
+        </div>
       </section>
     </main>
   );
