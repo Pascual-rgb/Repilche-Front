@@ -128,7 +128,6 @@ const ProductoDetail = () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const item: any = await res.json();
           if (isMounted && item) {
-            console.log("Datos del producto recibido:", item);
             const rawItemImg = String(
               item.imagen ||
               item.imagen_url ||

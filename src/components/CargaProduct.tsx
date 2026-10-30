@@ -168,8 +168,6 @@ const CargaProduct = () => {
         img: imagenPayload,
       };
 
-      console.log('Enviando payload JSON a Django:', payload);
-
       // 3. Envío del POST a Django incluyendo la URL en imagen_url
       const res = await fetch(`${apiUrl}/products/`, {
         method: 'POST',

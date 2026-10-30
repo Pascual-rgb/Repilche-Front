@@ -71,8 +71,6 @@ const SerVendedorForm = () => {
         usuario.locality = localidadFinal
         usuario.llegoHasta = llegoHastaSelect
 
-        console.log("Datos de solicitud para ser vendedor:", usuario)
-
         // Conexión con backend si existe sesión con token
         const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api"
         const token = localStorage.getItem("repilche-token")

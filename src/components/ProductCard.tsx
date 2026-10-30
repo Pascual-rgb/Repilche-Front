@@ -10,8 +10,6 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   if (!product) return null;
 
-  console.log('Datos del producto recibido:', product);
-
   // Manejo seguro con optional chaining y fallbacks
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawProduct = product as any;

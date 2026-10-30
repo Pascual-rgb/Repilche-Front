@@ -50,6 +50,5 @@ export async function uploadProductImage(file: File): Promise<string> {
     throw new Error('No se pudo obtener la URL pública de la imagen subida.');
   }
 
-  console.log('URL pública generada en Supabase Storage:', publicUrl);
   return publicUrl;
 }
