@@ -54,6 +54,10 @@ const User = () => {
     ? `${user.name || user.first_name || ""} ${user.lastName || user.last_name || ""}`.trim() || user.name || user.first_name || "Usuario"
     : "Usuario";
 
+  const rawUser = user as any;
+  const potentialAvatar = user?.avatar || user?.foto || rawUser?.avatar || rawUser?.foto;
+  const userAvatar = typeof potentialAvatar === "string" && potentialAvatar.trim() !== "" ? potentialAvatar : null;
+  
   return (
     <div className="user-container" ref={userContainerRef}>
       <button
@@ -61,14 +65,22 @@ const User = () => {
         onClick={() => setOpen(!open)}
         aria-label="Abrir menú de usuario"
       >
-        <FaUserCircle />
+        {userAvatar ? (
+          <img src={userAvatar} alt="Avatar" className="user-button-img" />
+        ) : (
+          <FaUserCircle />
+        )}
       </button>
 
       {open && (
         <div className="user-menu">
 
           <div className="user-header">
-            <FaUserCircle className="user-avatar" />
+            {userAvatar ? (
+              <img src={userAvatar} alt="Avatar" className="user-avatar-img" />
+            ) : (
+              <FaUserCircle className="user-avatar" />
+            )}
 
             <div className="user-info">
               <h3>{nombreUsuario}</h3>
@@ -87,8 +99,7 @@ const User = () => {
             <Link
               to="/admin/moderacion"
               className="user-menu-link"
-              onClick={() => setOpen(false)}
-            >
+              onClick={() => setOpen(false)}>
               <FaShieldAlt style={{ color: "#e0a800" }} />
               <span>Panel de Moderación</span>
             </Link>
@@ -135,7 +146,7 @@ const User = () => {
           </button>
 
         </div>
-      )}
+        )}
     </div>
   );
 };

@@ -27,8 +27,10 @@ const EditarPerfil = () => {
       setEmail(user.email || "");
       setTelefono(user.phone || user.numberPhone || user.celphone || rawUser.telefono || "");
       const existingAvatar = user.avatar || user.foto || rawUser.avatar || rawUser.foto;
-      if (existingAvatar && typeof existingAvatar === "string") {
+      if (existingAvatar && typeof existingAvatar === "string" && existingAvatar.trim() !== "") {
         setAvatarPreview(existingAvatar);
+      } else {
+        setAvatarPreview(null); // Fuerza a mostrar el FaUserCircle si no hay foto
       }
     }
   }, [user]);
