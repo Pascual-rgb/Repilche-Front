@@ -54,7 +54,8 @@ export async function uploadProductImage(file: File): Promise<string> {
 }
 
 /**
- * Sube una imagen de avatar directamente al bucket público 'productos' de Supabase Storage en la carpeta 'avatars/'.
+ * Sube una imagen de avatar directamente al bucket público 'productos' de Supabase Storage en la ruta 'prendas/avatar-...'.
+ * Utiliza la carpeta 'prendas/' para respetar las políticas de Row-Level Security (RLS) habilitadas en el bucket.
  * Retorna la URL pública accesible del avatar.
  *
  * @param file Archivo nativo File a subir
@@ -73,11 +74,10 @@ export async function uploadAvatarImage(file: File, userId?: number | string): P
   const uniqueId =
     typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
       ? crypto.randomUUID()
-      : Math.random().toString(36).substring(2, 11);
+      : Math.random().toString(36).substring(2, 9);
 
   const userPrefix = userId ? String(userId) : Date.now();
-  const fileName = `${userPrefix}-${uniqueId}.${extension}`;
-  const filePath = `avatars/${fileName}`;
+  const filePath = `prendas/avatar-${userPrefix}-${uniqueId}.${extension}`;
 
   const { data: uploadData, error: uploadError } = await supabase.storage
     .from('productos')
