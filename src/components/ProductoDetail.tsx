@@ -14,7 +14,6 @@ import { useCarritoContext } from "../context/CartContext";
 import { useAuthContext } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import ModalPagoTransferencia from "./ModalPagoTransferencia";
-import { DATOS_PAGO_REPILCHE } from "../config/constants";
 import "./styles/ProductoDetail.css";
 
 type ExtendedProduct = Products & {
@@ -99,8 +98,6 @@ const ProductoDetail = () => {
     pedidoId?: number | string;
     total: number;
     codigoSecreto?: string;
-    alias: string;
-    titular: string;
   } | null>(null);
 
   const [toast, setToast] = useState<{
@@ -399,15 +396,11 @@ const ProductoDetail = () => {
       const pedidoId = resData?.pedido_id ?? resData?.id;
       const total = Number(resData?.total ?? resData?.monto ?? producto.precio);
       const codigoSecreto = resData?.codigo_secreto ?? resData?.codigo ?? resData?.codigo_retiro;
-      const aliasTransferencia = resData?.alias_transferencia || DATOS_PAGO_REPILCHE.ALIAS;
-      const titular = resData?.titular || DATOS_PAGO_REPILCHE.TITULAR;
-
+      // El alias y titular de pago son siempre los oficiales (config/constants.ts); se ignora cualquier alias devuelto por el backend.
       setDatosCheckout({
         pedidoId,
         total,
         codigoSecreto,
-        alias: aliasTransferencia,
-        titular,
       });
 
       setShowModalTransferencia(true);
@@ -419,8 +412,6 @@ const ProductoDetail = () => {
         pedidoId: Date.now(),
         total: Number(producto.precio),
         codigoSecreto: codigoFallback,
-        alias: DATOS_PAGO_REPILCHE.ALIAS,
-        titular: DATOS_PAGO_REPILCHE.TITULAR,
       });
       setShowModalTransferencia(true);
     } finally {
@@ -429,7 +420,7 @@ const ProductoDetail = () => {
   };
 
   // Callback de confirmación al pulsar "Ya transferí" en ModalPagoTransferencia
-  const handleConfirmarTransferencia = () => {
+  const handleConfirmarTransferencia = async () => {
     // Pedido confirmado y prenda adquirida
     setAdquirido(true);
 
@@ -492,8 +483,6 @@ const ProductoDetail = () => {
           isOpen={showModalTransferencia}
           onClose={() => setShowModalTransferencia(false)}
           monto={datosCheckout.total}
-          alias={datosCheckout.alias}
-          titular={datosCheckout.titular}
           codigoSecreto={datosCheckout.codigoSecreto}
           pedidoId={datosCheckout.pedidoId}
           onConfirmarTransferencia={handleConfirmarTransferencia}

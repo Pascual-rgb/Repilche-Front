@@ -5,9 +5,6 @@ import { useCarritoContext } from "../context/CartContext";
 import { DATOS_PAGO_REPILCHE } from "../config/constants";
 import "./styles/CheckoutModal.css";
 
-export const ALIAS_OFICIAL = DATOS_PAGO_REPILCHE.ALIAS;
-export const TITULAR_OFICIAL = DATOS_PAGO_REPILCHE.TITULAR;
-
 export interface ModalPagoTransferenciaProps {
   isOpen: boolean;
   onClose: () => void;
@@ -16,7 +13,7 @@ export interface ModalPagoTransferenciaProps {
   titular?: string; // Fallback: DATOS_PAGO_REPILCHE.TITULAR
   codigoSecreto?: string;
   pedidoId?: number | string;
-  onConfirmarTransferencia?: () => Promise<void> | void;
+  onConfirmarTransferencia: () => Promise<void>;
 }
 
 export default function ModalPagoTransferencia({
@@ -95,10 +92,8 @@ export default function ModalPagoTransferencia({
     setIsSubmitting(true);
 
     try {
-      // 1. Ejecutar callback previo si existe
-      if (onConfirmarTransferencia) {
-        await onConfirmarTransferencia();
-      }
+      // 1. Ejecutar callback de confirmación del flujo (compra directa o carrito)
+      await onConfirmarTransferencia();
 
       // 2. Simula la espera con timer de 2.5 a 3 segundos (2800ms) mostrando "Verificando comprobante con la red bancaria..."
       await new Promise((resolve) => setTimeout(resolve, 2800));
@@ -170,51 +165,33 @@ export default function ModalPagoTransferencia({
               <div className="checkout-monto-valor">{formatPrice(monto)}</div>
             </div>
 
-            <div
-              className={`checkout-alias-box ${copiado ? "copiado" : ""}`}
-              onClick={handleCopyAlias}
-              title="Hacé click para copiar el Alias"
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleCopyAlias();
-                }
-              }}
-            >
-              <span className="checkout-alias-label" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                <FaCopy /> {copiado ? "¡Alias copiado al portapapeles!" : "Alias oficial de custodia (Click para copiar)"}
-              </span>
+            <div className={`checkout-alias-box ${copiado ? "copiado" : ""}`}>
+              <span className="checkout-alias-label">Alias oficial de custodia</span>
               <strong className="checkout-alias-text">{alias}</strong>
               <span className="checkout-alias-titular">
                 Titular: {titular}
               </span>
-              <div style={{ marginTop: "4px" }}>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCopyAlias();
-                  }}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "6px 16px",
-                    borderRadius: "8px",
-                    border: "1px solid #d4a709",
-                    background: copiado ? "#2e7d32" : "#f6ca17",
-                    color: copiado ? "#fff" : "#1a1a1a",
-                    fontSize: "13px",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  {copiado ? <FaCheck /> : <FaCopy />} {copiado ? "¡Copiado!" : "Copiar"}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleCopyAlias}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  marginTop: "4px",
+                  padding: "6px 16px",
+                  borderRadius: "8px",
+                  border: "1px solid #d4a709",
+                  background: copiado ? "#2e7d32" : "#f6ca17",
+                  color: copiado ? "#fff" : "#1a1a1a",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {copiado ? <FaCheck /> : <FaCopy />} {copiado ? "¡Copiado!" : "Copiar"}
+              </button>
             </div>
 
             {error && (

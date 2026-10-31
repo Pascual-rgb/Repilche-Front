@@ -116,42 +116,16 @@
   background: #fdfae8;
   border: 2px dashed #F6C417;
   border-radius: 16px;
-  cursor: pointer;
+  cursor: default;
   position: relative;
   overflow: hidden;
   transition: 0.25s;
-  user-select: none;
   margin-bottom: 20px;
 }
 
 .checkout-alias-box * {
   position: relative;
   z-index: 1;
-}
-
-.checkout-alias-box::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: #f6c91769;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  transition: 0.25s;
-  border-radius: 14px;
-}
-
-.checkout-alias-box:hover::after {
-  opacity: 1;
-}
-
-.checkout-alias-box:hover {
-  transform: translateY(-2px);
-}
-
-.checkout-alias-box:active {
-  transform: scale(0.99);
 }
 
 .checkout-alias-box.copiado {

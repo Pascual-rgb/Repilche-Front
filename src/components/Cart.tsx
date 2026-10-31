@@ -5,7 +5,6 @@ import { useAuthContext } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import { FaTimes, FaTrash } from "react-icons/fa";
 import ModalPagoTransferencia from "./ModalPagoTransferencia";
-import { DATOS_PAGO_REPILCHE } from "../config/constants";
 import "./styles/Cart.css";
 
 export default function Cart() {
@@ -19,8 +18,6 @@ export default function Cart() {
     pedidoId?: number | string;
     total: number;
     codigoSecreto?: string;
-    alias: string;
-    titular: string;
   } | null>(null);
 
   const handleProcederPago = async () => {
@@ -83,15 +80,12 @@ export default function Cart() {
       const pedidoId = resData?.pedido_id ?? resData?.id;
       const total = Number(resData?.total ?? resData?.monto ?? totalLocal);
       const codigoSecreto = resData?.codigo_secreto ?? resData?.codigo ?? String(Math.floor(100000 + Math.random() * 900000));
-      const alias = resData?.alias_transferencia || DATOS_PAGO_REPILCHE.ALIAS;
-      const titular = resData?.titular || DATOS_PAGO_REPILCHE.TITULAR;
 
+      // El alias y titular de pago son siempre los oficiales (config/constants.ts); se ignora cualquier alias devuelto por el backend.
       setDatosCheckout({
         pedidoId,
         total,
         codigoSecreto,
-        alias,
-        titular,
       });
 
       closeCart();
@@ -103,8 +97,6 @@ export default function Cart() {
         pedidoId: Date.now(),
         total: totalLocal,
         codigoSecreto: String(Math.floor(100000 + Math.random() * 900000)),
-        alias: DATOS_PAGO_REPILCHE.ALIAS,
-        titular: DATOS_PAGO_REPILCHE.TITULAR,
       });
       closeCart();
       setIsCheckoutOpen(true);
@@ -113,7 +105,7 @@ export default function Cart() {
     }
   };
 
-  const handleConfirmarPedido = () => {
+  const handleConfirmarPedido = async () => {
     try {
       // 1. Guardar IDs de prendas compradas para que queden adquiridas si se visita el detalle
       const comprados = JSON.parse(localStorage.getItem("repilche-compras-ids") || "[]");
@@ -220,8 +212,6 @@ export default function Cart() {
           isOpen={isCheckoutOpen}
           onClose={handleCloseCheckout}
           monto={datosCheckout.total}
-          alias={datosCheckout.alias}
-          titular={datosCheckout.titular}
           codigoSecreto={datosCheckout.codigoSecreto}
           pedidoId={datosCheckout.pedidoId}
           onConfirmarTransferencia={handleConfirmarPedido}
