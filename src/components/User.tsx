@@ -54,6 +54,8 @@ const User = () => {
     ? `${user.name || user.first_name || ""} ${user.lastName || user.last_name || ""}`.trim() || user.name || user.first_name || "Usuario"
     : "Usuario";
 
+  // Desactivado temporalmente para lanzamiento: evaluación de foto real de avatar
+  /*
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawUser = (user || {}) as any;
   const avatarUrl =
@@ -66,6 +68,7 @@ const User = () => {
     rawUser?.image ||
     rawUser?.avatar_url ||
     "";
+  */
   
   return (
     <div className="user-container" ref={userContainerRef}>
@@ -74,6 +77,7 @@ const User = () => {
         onClick={() => setOpen(!open)}
         aria-label="Abrir menú de usuario"
       >
+        {/* Desactivado temporalmente para lanzamiento: foto real de avatar
         {avatarUrl ? (
           <img src={avatarUrl} alt="Avatar" className="user-button-img" />
         ) : (
@@ -81,12 +85,17 @@ const User = () => {
             <FaUserCircle />
           </div>
         )}
+        */}
+        <div className="user-avatar-placeholder">
+          <FaUserCircle />
+        </div>
       </button>
 
       {open && (
         <div className="user-menu">
 
           <div className="user-header">
+            {/* Desactivado temporalmente para lanzamiento: foto real de avatar
             {avatarUrl ? (
               <img src={avatarUrl} alt="Avatar" className="user-avatar-img" />
             ) : (
@@ -94,6 +103,10 @@ const User = () => {
                 <FaUserCircle className="user-avatar" />
               </div>
             )}
+            */}
+            <div className="user-avatar-placeholder">
+              <FaUserCircle className="user-avatar" />
+            </div>
 
             <div className="user-info">
               <h3>{nombreUsuario}</h3>

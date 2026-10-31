@@ -1,8 +1,9 @@
 import { useRef, useState, useEffect } from "react";
-import { FaUserCircle, FaSave, FaCheck, FaCamera, FaSpinner, FaExclamationTriangle } from "react-icons/fa";
+import { FaUserCircle, FaSave, FaCheck, /* FaCamera, */ FaSpinner, FaExclamationTriangle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
-import { uploadAvatarImage } from "../services/storageService";
+// Desactivado temporalmente para lanzamiento:
+// import { uploadAvatarImage } from "../services/storageService";
 import FeedbackCard from "./FeedbackCard";
 import "./styles/EditarPerfil.css";
 
@@ -12,8 +13,9 @@ const EditarPerfil = () => {
   const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  // Desactivado temporalmente para lanzamiento: estados de avatar
+  // const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  // const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [actualizado, setActualizado] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -29,6 +31,7 @@ const EditarPerfil = () => {
       setEmail(user.email || "");
       setTelefono(user.telefono || user.phone || user.numberPhone || user.celphone || rawUser.telefono || "");
       
+      /* Desactivado temporalmente para lanzamiento:
       const avatarUrl =
         user.avatar ||
         user.foto ||
@@ -41,9 +44,11 @@ const EditarPerfil = () => {
         null;
 
       setAvatarPreview(avatarUrl);
+      */
     }
   }, [user]);
 
+  /* Desactivado temporalmente para lanzamiento:
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -52,6 +57,7 @@ const EditarPerfil = () => {
       setErrorMsg(null);
     }
   };
+  */
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,7 +74,7 @@ const EditarPerfil = () => {
       const token = localStorage.getItem("repilche-token");
       const apiUrl = import.meta.env.VITE_API_URL || "https://repilche-backend.onrender.com/api";
 
-      // 1. Si hay una nueva imagen seleccionada, subir directamente a Supabase Storage
+      /* Desactivado temporalmente para lanzamiento: subida de avatar a Supabase
       let urlPublicaAvatar = avatarPreview;
       if (avatarFile) {
         try {
@@ -78,8 +84,9 @@ const EditarPerfil = () => {
           throw new Error("No se pudo subir la foto de perfil a Supabase Storage. Verificá tu conexión e intentá de nuevo.");
         }
       }
+      */
 
-      // 2. Enviar JSON estándar al backend Django (sin FormData binario)
+      // 2. Enviar JSON estándar al backend Django (sin avatar ni foto por el momento)
       const payload = {
         first_name: nombre,
         nombre: nombre,
@@ -89,8 +96,8 @@ const EditarPerfil = () => {
         phone: telefono,
         telefono: telefono,
         numberPhone: telefono,
-        avatar: urlPublicaAvatar || "",
-        foto: urlPublicaAvatar || "",
+        // avatar: urlPublicaAvatar || "",
+        // foto: urlPublicaAvatar || "",
       };
 
       if (token) {
@@ -120,14 +127,14 @@ const EditarPerfil = () => {
         phone: telefono,
         telefono: telefono,
         numberPhone: telefono,
-        avatar: urlPublicaAvatar || undefined,
-        foto: urlPublicaAvatar || undefined,
-        avatar_url: urlPublicaAvatar || undefined,
-        image: urlPublicaAvatar || undefined,
+        // avatar: urlPublicaAvatar || undefined,
+        // foto: urlPublicaAvatar || undefined,
+        // avatar_url: urlPublicaAvatar || undefined,
+        // image: urlPublicaAvatar || undefined,
       });
 
-      setAvatarFile(null);
-      setAvatarPreview(urlPublicaAvatar);
+      // setAvatarFile(null);
+      // setAvatarPreview(urlPublicaAvatar);
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
       setActualizado(true);
     } catch (err: unknown) {
@@ -157,6 +164,7 @@ const EditarPerfil = () => {
             <>
               <div className="editar-perfil-header">
                 <div className="avatar-upload-container">
+                  {/* Desactivado temporalmente para lanzamiento: foto de perfil personalizada
                   {avatarPreview ? (
                     <img src={avatarPreview} alt="Avatar" className="avatar-img-preview" />
                   ) : (
@@ -173,6 +181,8 @@ const EditarPerfil = () => {
                     onChange={handleImageChange}
                     style={{ display: "none" }}
                   />
+                  */}
+                  <FaUserCircle className="editar-perfil-avatar" />
                 </div>
                 <div>
                   <h1>Editar perfil</h1>
