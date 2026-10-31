@@ -69,7 +69,7 @@ export default function ModalPagoTransferencia({
     try {
       await navigator.clipboard.writeText(alias);
       setCopiado(true);
-      setTimeout(() => setCopiado(false), 2200);
+      setTimeout(() => setCopiado(false), 2000);
     } catch (err) {
       console.error("Error al copiar alias al portapapeles:", err);
     }
@@ -165,33 +165,26 @@ export default function ModalPagoTransferencia({
               <div className="checkout-monto-valor">{formatPrice(monto)}</div>
             </div>
 
-            <div className={`checkout-alias-box ${copiado ? "copiado" : ""}`}>
-              <span className="checkout-alias-label">Alias oficial de custodia</span>
-              <strong className="checkout-alias-text">{alias}</strong>
+            <div
+              className={`checkout-alias-box ${copiado ? "copiado" : ""}`}
+              onClick={handleCopyAlias}
+              title="Hacé click para copiar el Alias"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCopyAlias();
+                }
+              }}
+            >
+              <span className="checkout-alias-label" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <FaCopy /> Alias oficial de custodia (Click para copiar)
+              </span>
+              <strong className="checkout-alias-text">{copiado ? "✓ ¡Copiado!" : alias}</strong>
               <span className="checkout-alias-titular">
                 Titular: {titular}
               </span>
-              <button
-                type="button"
-                onClick={handleCopyAlias}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  marginTop: "4px",
-                  padding: "6px 16px",
-                  borderRadius: "8px",
-                  border: "1px solid #d4a709",
-                  background: copiado ? "#2e7d32" : "#f6ca17",
-                  color: copiado ? "#fff" : "#1a1a1a",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {copiado ? <FaCheck /> : <FaCopy />} {copiado ? "¡Copiado!" : "Copiar"}
-              </button>
             </div>
 
             {error && (
