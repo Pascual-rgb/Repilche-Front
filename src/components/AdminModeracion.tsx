@@ -1,20 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { FaCheck, FaTimes, FaShieldAlt, FaShoppingBag, FaEdit } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  FaCheck,
+  FaTimes,
+  FaShieldAlt,
+  FaShoppingBag,
+  FaEdit,
+  FaBoxes,
+  FaLock,
+  FaTruck
+} from 'react-icons/fa';
 import '../components/styles/CheckoutModal.css'; 
 import './styles/AdminModeracion.css';
 import AdminPedidos from './AdminPedidos';
+import AdminCatalogo from './AdminCatalogo';
 
 interface PrendaPendiente {
   id: number;
   nombre: string;
+  name?: string;
   descripcion: string;
   precio: number;
+  price?: number;
   imagen: string;
   vendedor: string;
+  categoria?: any;
+  categoria_id?: number;
+  categoria_nombre?: string;
 }
 
 export const AdminModeracion = () => {
-  const [activeTab, setActiveTab] = useState<'moderacion' | 'compras'>('moderacion');
+  const [activeTab, setActiveTab] = useState<'moderacion' | 'compras' | 'catalogo'>('moderacion');
   const [pendientes, setPendientes] = useState<PrendaPendiente[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -24,11 +39,24 @@ export const AdminModeracion = () => {
   const [motivoRechazo, setMotivoRechazo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Métricas de Resumen Superior
+  const [metricas, setMetricas] = useState<{
+    dinero_en_custodia?: number;
+    pendientes_entrega?: number;
+    en_moderacion?: number;
+    [key: string]: any;
+  } | null>(null);
+
+  // Lista de Categorías para Edición Rápida
+  const [categorias, setCategorias] = useState<{ id: number; nombre: string }[]>([]);
+
   // Estado para Edición Rápida
-  const [editingProduct, setEditingProduct] = useState<PrendaPendiente | null>(null);
+  const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [editNombre, setEditNombre] = useState('');
   const [editPrecio, setEditPrecio] = useState<number | string>('');
+  const [editCategoriaId, setEditCategoriaId] = useState<number | string>('');
   const [isSavingEdit, setIsSavingEdit] = useState(false);
+  const onEditSavedCallbackRef = useRef<((updated: any) => void) | null>(null);
 
   const apiUrl = import.meta.env.VITE_API_URL || 'https://repilche-backend.onrender.com/api';
 
@@ -53,6 +81,44 @@ export const AdminModeracion = () => {
     };
 
     fetchPendientes();
+  }, [apiUrl]);
+
+  useEffect(() => {
+    const fetchMetricas = async () => {
+      try {
+        const token = localStorage.getItem('repilche-token') || localStorage.getItem('token') || '';
+        const res = await fetch(`${apiUrl}/admin/metricas-resumen/`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setMetricas(data);
+        }
+      } catch (err) {
+        console.warn('Error al cargar métricas de administración:', err);
+      }
+    };
+
+    fetchMetricas();
+  }, [apiUrl, pendientes.length]);
+
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/categorias/`);
+        if (res.ok) {
+          const data = await res.json();
+          const list = Array.isArray(data) ? data : data.results || [];
+          setCategorias(list);
+        }
+      } catch (err) {
+        console.warn('Error al cargar categorías para admin:', err);
+      }
+    };
+
+    fetchCategorias();
   }, [apiUrl]);
 
   const handleAprobar = async (id: number) => {
@@ -113,13 +179,24 @@ export const AdminModeracion = () => {
     }
   };
 
-  const handleOpenEdit = (product: PrendaPendiente, e?: React.MouseEvent) => {
+  const handleOpenEdit = (
+    product: any,
+    e?: React.MouseEvent,
+    onSuccess?: (updated: any) => void
+  ) => {
     if (e) {
       e.stopPropagation();
     }
+    onEditSavedCallbackRef.current = onSuccess || null;
     setEditingProduct(product);
-    setEditNombre(product.nombre);
-    setEditPrecio(product.precio);
+    setEditNombre(product.nombre || product.name || '');
+    setEditPrecio(product.precio ?? product.price ?? '');
+    const catId =
+      product.categoria_id ??
+      (typeof product.categoria === 'number'
+        ? product.categoria
+        : product.categoria?.id ?? '');
+    setEditCategoriaId(catId);
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
@@ -141,25 +218,43 @@ export const AdminModeracion = () => {
     setIsSavingEdit(true);
     try {
       const token = localStorage.getItem('repilche-token') || localStorage.getItem('token') || '';
+      const numericCatId = editCategoriaId !== '' ? Number(editCategoriaId) : null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const bodyPayload: Record<string, any> = {
+        nombre: trimmedNombre,
+        name: trimmedNombre,
+        precio: numericPrecio,
+        price: numericPrecio
+      };
+      if (numericCatId) {
+        bodyPayload.categoria = numericCatId;
+        bodyPayload.categoria_id = numericCatId;
+      }
+
       const res = await fetch(`${apiUrl}/admin/products/${editingProduct.id}/`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          nombre: trimmedNombre,
-          name: trimmedNombre,
-          precio: numericPrecio,
-          price: numericPrecio
-        })
+        body: JSON.stringify(bodyPayload)
       });
 
       if (res.ok) {
+        const selectedCat = categorias.find(c => c.id === numericCatId);
+        const updatedFields = {
+          nombre: trimmedNombre,
+          name: trimmedNombre,
+          precio: numericPrecio,
+          price: numericPrecio,
+          categoria_id: numericCatId || undefined,
+          categoria_nombre: selectedCat?.nombre || undefined
+        };
+
         setPendientes(prev =>
           prev.map(p =>
             p.id === editingProduct.id
-              ? { ...p, nombre: trimmedNombre, precio: numericPrecio }
+              ? { ...p, ...updatedFields }
               : p
           )
         );
@@ -167,9 +262,12 @@ export const AdminModeracion = () => {
         if (selectedProduct && selectedProduct.id === editingProduct.id) {
           setSelectedProduct({
             ...selectedProduct,
-            nombre: trimmedNombre,
-            precio: numericPrecio
+            ...updatedFields
           });
+        }
+
+        if (onEditSavedCallbackRef.current) {
+          onEditSavedCallbackRef.current(updatedFields);
         }
 
         setEditingProduct(null);
@@ -186,13 +284,70 @@ export const AdminModeracion = () => {
     }
   };
 
+  const dineroCustodia =
+    metricas?.dinero_en_custodia ??
+    metricas?.total_custodia ??
+    metricas?.monto_custodia ??
+    metricas?.custodia ??
+    0;
+
+  const pendientesEntrega =
+    metricas?.pendientes_entrega ??
+    metricas?.compras_en_curso ??
+    metricas?.pedidos_pendientes ??
+    0;
+
+  const enModeracion =
+    metricas?.en_moderacion ??
+    metricas?.prendas_moderacion ??
+    metricas?.pendientes_moderacion ??
+    pendientes.length;
+
+  const formatPesos = (val?: number): string => {
+    if (val === undefined || val === null) return '$0';
+    return `$${Number(val).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  };
+
   return (
     <div className="admin-mod-container">
       <div className="admin-mod-header">
         <h1>Panel de Administración</h1>
         <p>Control de catálogo, moderación de prendas y supervisión de compras en tiempo real.</p>
 
-        {/* Sistema de Navegación por Pestañas */}
+        {/* 1. Barra Superior de Métricas Rápidas */}
+        <div className="admin-metrics-grid">
+          <div className="admin-metric-card">
+            <div className="admin-metric-icon icon-custodia">
+              <FaLock />
+            </div>
+            <div className="admin-metric-info">
+              <span className="admin-metric-label">Dinero en Custodia</span>
+              <span className="admin-metric-value">{formatPesos(dineroCustodia)}</span>
+            </div>
+          </div>
+
+          <div className="admin-metric-card">
+            <div className="admin-metric-icon icon-entrega">
+              <FaTruck />
+            </div>
+            <div className="admin-metric-info">
+              <span className="admin-metric-label">Pendientes de Entrega</span>
+              <span className="admin-metric-value">{pendientesEntrega}</span>
+            </div>
+          </div>
+
+          <div className="admin-metric-card">
+            <div className="admin-metric-icon icon-moderacion">
+              <FaShieldAlt />
+            </div>
+            <div className="admin-metric-info">
+              <span className="admin-metric-label">En Moderación</span>
+              <span className="admin-metric-value">{enModeracion}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 2. Sistema de Navegación por Pestañas */}
         <div className="admin-nav-tabs">
           <button
             type="button"
@@ -211,11 +366,21 @@ export const AdminModeracion = () => {
           >
             <FaShoppingBag /> Monitoreo de Compras
           </button>
+          <button
+            type="button"
+            className={`admin-tab-btn ${activeTab === 'catalogo' ? 'active' : ''}`}
+            onClick={() => setActiveTab('catalogo')}
+          >
+            <FaBoxes /> Catálogo Global
+          </button>
         </div>
       </div>
 
+      {/* Contenido según pestaña activa */}
       {activeTab === 'compras' ? (
         <AdminPedidos />
+      ) : activeTab === 'catalogo' ? (
+        <AdminCatalogo onEditProduct={(prod, callback) => handleOpenEdit(prod, undefined, callback)} />
       ) : (
         <>
           {loading ? (
@@ -246,7 +411,7 @@ export const AdminModeracion = () => {
                           type="button"
                           className="admin-mod-btn-editar-card"
                           onClick={(e) => handleOpenEdit(product, e)}
-                          title="Editar título o precio"
+                          title="Editar título, precio o categoría"
                         >
                           <FaEdit /> Editar
                         </button>
@@ -258,7 +423,7 @@ export const AdminModeracion = () => {
             </div>
           )}
 
-          {/* Modal de Detalle de Prenda */}
+          {/* Modal de Detalle de Prenda (Moderación) */}
           {selectedProduct && (
             <div className="checkout-modal-overlay" onClick={() => setSelectedProduct(null)}>
               <div className="checkout-modal-card admin-detalle-modal" onClick={(e) => e.stopPropagation()}>
@@ -357,70 +522,87 @@ export const AdminModeracion = () => {
               </div>
             </div>
           )}
-
-          {/* Modal de Edición Rápida */}
-          {editingProduct && (
-            <div className="checkout-modal-overlay" style={{ zIndex: 10002 }} onClick={() => setEditingProduct(null)}>
-              <div className="checkout-modal-card" style={{ maxWidth: '440px' }} onClick={(e) => e.stopPropagation()}>
-                <button className="checkout-modal-close" onClick={() => setEditingProduct(null)}>✕</button>
-                <div className="checkout-modal-header">
-                  <h2>Edición Rápida de Prenda</h2>
-                  <p>Corregí el título o precio antes de aprobar la prenda.</p>
-                </div>
-
-                <form onSubmit={handleSaveEdit}>
-                  <div style={{ marginBottom: '16px', textAlign: 'left' }}>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>
-                      Título / Nombre de la prenda
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={editNombre}
-                      onChange={(e) => setEditNombre(e.target.value)}
-                      required
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db', boxSizing: 'border-box' }}
-                    />
-                  </div>
-
-                  <div style={{ marginBottom: '24px', textAlign: 'left' }}>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>
-                      Precio en ARS ($)
-                    </label>
-                    <input
-                      type="number"
-                      step="any"
-                      min="1"
-                      className="form-control"
-                      value={editPrecio}
-                      onChange={(e) => setEditPrecio(e.target.value)}
-                      required
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db', boxSizing: 'border-box' }}
-                    />
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button 
-                      type="button" 
-                      className="checkout-btn-seguir" 
-                      onClick={() => setEditingProduct(null)}
-                      disabled={isSavingEdit}
-                    >
-                      Cancelar
-                    </button>
-                    <button 
-                      type="submit" 
-                      className="checkout-btn-compras" 
-                      disabled={isSavingEdit}
-                    >
-                      {isSavingEdit ? 'Guardando...' : 'Guardar Cambios'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
         </>
+      )}
+
+      {/* Modal de Edición Rápida (Accesible desde Moderación y Catálogo Global) */}
+      {editingProduct && (
+        <div className="checkout-modal-overlay" style={{ zIndex: 10002 }} onClick={() => setEditingProduct(null)}>
+          <div className="checkout-modal-card" style={{ maxWidth: '440px' }} onClick={(e) => e.stopPropagation()}>
+            <button className="checkout-modal-close" onClick={() => setEditingProduct(null)}>✕</button>
+            <div className="checkout-modal-header">
+              <h2>Edición Rápida de Prenda</h2>
+              <p>Corregí el título, precio o categoría de la prenda.</p>
+            </div>
+
+            <form onSubmit={handleSaveEdit}>
+              <div style={{ marginBottom: '16px', textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>
+                  Título / Nombre de la prenda
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editNombre}
+                  onChange={(e) => setEditNombre(e.target.value)}
+                  required
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '16px', textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>
+                  Precio en ARS ($)
+                </label>
+                <input
+                  type="number"
+                  step="any"
+                  min="1"
+                  className="form-control"
+                  value={editPrecio}
+                  onChange={(e) => setEditPrecio(e.target.value)}
+                  required
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '24px', textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>
+                  Categoría
+                </label>
+                <select
+                  className="form-control"
+                  value={editCategoriaId}
+                  onChange={(e) => setEditCategoriaId(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db', boxSizing: 'border-box', background: '#fff' }}
+                >
+                  <option value="">-- Sin categoría asignada --</option>
+                  {categorias.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button 
+                  type="button" 
+                  className="checkout-btn-seguir" 
+                  onClick={() => setEditingProduct(null)}
+                  disabled={isSavingEdit}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  className="checkout-btn-compras" 
+                  disabled={isSavingEdit}
+                >
+                  {isSavingEdit ? 'Guardando...' : 'Guardar Cambios'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
