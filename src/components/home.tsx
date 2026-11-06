@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ProductList } from './ProductList';
 import { ProductCard } from './ProductCard';
 import type { Products } from '../data/products.ts';
+import { intercalarPorVendedor } from '../utils/intercalarProductos';
 import './styles/Home.css';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,6 +44,7 @@ const normalizeProducts = (rawList: any[]): Products[] => {
       categoria_nombre: catNombre,
       categoria_detail: item?.categoria_detail,
       precio: Number(item?.precio || item?.price || 0),
+      vendedor_id: item?.vendedor_id ?? (typeof item?.vendedor === 'object' ? item?.vendedor?.id : undefined),
       vendedor:
         typeof item?.vendedor === 'string'
           ? item.vendedor
@@ -70,9 +72,10 @@ export const Home: React.FC = () => {
           const data = await res.json();
           const rawList = Array.isArray(data) ? data : data?.results || [];
           const normalized = normalizeProducts(rawList);
+          const intercalados = intercalarPorVendedor(normalized);
 
           if (isMounted) {
-            setProductos(normalized);
+            setProductos(intercalados);
             setNextPage(data?.next || null);
           }
         }
@@ -100,7 +103,8 @@ export const Home: React.FC = () => {
         const data = await res.json();
         const rawList = Array.isArray(data) ? data : data?.results || [];
         const nuevos = normalizeProducts(rawList);
-        setProductos((prev) => [...prev, ...nuevos]);
+        const intercaladosNuevos = intercalarPorVendedor(nuevos);
+        setProductos((prev) => [...prev, ...intercaladosNuevos]);
         setNextPage(data?.next || null);
       }
     } catch (err) {

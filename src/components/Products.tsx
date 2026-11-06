@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { ProductCard } from "./ProductCard";
 import type { Products as ProductType } from "../data/products";
 import { coincideCategoria } from "../utils/categories";
+import { intercalarPorVendedor } from "../utils/intercalarProductos";
 import "./styles/Home.css";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,6 +45,7 @@ const normalizeProducts = (rawList: any[]): ProductType[] => {
       categoria_nombre: catNombre,
       categoria_detail: item?.categoria_detail,
       precio: Number(item?.precio || item?.price || 0),
+      vendedor_id: item?.vendedor_id ?? (typeof item?.vendedor === 'object' ? item?.vendedor?.id : undefined),
       vendedor:
         item?.vendedor_nombre ||
         item?.vendedor?.first_name ||
@@ -74,9 +76,10 @@ const Products = () => {
           const data = await res.json();
           const rawList = Array.isArray(data) ? data : data?.results || [];
           const normalized = normalizeProducts(rawList);
+          const intercalados = intercalarPorVendedor(normalized);
 
           if (isMounted) {
-            setProducts(normalized);
+            setProducts(intercalados);
             setNextPage(data?.next || null);
           }
         }
@@ -104,7 +107,8 @@ const Products = () => {
         const data = await res.json();
         const rawList = Array.isArray(data) ? data : data?.results || [];
         const nuevos = normalizeProducts(rawList);
-        setProducts((prev) => [...prev, ...nuevos]);
+        const intercaladosNuevos = intercalarPorVendedor(nuevos);
+        setProducts((prev) => [...prev, ...intercaladosNuevos]);
         setNextPage(data?.next || null);
       }
     } catch (err) {

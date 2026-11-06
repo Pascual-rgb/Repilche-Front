@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type { Products } from '../data/products.ts';
+import { intercalarPorVendedor } from '../utils/intercalarProductos';
 import './styles/Home.css';
 
 interface ProductListProps {
@@ -14,7 +15,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
 
   useEffect(() => {
     if (initialProducts) {
-      setProducts(initialProducts);
+      setProducts(intercalarPorVendedor(initialProducts));
       setLoading(false);
     }
   }, [initialProducts]);
@@ -89,7 +90,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
         });
 
         if (isMounted) {
-          setProducts(normalizedList);
+          setProducts(intercalarPorVendedor(normalizedList));
         }
       } catch (error) {
         console.warn('No se pudieron obtener productos del backend:', error);
