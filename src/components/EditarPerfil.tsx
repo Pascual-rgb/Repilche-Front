@@ -5,6 +5,7 @@ import { useAuthContext } from "../context/AuthContext";
 // Desactivado temporalmente para lanzamiento:
 // import { uploadAvatarImage } from "../services/storageService";
 import FeedbackCard from "./FeedbackCard";
+import { validarAliasBancario } from "../utils/validaciones";
 import "./styles/EditarPerfil.css";
 
 const EditarPerfil = () => {
@@ -14,6 +15,7 @@ const EditarPerfil = () => {
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [alias, setAlias] = useState("");
+  const [aliasError, setAliasError] = useState<string | null>(null);
   // Desactivado temporalmente para lanzamiento: estados de avatar
   // const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   // const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -44,7 +46,7 @@ const EditarPerfil = () => {
         user.perfil_vendedor?.alias ||
         "";
       setAlias(aliasActual);
-      
+
       /* Desactivado temporalmente para lanzamiento:
       const avatarUrl =
         user.avatar ||
@@ -80,6 +82,16 @@ const EditarPerfil = () => {
     if (!formRef.current.checkValidity()) {
       formRef.current.reportValidity();
       return;
+    }
+
+    if (user?.is_vendedor) {
+      const validacion = validarAliasBancario(alias);
+      if (!validacion.valido) {
+        setAliasError(validacion.error || "Alias bancario inválido.");
+        const aliasInput = document.getElementById("alias_bancario") as HTMLInputElement | null;
+        if (aliasInput) aliasInput.focus();
+        return;
+      }
     }
 
     setGuardando(true);
@@ -307,10 +319,27 @@ const EditarPerfil = () => {
                       id="alias_bancario"
                       name="alias_bancario"
                       value={alias}
-                      onChange={(e) => setAlias(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value.toLowerCase().replace(/\s/g, "");
+                        setAlias(val);
+                        if (val) {
+                          const res = validarAliasBancario(val);
+                          setAliasError(res.valido ? null : (res.error || null));
+                        } else {
+                          setAliasError(null);
+                        }
+                      }}
                       placeholder="Ej: tu.alias.mp"
                       autoComplete="off"
                     />
+                    {aliasError && (
+                      <span
+                        className="text-red-500 text-xs"
+                        style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px", display: "block" }}
+                      >
+                        {aliasError}
+                      </span>
+                    )}
                   </div>
                 )}
 
