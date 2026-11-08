@@ -30,6 +30,8 @@ export interface UserData {
   avatar_url?: string;
   image?: string;
   is_vendedor?: boolean;
+  alias_bancario?: string;
+  alias?: string;
   is_staff?: boolean;
   is_superuser?: boolean;
   role?: string;
@@ -78,6 +80,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         first_name: parsed.first_name || parsed.name || '',
         last_name: parsed.last_name || parsed.lastName || '',
         username: parsed.username || parsed.email?.split('@')[0] || '',
+        alias_bancario: parsed.alias_bancario || parsed.alias || perfilObj?.alias_bancario || perfilObj?.alias || '',
+        alias: parsed.alias || parsed.alias_bancario || perfilObj?.alias || perfilObj?.alias_bancario || '',
         avatar: avatarVal,
         foto: avatarVal,
         avatar_url: avatarVal,

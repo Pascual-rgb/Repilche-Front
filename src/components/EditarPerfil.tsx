@@ -13,6 +13,7 @@ const EditarPerfil = () => {
   const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [alias, setAlias] = useState("");
   // Desactivado temporalmente para lanzamiento: estados de avatar
   // const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   // const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -30,6 +31,19 @@ const EditarPerfil = () => {
       setApellido(user.apellido || user.last_name || rawUser.apellido || "");
       setEmail(user.email || "");
       setTelefono(user.telefono || user.phone || user.numberPhone || user.celphone || rawUser.telefono || "");
+
+      // Alias bancario de cobro para vendedores
+      const aliasActual =
+        user.alias_bancario ||
+        user.alias ||
+        rawUser.alias_bancario ||
+        rawUser.alias ||
+        user.perfil?.alias_bancario ||
+        user.perfil?.alias ||
+        user.perfil_vendedor?.alias_bancario ||
+        user.perfil_vendedor?.alias ||
+        "";
+      setAlias(aliasActual);
       
       /* Desactivado temporalmente para lanzamiento:
       const avatarUrl =
@@ -87,7 +101,8 @@ const EditarPerfil = () => {
       */
 
       // 2. Enviar JSON estándar al backend Django (sin avatar ni foto por el momento)
-      const payload = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const payload: Record<string, any> = {
         first_name: nombre,
         nombre: nombre,
         last_name: apellido,
@@ -96,6 +111,10 @@ const EditarPerfil = () => {
         phone: telefono,
         telefono: telefono,
         numberPhone: telefono,
+        ...(user?.is_vendedor && {
+          alias_bancario: alias.trim(),
+          alias: alias.trim(),
+        }),
         // avatar: urlPublicaAvatar || "",
         // foto: urlPublicaAvatar || "",
       };
@@ -127,6 +146,10 @@ const EditarPerfil = () => {
         phone: telefono,
         telefono: telefono,
         numberPhone: telefono,
+        ...(user?.is_vendedor && {
+          alias_bancario: alias.trim(),
+          alias: alias.trim(),
+        }),
         // avatar: urlPublicaAvatar || undefined,
         // foto: urlPublicaAvatar || undefined,
         // avatar_url: urlPublicaAvatar || undefined,
@@ -275,6 +298,21 @@ const EditarPerfil = () => {
                     }}
                   />
                 </div>
+
+                {user?.is_vendedor && (
+                  <div className="editar-perfil-field">
+                    <label htmlFor="alias_bancario">Alias bancario de cobro</label>
+                    <input
+                      type="text"
+                      id="alias_bancario"
+                      name="alias_bancario"
+                      value={alias}
+                      onChange={(e) => setAlias(e.target.value)}
+                      placeholder="Ej: tu.alias.mp"
+                      autoComplete="off"
+                    />
+                  </div>
+                )}
 
                 <div className="editar-perfil-actions">
                   <Link to="/" className="editar-perfil-cancelar">
