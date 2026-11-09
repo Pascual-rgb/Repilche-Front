@@ -40,8 +40,8 @@ const MisProductos = () => {
             const catList: string[] = Array.isArray(item?.cat)
               ? item.cat
               : catNombre
-              ? [catNombre]
-              : ['General'];
+                ? [catNombre]
+                : ['General'];
 
             const rawImg = String(
               item?.imagen || item?.imagen_url || item?.image || item?.img || ''
@@ -69,8 +69,8 @@ const MisProductos = () => {
                 typeof item?.vendedor === "string"
                   ? item.vendedor
                   : item?.vendedor?.first_name
-                  ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
-                  : item?.vendedor_nombre || "Repilche",
+                    ? `${item.vendedor.first_name} ${item.vendedor.last_name || ""}`.trim()
+                    : item?.vendedor_nombre || "Repilche",
               vendedor_id: item?.vendedor_id ?? (typeof item?.vendedor === "number" ? item?.vendedor : item?.vendedor?.id),
             };
           });

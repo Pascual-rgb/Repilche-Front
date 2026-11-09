@@ -43,8 +43,8 @@ export async function uploadProductImage(file: File): Promise<string> {
     fileToUpload.type === 'image/webp'
       ? 'webp'
       : fileToUpload.type === 'image/jpeg' || fileToUpload.type === 'image/jpg'
-      ? 'jpg'
-      : file.name.split('.').pop()?.toLowerCase() || 'webp';
+        ? 'jpg'
+        : file.name.split('.').pop()?.toLowerCase() || 'webp';
 
   // Generar identificador único robusto
   const uniqueId =
@@ -106,8 +106,8 @@ export async function uploadAvatarImage(file: File, userId?: number | string): P
     fileToUpload.type === 'image/webp'
       ? 'webp'
       : fileToUpload.type === 'image/jpeg' || fileToUpload.type === 'image/jpg'
-      ? 'jpg'
-      : file.name.split('.').pop()?.toLowerCase() || 'webp';
+        ? 'jpg'
+        : file.name.split('.').pop()?.toLowerCase() || 'webp';
 
   // Generar identificador único robusto
   const uniqueId =

@@ -9,7 +9,7 @@ import {
   FaLock,
   FaTruck
 } from 'react-icons/fa';
-import '../components/styles/CheckoutModal.css'; 
+import '../components/styles/CheckoutModal.css';
 import './styles/AdminModeracion.css';
 import AdminPedidos from './AdminPedidos';
 import AdminCatalogo from './AdminCatalogo';
@@ -32,9 +32,9 @@ export const AdminModeracion = () => {
   const [activeTab, setActiveTab] = useState<'moderacion' | 'compras' | 'catalogo'>('moderacion');
   const [pendientes, setPendientes] = useState<PrendaPendiente[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [selectedProduct, setSelectedProduct] = useState<PrendaPendiente | null>(null);
-  
+
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [motivoRechazo, setMotivoRechazo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -452,26 +452,26 @@ export const AdminModeracion = () => {
                     </div>
 
                     <div className="admin-acciones-btns">
-                      <button 
-                        type="button" 
-                        className="checkout-btn-seguir" 
+                      <button
+                        type="button"
+                        className="checkout-btn-seguir"
                         style={{ background: '#f3f4f6', color: '#1f2937', borderColor: '#d1d5db' }}
                         onClick={() => handleOpenEdit(selectedProduct)}
                         disabled={isSubmitting}
                       >
                         <FaEdit /> Editar
                       </button>
-                      <button 
-                        type="button" 
-                        className="checkout-btn-seguir" 
+                      <button
+                        type="button"
+                        className="checkout-btn-seguir"
                         style={{ background: '#ffebee', color: '#c62828', borderColor: '#ffcdd2' }}
                         onClick={() => setShowRejectModal(true)}
                         disabled={isSubmitting}
                       >
                         <FaTimes /> Rechazar
                       </button>
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         className="checkout-btn-compras"
                         onClick={() => handleAprobar(selectedProduct.id)}
                         disabled={isSubmitting}
@@ -484,7 +484,7 @@ export const AdminModeracion = () => {
               </div>
             </div>
           )}
-          
+
           {/* Modal de Rechazo */}
           {showRejectModal && (
             <div className="checkout-modal-overlay" style={{ zIndex: 10001 }}>
@@ -504,16 +504,16 @@ export const AdminModeracion = () => {
                 />
 
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  <button 
-                    type="button" 
-                    className="checkout-btn-seguir" 
+                  <button
+                    type="button"
+                    className="checkout-btn-seguir"
                     onClick={() => setShowRejectModal(false)}
                   >
                     Cancelar
                   </button>
-                  <button 
-                    type="button" 
-                    className="checkout-btn-compras" 
+                  <button
+                    type="button"
+                    className="checkout-btn-compras"
                     style={{ background: '#c62828', color: '#fff' }}
                     onClick={handleRechazarConfirm}
                     disabled={isSubmitting}
@@ -586,17 +586,17 @@ export const AdminModeracion = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button 
-                  type="button" 
-                  className="checkout-btn-seguir" 
+                <button
+                  type="button"
+                  className="checkout-btn-seguir"
                   onClick={() => setEditingProduct(null)}
                   disabled={isSavingEdit}
                 >
                   Cancelar
                 </button>
-                <button 
-                  type="submit" 
-                  className="checkout-btn-compras" 
+                <button
+                  type="submit"
+                  className="checkout-btn-compras"
                   disabled={isSavingEdit}
                 >
                   {isSavingEdit ? 'Guardando...' : 'Guardar Cambios'}
