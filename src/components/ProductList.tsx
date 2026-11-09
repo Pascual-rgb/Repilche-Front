@@ -6,19 +6,29 @@ import './styles/Home.css';
 
 interface ProductListProps {
   products?: Products[];
+  loading?: boolean;
 }
 
-export const ProductList: React.FC<ProductListProps> = ({ products: initialProducts }) => {
+export const ProductList: React.FC<ProductListProps> = ({ products: initialProducts, loading: loadingProp }) => {
   const [products, setProducts] = useState<Products[]>(initialProducts || []);
-  const [loading, setLoading] = useState<boolean>(!initialProducts || initialProducts.length === 0);
+  const [loading, setLoading] = useState<boolean>(loadingProp ?? (!initialProducts || initialProducts.length === 0));
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
-    if (initialProducts) {
-      setProducts(intercalarPorVendedor(initialProducts));
-      setLoading(false);
+    if (loadingProp !== undefined) {
+      setLoading(loadingProp);
     }
-  }, [initialProducts]);
+  }, [loadingProp]);
+
+  useEffect(() => {
+    if (initialProducts && initialProducts.length > 0) {
+      setProducts(intercalarPorVendedor(initialProducts));
+      if (loadingProp === undefined) {
+        setLoading(false);
+      }
+    }
+  }, [initialProducts, loadingProp]);
 
   useEffect(() => {
     if (initialProducts && initialProducts.length > 0) return;
@@ -141,8 +151,24 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
     return () => clearInterval(interval);
   }, [sliderProducts.length]);
 
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [currentIndex]);
+
   if (loading) {
-    return <div className="product-list-container">Cargando productos...</div>;
+    return (
+      <div className="product-list-container" aria-hidden="true">
+        <div className="product-list-card animate-pulse">
+          <div className="product-list-img-box" style={{ backgroundColor: '#e5e1ee', position: 'relative' }} />
+          <div className="product-list-details" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ height: '28px', width: '60%', backgroundColor: '#d4cbe4', borderRadius: '6px' }} />
+            <div style={{ height: '16px', width: '90%', backgroundColor: '#d4cbe4', borderRadius: '4px' }} />
+            <div style={{ height: '16px', width: '40%', backgroundColor: '#d4cbe4', borderRadius: '4px' }} />
+            <div style={{ height: '32px', width: '100px', backgroundColor: '#d4cbe4', borderRadius: '6px', marginTop: '10px' }} />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (sliderProducts.length === 0) return null;
@@ -175,13 +201,31 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
         className="product-list-card"
         style={{ textDecoration: 'none', color: 'inherit' }}
       >
-        <div className="product-list-img-box">
+        <div className="product-list-img-box" style={{ position: 'relative' }}>
+          {!imageLoaded && (
+            <div
+              className="animate-pulse"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundColor: '#e5e1ee',
+                borderRadius: '8%',
+              }}
+              aria-hidden="true"
+            />
+          )}
           <img
             src={portada}
             alt={currentProduct.name || 'Prenda'}
+            style={{
+              transition: 'opacity 0.25s ease-in-out',
+              opacity: imageLoaded ? 1 : 0,
+            }}
             loading="lazy"
             decoding="async"
+            onLoad={() => setImageLoaded(true)}
             onError={(e) => {
+              setImageLoaded(true);
               const target = e.currentTarget;
               if (!target.src.includes('remera-negra-manga-corta.png')) {
                 target.src = placeholder;

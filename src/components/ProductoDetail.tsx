@@ -82,6 +82,11 @@ const ProductoDetail = () => {
   const [producto, setProducto] = useState<ExtendedProduct | null>(null);
   const [imagenSeleccionada, setImagenSeleccionada] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [mainImageLoaded, setMainImageLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMainImageLoaded(false);
+  }, [imagenSeleccionada, id]);
 
   // Estados de flujo de compra C2C
   const [showModalTransferencia, setShowModalTransferencia] = useState<boolean>(false);
@@ -229,7 +234,66 @@ const ProductoDetail = () => {
   if (loading) {
     return (
       <main className="producto-detail-page">
-        <div style={{ textAlign: "center", padding: "40px" }}>Cargando producto...</div>
+        <section className="producto-detail-container" aria-busy="true" aria-label="Cargando prenda">
+          <div
+            className="volver-btn animate-pulse"
+            style={{ width: "170px", height: "42px", backgroundColor: "#e5e7eb", pointerEvents: "none", border: "none" }}
+          />
+
+          <div className="producto-detail animate-pulse">
+            <div className="producto-detail-gallery">
+              <div
+                className="producto-detail-image"
+                style={{
+                  minHeight: "450px",
+                  backgroundColor: "#e5e7eb",
+                  borderRadius: "16px",
+                }}
+              />
+              <div className="producto-detail-thumbnails" style={{ justifyContent: "flex-start", marginTop: "8px" }}>
+                <div style={{ width: "68px", height: "68px", backgroundColor: "#e5e7eb", borderRadius: "10px" }} />
+                <div style={{ width: "68px", height: "68px", backgroundColor: "#e5e7eb", borderRadius: "10px" }} />
+                <div style={{ width: "68px", height: "68px", backgroundColor: "#e5e7eb", borderRadius: "10px" }} />
+              </div>
+            </div>
+
+            <div className="producto-detail-info" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {/* Categoría */}
+              <div style={{ height: "18px", width: "120px", backgroundColor: "#e5e7eb", borderRadius: "4px" }} />
+
+              {/* Título */}
+              <div style={{ height: "36px", width: "80%", backgroundColor: "#e5e7eb", borderRadius: "6px" }} />
+
+              {/* Descripción */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "8px" }}>
+                <div style={{ height: "16px", width: "100%", backgroundColor: "#e5e7eb", borderRadius: "4px" }} />
+                <div style={{ height: "16px", width: "90%", backgroundColor: "#e5e7eb", borderRadius: "4px" }} />
+                <div style={{ height: "16px", width: "70%", backgroundColor: "#e5e7eb", borderRadius: "4px" }} />
+              </div>
+
+              {/* Precio */}
+              <div style={{ height: "40px", width: "140px", backgroundColor: "#e5e7eb", borderRadius: "8px", marginTop: "10px" }} />
+
+              {/* Stock */}
+              <div style={{ height: "20px", width: "160px", backgroundColor: "#e5e7eb", borderRadius: "4px" }} />
+
+              {/* Vendedor */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "8px" }}>
+                <div style={{ width: "38px", height: "38px", borderRadius: "50%", backgroundColor: "#e5e7eb" }} />
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <div style={{ height: "12px", width: "70px", backgroundColor: "#e5e7eb", borderRadius: "4px" }} />
+                  <div style={{ height: "16px", width: "130px", backgroundColor: "#e5e7eb", borderRadius: "4px" }} />
+                </div>
+              </div>
+
+              {/* Botones de acción */}
+              <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+                <div style={{ height: "48px", flex: 1, backgroundColor: "#e5e7eb", borderRadius: "12px" }} />
+                <div style={{ height: "48px", flex: 1, backgroundColor: "#e5e7eb", borderRadius: "12px" }} />
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     );
   }
@@ -497,13 +561,31 @@ const ProductoDetail = () => {
 
         <div className="producto-detail">
           <div className="producto-detail-gallery">
-            <div className="producto-detail-image">
+            <div className="producto-detail-image" style={{ position: "relative" }}>
+              {!mainImageLoaded && (
+                <div
+                  className="animate-pulse"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    backgroundColor: "#e5e7eb",
+                    borderRadius: "16px",
+                  }}
+                  aria-hidden="true"
+                />
+              )}
               <img
                 src={imagenActiva}
                 alt={producto.name as string}
+                style={{
+                  transition: "opacity 0.25s ease-in-out",
+                  opacity: mainImageLoaded ? 1 : 0,
+                }}
                 loading="lazy"
                 decoding="async"
+                onLoad={() => setMainImageLoaded(true)}
                 onError={(e) => {
+                  setMainImageLoaded(true);
                   const target = e.currentTarget;
                   if (!target.src.includes("remera-negra-manga-corta.png")) {
                     target.src = placeholder;

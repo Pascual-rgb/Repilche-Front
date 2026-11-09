@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ProductList } from './ProductList';
-import { ProductCard } from './ProductCard';
+import { ProductCard, ProductCardSkeleton } from './ProductCard';
 import type { Products } from '../data/products.ts';
 import { intercalarPorVendedor } from '../utils/intercalarProductos';
 import './styles/Home.css';
@@ -139,8 +139,22 @@ export const Home: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="home-container" style={{ textAlign: 'center', padding: '80px 20px', color: '#666' }}>
-        <p>Cargando catálogo oficial de Repilche...</p>
+      <div className="home-container" aria-busy="true">
+        <section className="home-section-top">
+          <h2 className="section-title">Productos Destacados</h2>
+          <ProductList loading={true} />
+        </section>
+
+        <section className="home-section-grid">
+          <h2 className="section-title">Productos</h2>
+          <div className="product-grid">
+            {Array(8)
+              .fill(0)
+              .map((_, idx) => (
+                <ProductCardSkeleton key={`skeleton-home-${idx}`} />
+              ))}
+          </div>
+        </section>
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ProductCard } from "./ProductCard";
+import { ProductCard, ProductCardSkeleton } from "./ProductCard";
 import type { Products as ProductType } from "../data/products";
 import { coincideCategoria } from "../utils/categories";
 import { intercalarPorVendedor } from "../utils/intercalarProductos";
@@ -154,8 +154,12 @@ const Products = () => {
       </h2>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "60px 20px", color: "#666" }}>
-          Cargando catálogo...
+        <div className="product-grid" aria-busy="true">
+          {Array(8)
+            .fill(0)
+            .map((_, idx) => (
+              <ProductCardSkeleton key={`skeleton-catalog-${idx}`} />
+            ))}
         </div>
       ) : filtrados.length === 0 ? (
         <p style={{ textAlign: "center", padding: "40px 20px", color: "#666" }}>
