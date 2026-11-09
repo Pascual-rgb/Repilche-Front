@@ -211,6 +211,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
+    if (!userObj) {
+      userObj = {
+        id: tokenClaims.user_id || tokenClaims.sub || 0,
+        email: datos.email || (typeof datos.username === 'string' && datos.username.includes('@') ? datos.username : ''),
+        username: typeof datos.username === 'string' ? datos.username : (typeof datos.email === 'string' ? datos.email.split('@')[0] : 'usuario'),
+        is_staff: Boolean(tokenClaims.is_staff),
+        is_superuser: Boolean(tokenClaims.is_superuser),
+        role: tokenClaims.role,
+      };
+    }
+
     if (userObj) {
       const perfilObj = userObj.perfil || userObj.perfil_vendedor || null;
       const avatarVal =

@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import type { Products } from "../data/products";
 
 interface CarritoItem extends Products {
@@ -32,8 +32,32 @@ export const CarritoProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [carrito, setCarrito] = useState<CarritoItem[]>([]);
+  // Inicialización perezosa (Lazy Initialization) desde localStorage
+  const [carrito, setCarrito] = useState<CarritoItem[]>(() => {
+    try {
+      const storedCart = localStorage.getItem("repilche-cart");
+      if (!storedCart) return [];
+      const parsed = JSON.parse(storedCart);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Sincronizar el carrito hacia localStorage ante cada cambio (agregar/eliminar/actualizar)
+  useEffect(() => {
+    try {
+      if (carrito.length === 0) {
+        localStorage.removeItem("repilche-cart");
+      } else {
+        localStorage.setItem("repilche-cart", JSON.stringify(carrito));
+      }
+    } catch (err) {
+      console.warn("No se pudo sincronizar repilche-cart en localStorage:", err);
+    }
+  }, [carrito]);
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
@@ -61,7 +85,10 @@ export const CarritoProvider = ({
 
   const removeItem = (id: number): void => setCarrito(aux => aux.filter(p => p.id !== id));
 
-  const emptyCart = (): void => setCarrito([]);
+  const emptyCart = (): void => {
+    setCarrito([]);
+    localStorage.removeItem("repilche-cart");
+  };
 
   const getItemQuantity = (): number => carrito.reduce((acum, p) => acum + p.quantity, 0);
 
