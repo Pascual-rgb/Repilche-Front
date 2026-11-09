@@ -106,13 +106,33 @@ const MisProductos = () => {
         <p className="lista-subtitle">Las prendas que publicaste en Repilche.</p>
 
         {loading ? (
-          <div className="lista-vacia" style={{ padding: "40px" }}>
-            <p>Cargando tus publicaciones...</p>
+          <div className="lista-vacia" style={{ padding: "50px 20px" }}>
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                border: "3px solid #eee",
+                borderTop: "3px solid #f6ca17",
+                borderRadius: "50%",
+                animation: "spin 0.8s linear infinite",
+                marginBottom: "12px",
+              }}
+            />
+            <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+            <p style={{ margin: 0, color: "#666", fontWeight: 500 }}>
+              Cargando tus publicaciones...
+            </p>
           </div>
         ) : misProductos.length === 0 ? (
           <div className="lista-vacia">
-            <p>Todavía no subiste ninguna prenda.</p>
-            <Link to="/cargar-producto" className="lista-btn">Cargar producto</Link>
+            <div className="lista-vacia-icon">👕</div>
+            <h2>Todavía no tenés productos publicados</h2>
+            <p>
+              Cuando subas tus primeras prendas a Repilche, aparecerán acá.
+            </p>
+            <Link to="/cargar-producto" className="lista-btn">
+              Cargar producto
+            </Link>
           </div>
         ) : (
           <div className="lista-grid">
