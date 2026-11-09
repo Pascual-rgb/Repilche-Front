@@ -401,7 +401,7 @@ export const AdminModeracion = () => {
                     .filter(Boolean)[0] || '/src/data/img/remera-negra-manga-corta.png';
                 return (
                   <div key={product.id} className="admin-mod-card" onClick={() => setSelectedProduct(product)}>
-                    <img src={portada} alt={product.nombre} />
+                    <img src={portada} alt={product.nombre} loading="lazy" decoding="async" />
                     <div className="admin-mod-card-info">
                       <h3>{product.nombre}</h3>
                       <p><strong>Vendedor:</strong> {product.vendedor}</p>
@@ -439,6 +439,8 @@ export const AdminModeracion = () => {
                           .filter(Boolean)[0] || '/src/data/img/remera-negra-manga-corta.png'
                       }
                       alt={selectedProduct.nombre}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <div className="admin-detalle-info">

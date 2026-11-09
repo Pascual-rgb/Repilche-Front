@@ -1,7 +1,29 @@
 import { supabase } from '../lib/supabaseClient';
+import imageCompression from 'browser-image-compression';
+
+const COMPRESSION_OPTIONS = {
+  maxSizeMB: 0.25, // Máximo ~250 KB para optimizar ancho de banda (Cached egress)
+  maxWidthOrHeight: 1080,
+  useWebWorker: true,
+  fileType: 'image/webp',
+};
+
+/**
+ * Comprime una imagen en el navegador antes de subirla a Supabase.
+ */
+async function compressImageFile(file: File): Promise<File> {
+  try {
+    const compressed = await imageCompression(file, COMPRESSION_OPTIONS);
+    return compressed;
+  } catch (error) {
+    console.warn('No se pudo comprimir la imagen en el cliente, subiendo archivo original:', error);
+    return file;
+  }
+}
 
 /**
  * Sube una imagen de producto directamente al bucket público 'productos' de Supabase Storage.
+ * Comprime la imagen en WebP (~250 KB max, 1080px max) antes del upload.
  * Genera un nombre único con timestamp y UUID en la ruta 'prendas/<nombre_archivo>'.
  * Retorna la URL pública accesible de la imagen.
  *
@@ -13,8 +35,16 @@ export async function uploadProductImage(file: File): Promise<string> {
     throw new Error('No se proporcionó ningún archivo para subir.');
   }
 
-  // Extraer extensión del archivo original asegurando fallback
-  const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+  // 1. Comprimir imagen en el cliente
+  const fileToUpload = await compressImageFile(file);
+
+  // Extraer extensión del archivo comprimido asegurando fallback
+  const extension =
+    fileToUpload.type === 'image/webp'
+      ? 'webp'
+      : fileToUpload.type === 'image/jpeg' || fileToUpload.type === 'image/jpg'
+      ? 'jpg'
+      : file.name.split('.').pop()?.toLowerCase() || 'webp';
 
   // Generar identificador único robusto
   const uniqueId =
@@ -27,8 +57,9 @@ export async function uploadProductImage(file: File): Promise<string> {
 
   const { data: uploadData, error: uploadError } = await supabase.storage
     .from('productos')
-    .upload(filePath, file, {
+    .upload(filePath, fileToUpload, {
       cacheControl: '3600',
+      contentType: fileToUpload.type || (extension === 'webp' ? 'image/webp' : 'image/jpeg'),
       upsert: false,
     });
 
@@ -55,6 +86,7 @@ export async function uploadProductImage(file: File): Promise<string> {
 
 /**
  * Sube una imagen de avatar directamente al bucket público 'productos' de Supabase Storage en la ruta 'prendas/avatar-...'.
+ * Comprime la imagen en WebP (~250 KB max, 1080px max) antes del upload.
  * Utiliza la carpeta 'prendas/' para respetar las políticas de Row-Level Security (RLS) habilitadas en el bucket.
  * Retorna la URL pública accesible del avatar.
  *
@@ -67,8 +99,15 @@ export async function uploadAvatarImage(file: File, userId?: number | string): P
     throw new Error('No se proporcionó ningún archivo para subir.');
   }
 
-  // Extraer extensión del archivo original asegurando fallback
-  const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+  // 1. Comprimir avatar en el cliente
+  const fileToUpload = await compressImageFile(file);
+
+  const extension =
+    fileToUpload.type === 'image/webp'
+      ? 'webp'
+      : fileToUpload.type === 'image/jpeg' || fileToUpload.type === 'image/jpg'
+      ? 'jpg'
+      : file.name.split('.').pop()?.toLowerCase() || 'webp';
 
   // Generar identificador único robusto
   const uniqueId =
@@ -81,8 +120,9 @@ export async function uploadAvatarImage(file: File, userId?: number | string): P
 
   const { data: uploadData, error: uploadError } = await supabase.storage
     .from('productos')
-    .upload(filePath, file, {
+    .upload(filePath, fileToUpload, {
       cacheControl: '3600',
+      contentType: fileToUpload.type || (extension === 'webp' ? 'image/webp' : 'image/jpeg'),
       upsert: true,
     });
 

@@ -179,6 +179,8 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
           <img
             src={portada}
             alt={currentProduct.name || 'Prenda'}
+            loading="lazy"
+            decoding="async"
             onError={(e) => {
               const target = e.currentTarget;
               if (!target.src.includes('remera-negra-manga-corta.png')) {

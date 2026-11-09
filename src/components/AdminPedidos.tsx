@@ -387,6 +387,8 @@ export const AdminPedidos: React.FC = () => {
                             src={portada}
                             alt={itemNombre}
                             className="admin-item-thumb"
+                            loading="lazy"
+                            decoding="async"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/src/data/img/remera-negra-manga-corta.png';
                             }}

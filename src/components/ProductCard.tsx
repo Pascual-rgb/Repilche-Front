@@ -53,6 +53,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             src={portada}
             alt={nombre}
             className="product-card-img"
+            loading="lazy"
+            decoding="async"
             onError={(e) => {
               const target = e.currentTarget;
               if (!target.src.includes('remera-negra-manga-corta.png')) {

@@ -501,6 +501,8 @@ const ProductoDetail = () => {
               <img
                 src={imagenActiva}
                 alt={producto.name as string}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   const target = e.currentTarget;
                   if (!target.src.includes("remera-negra-manga-corta.png")) {
@@ -525,6 +527,8 @@ const ProductoDetail = () => {
                       <img
                         src={url}
                         alt={`${producto.name} - vista ${idx + 1}`}
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           const target = e.currentTarget;
                           if (!target.src.includes("remera-negra-manga-corta.png")) {

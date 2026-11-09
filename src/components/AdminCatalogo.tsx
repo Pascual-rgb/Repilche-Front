@@ -293,6 +293,8 @@ export const AdminCatalogo: React.FC<AdminCatalogoProps> = ({ onEditProduct }) =
                           src={portada}
                           alt={nombre}
                           className="admin-item-thumb"
+                          loading="lazy"
+                          decoding="async"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = '/src/data/img/remera-negra-manga-corta.png';
                           }}

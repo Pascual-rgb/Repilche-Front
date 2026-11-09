@@ -119,7 +119,7 @@ const MisProductos = () => {
             {misProductos.map((p) => (
               <article key={p.id} className="lista-card">
                 <div className="lista-img">
-                  <img src={p.img as string} alt={p.name as string} />
+                  <img src={p.img as string} alt={p.name as string} loading="lazy" decoding="async" />
                 </div>
 
                 <div className="lista-info">
