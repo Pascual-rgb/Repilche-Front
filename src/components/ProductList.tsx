@@ -76,8 +76,8 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
           const catList: string[] = Array.isArray(item?.cat)
             ? item.cat
             : catNombre
-              ? [catNombre]
-              : ['General'];
+            ? [catNombre]
+            : ['General'];
 
           return {
             id: item?.id ?? idx + 1,
