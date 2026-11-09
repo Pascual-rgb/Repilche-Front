@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import type { Products } from '../data/products.ts';
 import { intercalarPorVendedor } from '../utils/intercalarProductos';
@@ -14,6 +14,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
   const [loading, setLoading] = useState<boolean>(loadingProp ?? (!initialProducts || initialProducts.length === 0));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     if (loadingProp !== undefined) {
@@ -75,8 +76,8 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
           const catList: string[] = Array.isArray(item?.cat)
             ? item.cat
             : catNombre
-            ? [catNombre]
-            : ['General'];
+              ? [catNombre]
+              : ['General'];
 
           return {
             id: item?.id ?? idx + 1,
@@ -152,8 +153,12 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
   }, [sliderProducts.length]);
 
   useEffect(() => {
-    setImageLoaded(false);
-  }, [currentIndex]);
+    if (imgRef.current && imgRef.current.complete) {
+      setImageLoaded(true);
+    } else {
+      setImageLoaded(false);
+    }
+  }, [currentIndex, sliderProducts]);
 
   if (loading) {
     return (
@@ -215,6 +220,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products: initialProdu
             />
           )}
           <img
+            ref={imgRef}
             src={portada}
             alt={currentProduct.name || 'Prenda'}
             style={{

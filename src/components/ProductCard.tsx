@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type { Products } from '../data/products.ts';
 import './styles/ProductCard.css';
@@ -33,21 +33,20 @@ export const ProductCardSkeleton: React.FC = () => {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-
-  if (!product) return null;
+  const imgRef = useRef<HTMLImageElement>(null);
 
   // Manejo seguro con optional chaining y fallbacks
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawProduct = product as any;
-  const nombre = product.name || rawProduct.nombre || 'Prenda';
-  const precio = product.precio || rawProduct.price || 0;
+  const nombre = product?.name || rawProduct?.nombre || 'Prenda';
+  const precio = product?.precio || rawProduct?.price || 0;
   const placeholder = '/src/data/img/remera-negra-manga-corta.png';
   const rawImg = String(
-    rawProduct.imagen ||
-    rawProduct.imagen_url ||
-    rawProduct.image ||
-    rawProduct.img ||
-    product.img ||
+    rawProduct?.imagen ||
+    rawProduct?.imagen_url ||
+    rawProduct?.image ||
+    rawProduct?.img ||
+    product?.img ||
     ''
   );
   const portada =
@@ -55,6 +54,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       .split(',')
       .map((url: string) => url.trim())
       .filter(Boolean)[0] || placeholder;
+
+  useEffect(() => {
+    if (imgRef.current && imgRef.current.complete) {
+      setImageLoaded(true);
+    }
+  }, [portada]);
+
+  if (!product) return null;
   
   const categorias = Array.isArray(product.cat)
     ? product.cat.join(', ')
@@ -74,20 +81,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <h3 className="product-card-name">{nombre}</h3>
         </div>
 
-        <div className="product-card-img-container" style={{ position: 'relative' }}>
+        <div className="product-card-img-container" style={{ position: 'relative', overflow: 'hidden' }}>
           {!imageLoaded && (
             <div
               className="animate-pulse"
               style={{
                 position: 'absolute',
-                inset: '10px',
+                inset: 0,
                 backgroundColor: '#e5e7eb',
-                borderRadius: '8px',
               }}
               aria-hidden="true"
             />
           )}
           <img
+            ref={imgRef}
             src={portada}
             alt={nombre}
             className="product-card-img"

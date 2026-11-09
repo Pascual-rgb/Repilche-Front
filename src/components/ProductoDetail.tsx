@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -83,10 +83,15 @@ const ProductoDetail = () => {
   const [imagenSeleccionada, setImagenSeleccionada] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [mainImageLoaded, setMainImageLoaded] = useState<boolean>(false);
+  const mainImgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    setMainImageLoaded(false);
-  }, [imagenSeleccionada, id]);
+    if (mainImgRef.current && mainImgRef.current.complete) {
+      setMainImageLoaded(true);
+    } else {
+      setMainImageLoaded(false);
+    }
+  }, [imagenSeleccionada, id, producto]);
 
   // Estados de flujo de compra C2C
   const [showModalTransferencia, setShowModalTransferencia] = useState<boolean>(false);
@@ -575,6 +580,7 @@ const ProductoDetail = () => {
                 />
               )}
               <img
+                ref={mainImgRef}
                 src={imagenActiva}
                 alt={producto.name as string}
                 style={{
