@@ -21,9 +21,21 @@ import { Analytics } from "@vercel/analytics/react";
 import AdminRoute from "./components/AdminRoute";
 import AdminModeracion from "./components/AdminModeracion";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import MaintenanceScreen from "./components/MaintenanceScreen";
 
 function App() {
   const location = useLocation();
+
+  // Control de modo mantenimiento por variable de entorno (Vercel / .env)
+  const isMaintenanceEnv = import.meta.env.VITE_MAINTENANCE_MODE;
+  const IS_MAINTENANCE_MODE =
+    isMaintenanceEnv !== undefined
+      ? isMaintenanceEnv === "true" || isMaintenanceEnv === "1"
+      : true;
+
+  if (IS_MAINTENANCE_MODE) {
+    return <MaintenanceScreen />;
+  }
 
   const hideHeaderPaths: string[] = [];
   const shouldHideHeader = hideHeaderPaths.includes(location.pathname);
