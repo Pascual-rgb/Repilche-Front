@@ -1,20 +1,16 @@
-import React from 'react';
-import { FaWrench, FaSyncAlt, FaInstagram, FaEnvelope } from 'react-icons/fa';
+import React, { useEffect } from 'react';
+import { FaInstagram, FaEnvelope, FaExternalLinkAlt } from 'react-icons/fa';
 import logo from '../assets/PICHE.png';
 import './styles/MaintenanceScreen.css';
 
-interface MaintenanceScreenProps {
-  onRefresh?: () => void;
-}
+export const MaintenanceScreen: React.FC = () => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.location.replace("https://repilche-web.vercel.app/");
+    }, 2000);
 
-export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({ onRefresh }) => {
-  const handleReload = () => {
-    if (onRefresh) {
-      onRefresh();
-    } else {
-      window.location.reload();
-    }
-  };
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="maintenance-wrapper">
@@ -24,36 +20,34 @@ export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({ onRefresh 
           <img src={logo} alt="Repilche Logo" className="maintenance-logo" />
           <div className="maintenance-badge">
             <span className="maintenance-pulse"></span>
-            <FaWrench className="maintenance-badge-icon" />
-            <span>Mantenimiento en curso</span>
+            <span>Redirección a nueva web</span>
           </div>
         </div>
 
         {/* Título y Mensaje */}
         <div className="maintenance-body">
-          <h1 className="maintenance-title">¡Estamos mejorando Repilche para vos!</h1>
+          <h1 className="maintenance-title">¡Nos mudamos de dirección!</h1>
           <p className="maintenance-description">
-            En este momento estamos realizando tareas de mantenimiento y actualización en nuestra plataforma. Volvemos en unos minutos con todo el catálogo disponible.
+            Te estamos llevando a la nueva web oficial de Repilche...
           </p>
         </div>
 
-        {/* Botón de verificación/recarga */}
+        {/* Botón manual de respaldo */}
         <div className="maintenance-actions">
-          <button
-            type="button"
+          <a
+            href="https://repilche-web.vercel.app/"
             className="maintenance-reload-btn"
-            onClick={handleReload}
-            title="Verificar si la plataforma ya está disponible"
+            style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
           >
-            <FaSyncAlt className="maintenance-reload-icon" />
-            <span>Verificar disponibilidad</span>
-          </button>
+            <span>Ir a la nueva tienda ahora</span>
+            <FaExternalLinkAlt style={{ fontSize: '12px' }} />
+          </a>
         </div>
 
         {/* Contacto / Soporte */}
         <div className="maintenance-footer">
           <p className="maintenance-support-text">
-            ¿Tenés alguna consulta urgente sobre un pedido en curso?
+            ¿Tenés alguna consulta sobre tus pedidos o publicaciones?
           </p>
           <div className="maintenance-contact-links">
             <a
