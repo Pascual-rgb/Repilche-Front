@@ -5,11 +5,18 @@ import './styles/MaintenanceScreen.css';
 
 export const MaintenanceScreen: React.FC = () => {
   useEffect(() => {
+    // Elimina el padding-top global que Header.css aplica al body
+    const originalPaddingTop = document.body.style.paddingTop;
+    document.body.style.paddingTop = '0px';
+
     const timer = setTimeout(() => {
       window.location.replace("https://repilche-web.vercel.app/");
     }, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      document.body.style.paddingTop = originalPaddingTop;
+    };
   }, []);
 
   return (
